@@ -1,0 +1,21 @@
+steps:
+# Pull last build for caching
+- name: "gcr.io/cloud-builders/docker"
+  entrypoint: "bash"
+  args: ["-c", "docker pull gcr.io/answerleh/server:latest || exit 0"]
+# Generate .env from Secret Manager (for MongoDB Atlas credentials)
+- name: gcr.io/cloud-builders/gcloud
+  entrypoint: 'bash'
+  args: [ '-c', "gcloud secrets versions access latest --secret=atlas-node-env --format='get(payload.data)' | tr '_-' '/+' | base64 -d > server/.env" ]
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/answerleh/server', '--cache-from', 'gcr.io/answerleh/server', 'server/']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/answerleh/server']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'answerleh-server', '--image', 'gcr.io/answerleh/server', '--region', 'asia-southeast1', '--platform', 'managed', '--allow-unauthenticated']
+images:
+- gcr.io/answerleh/server
