@@ -58,13 +58,13 @@ export const AuthProvider = ({ children }) => {
   )
 }
 
-export default function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext)
 
   return context
 }
 
-export function ProtectRoute({ Component: Component, ...rest }) {
+export const ProtectRoute = ({ Component: Component, ...rest }) => {
   return () => {
     const { user, isAuthenticated, loading } = useAuth()
     const router = useRouter()
