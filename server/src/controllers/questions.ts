@@ -38,8 +38,19 @@ async function createQuestion(markdown: string): Promise<Question> {
   return doc;
 }
 
-function updateQuestion(): string {
-  return "Error! Not implemented!";
+async function updateQuestion(id: string, markdown: string): Promise<boolean> {
+  try {
+    const objectId: ObjectId = new ObjectID(id);
+
+    const result = await getQuestionsCollection().updateOne(
+      { _id: objectId },
+      { $set: { markdown: markdown, updated_at: new Date() } }
+    );
+
+    return result.modifiedCount === 1;
+  } catch (error) {
+    return false;
+  }
 }
 
 function deleteQuestion(): string {

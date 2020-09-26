@@ -48,8 +48,24 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // PUT request
-router.put("/:id", async (_, res: Response) => {
-  return res.status(200).send(updateQuestion());
+router.put("/:id", async (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  const markdown: string | undefined = req.body.markdown;
+  if (!markdown) {
+    return res.status(400).send("Required field markdown is missing");
+  }
+
+  const trimmedMarkdown: string = markdown.trim();
+  if (!trimmedMarkdown) {
+    return res
+      .status(400)
+      .send("Required field markdown cannot be empty string");
+  }
+
+  const isSuccessful: boolean = await updateQuestion(id, trimmedMarkdown);
+  return isSuccessful
+    ? res.status(204).send()
+    : res.status(404).send("Question not found");
 });
 
 // DELETE request
