@@ -1,11 +1,13 @@
+import MongoClient from "mongodb";
+
 import {
   DB_NAME,
   URI,
   initDb,
   closeDb,
   getDb,
+  getQuestionsCollection,
 } from "../../src/services/database";
-import MongoClient from "mongodb";
 
 describe("Database constants", () => {
   it("should be initialised to TEST environment", () => {
@@ -73,5 +75,28 @@ describe("Get database", () => {
     await closeDb();
 
     expect(getDb).toThrowError();
+  });
+});
+
+describe("Get questions collection", () => {
+  beforeAll(async (done) => {
+    await initDb();
+    done();
+  });
+
+  afterAll(async (done) => {
+    await closeDb();
+    done();
+  });
+
+  it("should return questions collection", async () => {
+    const questionsCollection = getQuestionsCollection();
+    expect(questionsCollection.collectionName).toBe("questions");
+  });
+
+  it("should throw error if database is not yet initialised", async () => {
+    await closeDb();
+
+    expect(getQuestionsCollection).toThrowError();
   });
 });
