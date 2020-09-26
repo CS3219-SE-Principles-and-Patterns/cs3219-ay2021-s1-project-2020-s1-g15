@@ -7,7 +7,7 @@ import {
   updateQuestion,
   deleteQuestion,
 } from "../controllers/questions";
-import Question from "../models/Question";
+import { Question } from "../models";
 
 const router: Router = Router();
 
