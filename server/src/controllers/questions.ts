@@ -57,8 +57,18 @@ async function updateQuestion(
   return result.value;
 }
 
-function deleteQuestion(): string {
-  return "Error! Not implemented!";
+async function deleteQuestion(id: string): Promise<boolean> {
+  if (!ObjectID.isValid(id)) {
+    return false;
+  }
+
+  const objectId: ObjectId = new ObjectID(id);
+
+  const result = await getQuestionsCollection().findOneAndDelete({
+    _id: objectId,
+  });
+
+  return result.value != null;
 }
 
 export {

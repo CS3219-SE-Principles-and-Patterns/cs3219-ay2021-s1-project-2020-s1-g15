@@ -72,8 +72,13 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE request
-router.delete("/:id", async (_, res: Response) => {
-  return res.status(200).send(deleteQuestion());
+router.delete("/:id", async (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  const isSuccessful: boolean = await deleteQuestion(id);
+
+  return isSuccessful
+    ? res.status(204).send()
+    : res.status(404).send("Question not found");
 });
 
 export default router;
