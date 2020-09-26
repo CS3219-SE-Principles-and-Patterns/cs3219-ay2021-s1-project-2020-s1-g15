@@ -1,6 +1,6 @@
 import MongoClient, { Collection } from "mongodb";
 
-import Question from "../models/Question";
+import { Question } from "../models";
 
 const { NODE_ENV, MONGO_URL } = process.env;
 const DB_NAME = `answerleh-${NODE_ENV?.toUpperCase()}`;

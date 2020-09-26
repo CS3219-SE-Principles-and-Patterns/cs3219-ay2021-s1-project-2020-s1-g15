@@ -1,7 +1,7 @@
 import { ObjectId, ObjectID } from "mongodb";
 
 import { getQuestionsCollection } from "../services/database";
-import Question from "../models/Question";
+import { Question } from "../models";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
