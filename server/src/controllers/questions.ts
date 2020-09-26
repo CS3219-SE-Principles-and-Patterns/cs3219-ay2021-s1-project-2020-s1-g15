@@ -11,17 +11,17 @@ async function getQuestions(): Promise<Question[]> {
 }
 
 async function getQuestionById(id: string): Promise<Question | null> {
-  try {
-    const objectId: ObjectId = new ObjectID(id);
-
-    const question: Question | null = await getQuestionsCollection().findOne({
-      _id: objectId,
-    });
-
-    return question;
-  } catch (error) {
+  if (!ObjectID.isValid(id)) {
     return null;
   }
+
+  const objectId: ObjectId = new ObjectID(id);
+
+  const question: Question | null = await getQuestionsCollection().findOne({
+    _id: objectId,
+  });
+
+  return question;
 }
 
 async function createQuestion(markdown: string): Promise<Question> {
@@ -38,19 +38,23 @@ async function createQuestion(markdown: string): Promise<Question> {
   return doc;
 }
 
-async function updateQuestion(id: string, markdown: string): Promise<boolean> {
-  try {
-    const objectId: ObjectId = new ObjectID(id);
-
-    const result = await getQuestionsCollection().updateOne(
-      { _id: objectId },
-      { $set: { markdown: markdown, updated_at: new Date() } }
-    );
-
-    return result.modifiedCount === 1;
-  } catch (error) {
-    return false;
+async function updateQuestion(
+  id: string,
+  markdown: string
+): Promise<Question | undefined> {
+  if (!ObjectID.isValid(id)) {
+    return undefined;
   }
+
+  const objectId: ObjectId = new ObjectID(id);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: objectId },
+    { $set: { markdown: markdown, updated_at: new Date() } },
+    { returnOriginal: false }
+  );
+
+  return result.value;
 }
 
 function deleteQuestion(): string {

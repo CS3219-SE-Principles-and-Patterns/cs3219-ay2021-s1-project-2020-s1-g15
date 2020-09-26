@@ -47,7 +47,7 @@ router.post("/", async (req: Request, res: Response) => {
   return res.status(201).json(createdQuestion);
 });
 
-// PUT request
+// PUT request - update a question
 router.put("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const markdown: string | undefined = req.body.markdown;
@@ -62,10 +62,13 @@ router.put("/:id", async (req: Request, res: Response) => {
       .send("Required field markdown cannot be empty string");
   }
 
-  const isSuccessful: boolean = await updateQuestion(id, trimmedMarkdown);
-  return isSuccessful
-    ? res.status(204).send()
-    : res.status(404).send("Question not found");
+  const updatedQuestion: Question | undefined = await updateQuestion(
+    id,
+    trimmedMarkdown
+  );
+  return updatedQuestion == null
+    ? res.status(404).send("Question not found")
+    : res.status(200).json(updatedQuestion);
 });
 
 // DELETE request
