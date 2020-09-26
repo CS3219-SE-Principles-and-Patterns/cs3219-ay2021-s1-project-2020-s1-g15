@@ -1,6 +1,8 @@
+import "express-async-errors";
 import express, { Express, Router } from "express";
 import cors from "cors";
 
+import customErrorHandler from "../middlewares/customErrorHandler";
 import questionsRouter from "../routes/questions";
 
 const app: Express = express();
@@ -16,5 +18,7 @@ app.use("/api", router);
 
 // routes
 router.use("/questions", questionsRouter);
+// custom error handler: must be last middleware
+app.use(customErrorHandler);
 
 export default app;

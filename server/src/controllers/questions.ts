@@ -11,10 +11,6 @@ async function getQuestions(): Promise<Question[]> {
 }
 
 async function getQuestionById(id: string): Promise<Question | null> {
-  if (!ObjectID.isValid(id)) {
-    return null;
-  }
-
   const objectId: ObjectId = new ObjectID(id);
 
   const question: Question | null = await getQuestionsCollection().findOne({
@@ -42,10 +38,6 @@ async function updateQuestion(
   id: string,
   markdown: string
 ): Promise<Question | undefined> {
-  if (!ObjectID.isValid(id)) {
-    return undefined;
-  }
-
   const objectId: ObjectId = new ObjectID(id);
 
   const result = await getQuestionsCollection().findOneAndUpdate(
@@ -58,10 +50,6 @@ async function updateQuestion(
 }
 
 async function deleteQuestion(id: string): Promise<boolean> {
-  if (!ObjectID.isValid(id)) {
-    return false;
-  }
-
   const objectId: ObjectId = new ObjectID(id);
 
   const result = await getQuestionsCollection().findOneAndDelete({
