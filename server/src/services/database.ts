@@ -1,8 +1,10 @@
-import MongoClient from "mongodb";
+import MongoClient, { Collection } from "mongodb";
+
+import Question from "../models/Question";
 
 const { NODE_ENV, MONGO_URL } = process.env;
 const DB_NAME = `answerleh-${NODE_ENV?.toUpperCase()}`;
-const PROD_DB_URL = "Error, not implemented!";
+const PROD_DB_URL = "Error, not implemented!"; // TODO: use prod DB URL
 const DEV_DB_URL = `mongodb://localhost:27017/${DB_NAME}`;
 const URI: string =
   NODE_ENV === "test"
@@ -44,4 +46,12 @@ async function closeDb(): Promise<void> {
   console.log("MongoDB: connection closed");
 }
 
-export { DB_NAME, URI, initDb, getDb, closeDb };
+function getQuestionsCollection(): Collection<Question> {
+  if (!mongoClient.isConnected()) {
+    throw Error("MongoDB: not yet connected");
+  }
+
+  return getDb().collection("questions");
+}
+
+export { DB_NAME, URI, initDb, getDb, closeDb, getQuestionsCollection };
