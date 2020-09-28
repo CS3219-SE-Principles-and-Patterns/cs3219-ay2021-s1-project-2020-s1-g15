@@ -1,0 +1,21 @@
+name: Server CI Tests
+
+on: [push]
+
+jobs:
+  lint-test-upload:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install dependencies
+      run: yarn --cwd ./server install
+    - name: Test and generate coverage
+      run: yarn --cwd ./server ci
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        directory: ./server/coverage
