@@ -5,10 +5,13 @@
 ## TOC
 
 - [Client](#client)
-- [Server](#server)
   - [Prerequisites](#prerequisites)
   - [Installing](#installing)
   - [Development environment](#development-environment)
+- [Server](#server)
+  - [Prerequisites](#prerequisites-1)
+  - [Installing](#installing-1)
+  - [Development environment](#development-environment-1)
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
     - [Lint and run tests](#lint-and-run-tests)
@@ -22,6 +25,8 @@
 ## Client
 
 ### Prerequisites
+
+The following are required to be installed:
 
 - [Node](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
@@ -44,8 +49,7 @@ cd client/
 yarn dev
 ```
 
-The project should be hosted on [localhost](localhost:3000)\
-
+The project should be hosted on [localhost:3000](localhost:3000).
 
 ## Server
 
