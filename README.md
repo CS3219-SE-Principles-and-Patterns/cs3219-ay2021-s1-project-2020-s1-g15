@@ -15,12 +15,18 @@
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
     - [Lint and run tests](#lint-and-run-tests)
-  - [API reference](#api-reference)
+- [API reference](#api-reference)
+  - [Questions](#questions)
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
     - [Get a specific question](#get-a-specific-question)
     - [Update a question](#update-a-question)
     - [Delete a question](#delete-a-question)
+  - [Answers](#answers)
+    - [Create an answer](#create-an-answer)
+    - [Get all answers by question ID](#get-all-answers-by-question-id)
+    - [Update an answer](#update-an-answer)
+    - [Delete an answer](#delete-an-answer)
 
 ## Client
 
@@ -113,19 +119,20 @@ yarn test
 
 While running tests (`yarn test`), an in-memory version of MongoDB is used (see [`@shelf/jest-mongodb`](https://github.com/shelfio/jest-mongodb)). All reads and writes are performed using an ephemeral database which will not persist beyond the tests.
 
-### API reference
+## API reference
 
 The following base URLs are assumed:
 
 - **Deployed endpoint**: TODO
 - **Local endpoint**: http://localhost:8000
 
+### Questions
+
 #### Create a question
 
 - Method: `POST`
 - URL: `/api/questions`
 - Body data (example):
-
   ```js
   {
     "markdown": "hello" // string; required!
@@ -137,7 +144,6 @@ The following base URLs are assumed:
 - Condition: if everything is OK, and the `markdown` field is valid
 - Code: `201 CREATED`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
@@ -164,7 +170,6 @@ The following base URLs are assumed:
 - Condition: if everything is OK
 - Code: `200 OK`
 - Content (example):
-
   ```js
   [
     // ...
@@ -191,7 +196,6 @@ The following base URLs are assumed:
 - Condition: if question exists
 - Code: `200 OK`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
@@ -221,7 +225,6 @@ OR
 - URL parameters
   - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
-
   ```js
   {
     "markdown": "updated" // string; required!
@@ -233,7 +236,6 @@ OR
 - Condition: if question exists, and the `markdown` field is valid
 - Code: `200 OK`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
@@ -271,5 +273,141 @@ OR
 **Error response**:
 
 - Condition: if question does not exist
+- Code: `404 NOT FOUND`
+- Content: description of error
+
+### Answers
+
+#### Create an answer
+
+- Method: `POST`
+- URL: `/api/answers`
+- Body data (example):
+  ```js
+  {
+    "question_id": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "markdown": "hello" // string; required!
+  }
+  ```
+
+**Success response**:
+
+- Condition: if everything is OK, and the `markdown` field is valid
+- Code: `201 CREATED`
+- Content (example):
+  ```js
+  {
+    "_id": "5f570273a83adf5417b48028",
+    "markdown": "hello",
+    "question_id": "5f570273a83adf5417b48026",
+    "created_at": "2020-09-08T04:02:59.081Z",
+    "updated_at": "2020-09-08T04:02:59.081Z"
+  }
+  ```
+
+**Error response**:
+
+- Condition: if `markdown` field is missing or the empty string
+- Status: `400 BAD REQUEST`
+- Content: description of error
+
+OR
+
+- Condition: if question (`question_id`) is not found
+- Status: `404 NOT FOUND`
+- Content: description of error
+
+#### Get all answers by question ID
+
+- Method: `GET`
+- URL: `/api/answers`
+- Body data (example):
+  ```js
+  {
+    "question_id": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "markdown": "hello" // string; required!
+  }
+  ```
+
+**Success response**:
+
+- Condition: if everything is OK
+- Code: `200 OK`
+- Content (example):
+  ```js
+  [
+    // ...
+    {
+      "_id": "5f570273a83adf5417b48028",
+      "markdown": "hello",
+      "question_id": "5f570273a83adf5417b48026",
+      "createdAt": "2020-09-08T04:02:59.081Z",
+      "updatedAt": "2020-09-08T04:02:59.081Z"
+    },
+    // ...
+  ]
+  ```
+
+**Error response**:
+
+- Condition: if question (`question_id`) is not found
+- Status: `404 NOT FOUND`
+- Content: description of error
+
+#### Update an answer
+
+- Method: `PUT`
+- URL: `/api/answers/:id`
+- URL parameters
+  - `id`: the `ObjectId` of the MongoDB document
+- Body data (example):
+  ```js
+  {
+    "markdown": "updated" // string; required!
+  }
+  ```
+
+**Success response**:
+
+- Condition: if answer exists, and the `markdown` field is valid
+- Code: `200 OK`
+- Content (example):
+  ```js
+  {
+    "_id": "5f570273a83adf5417b48026",
+    "markdown": "updated",
+    "question_id": "5f570273a83adf5417b48026",
+    "createdAt": "2020-09-08T04:02:59.081Z",
+    "updatedAt": "2020-09-08T09:03:21.081Z"
+  },
+  ```
+
+**Error response**:
+
+- Condition: if `id` is not valid, or if `markdown` field is missing or the empty string
+- Status: `400 BAD REQUEST`
+- Content: description of error
+
+OR
+
+- Condition: if answer does not exist
+- Status: `404 NOT FOUND`
+- Content: description of error
+
+#### Delete an answer
+
+- Method: `DELETE`
+- URL: `/api/answers/:id`
+- URL parameters
+  - `id`: the `ObjectId` of the MongoDB document
+
+**Success response**:
+
+- Condition: if the answer exists and is deleted successfully
+- Code: `204 NO CONTENT`
+
+**Error response**:
+
+- Condition: if answer does not exist
 - Code: `404 NOT FOUND`
 - Content: description of error
