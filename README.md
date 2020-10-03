@@ -15,7 +15,8 @@
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
     - [Lint and run tests](#lint-and-run-tests)
-  - [API reference](#api-reference)
+- [API reference](#api-reference)
+  - [Questions](#questions)
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
     - [Get a specific question](#get-a-specific-question)
@@ -113,19 +114,20 @@ yarn test
 
 While running tests (`yarn test`), an in-memory version of MongoDB is used (see [`@shelf/jest-mongodb`](https://github.com/shelfio/jest-mongodb)). All reads and writes are performed using an ephemeral database which will not persist beyond the tests.
 
-### API reference
+## API reference
 
 The following base URLs are assumed:
 
 - **Deployed endpoint**: TODO
 - **Local endpoint**: http://localhost:8000
 
+### Questions
+
 #### Create a question
 
 - Method: `POST`
 - URL: `/api/questions`
 - Body data (example):
-
   ```js
   {
     "markdown": "hello" // string; required!
@@ -137,7 +139,6 @@ The following base URLs are assumed:
 - Condition: if everything is OK, and the `markdown` field is valid
 - Code: `201 CREATED`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
@@ -164,7 +165,6 @@ The following base URLs are assumed:
 - Condition: if everything is OK
 - Code: `200 OK`
 - Content (example):
-
   ```js
   [
     // ...
@@ -191,7 +191,6 @@ The following base URLs are assumed:
 - Condition: if question exists
 - Code: `200 OK`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
@@ -221,7 +220,6 @@ OR
 - URL parameters
   - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
-
   ```js
   {
     "markdown": "updated" // string; required!
@@ -233,7 +231,6 @@ OR
 - Condition: if question exists, and the `markdown` field is valid
 - Code: `200 OK`
 - Content (example):
-
   ```js
   {
     "_id": "5f570273a83adf5417b48026",
