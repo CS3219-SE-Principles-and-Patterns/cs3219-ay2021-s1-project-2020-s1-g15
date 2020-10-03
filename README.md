@@ -5,10 +5,13 @@
 ## TOC
 
 - [Client](#client)
-- [Server](#server)
   - [Prerequisites](#prerequisites)
   - [Installing](#installing)
   - [Development environment](#development-environment)
+- [Server](#server)
+  - [Prerequisites](#prerequisites-1)
+  - [Installing](#installing-1)
+  - [Development environment](#development-environment-1)
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
     - [Lint and run tests](#lint-and-run-tests)
@@ -20,6 +23,33 @@
     - [Delete a question](#delete-a-question)
 
 ## Client
+
+### Prerequisites
+
+The following are required to be installed:
+
+- [Node](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/)
+
+### Installing
+
+```sh
+# change to client / directory first
+cd client/
+# install all dependencies and next Js
+yarn
+```
+
+### Development environment
+
+```sh
+# change to client / directory first
+cd client/
+# Runs in dev mode. This same as running next dev
+yarn dev
+```
+
+The project should be hosted on [localhost:3000](localhost:3000).
 
 ## Server
 
