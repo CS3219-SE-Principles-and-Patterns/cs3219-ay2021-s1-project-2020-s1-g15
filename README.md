@@ -21,6 +21,32 @@
 
 ## Client
 
+### Prerequisites
+
+- [Node](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/)
+
+### Installing
+
+```sh
+# change to client / directory first
+cd client/
+# install all dependencies and next Js
+yarn
+```
+
+### Development environment
+
+```sh
+# change to client / directory first
+cd client/
+# Runs in dev mode. This same as running next dev
+yarn dev
+```
+
+The project should be hosted on [localhost](localhost:3000)\
+
+
 ## Server
 
 ### Prerequisites
