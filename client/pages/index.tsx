@@ -3,7 +3,6 @@ import FluidPage from '../components/layout'
 
 export const Home = (): JSX.Element => (
   <FluidPage>
-    
     <div className="container">
       <Head>
         <title>Create Next App</title>
