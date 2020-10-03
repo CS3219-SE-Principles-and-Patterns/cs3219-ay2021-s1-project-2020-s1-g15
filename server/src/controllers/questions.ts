@@ -1,17 +1,68 @@
-function getQuestions(): string {
-  return "Error! Not implemented!";
+import { ObjectId, ObjectID } from "mongodb";
+
+import { getQuestionsCollection } from "../services/database";
+import { Question } from "../models";
+
+// TODO: add pagination/search/filter in the future
+async function getQuestions(): Promise<Question[]> {
+  const questions: Question[] = await getQuestionsCollection().find().toArray();
+
+  return questions;
 }
 
-function createQuestion(): string {
-  return "Error! Not implemented!";
+async function getQuestionById(id: string): Promise<Question | null> {
+  const objectId: ObjectId = new ObjectID(id);
+
+  const question: Question | null = await getQuestionsCollection().findOne({
+    _id: objectId,
+  });
+
+  return question;
 }
 
-function updateQuestion(): string {
-  return "Error! Not implemented!";
+async function createQuestion(markdown: string): Promise<Question> {
+  const doc: Question = {
+    _id: new ObjectId(),
+    markdown: markdown,
+    answer_ids: [],
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  await getQuestionsCollection().insertOne(doc);
+
+  return doc;
 }
 
-function deleteQuestion(): string {
-  return "Error! Not implemented!";
+async function updateQuestion(
+  id: string,
+  markdown: string
+): Promise<Question | undefined> {
+  const objectId: ObjectId = new ObjectID(id);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: objectId },
+    { $set: { markdown: markdown, updated_at: new Date() } },
+    { returnOriginal: false }
+  );
+
+  return result.value;
 }
 
-export { getQuestions, createQuestion, updateQuestion, deleteQuestion };
+async function deleteQuestion(id: string): Promise<boolean> {
+  const objectId: ObjectId = new ObjectID(id);
+
+  const result = await getQuestionsCollection().findOneAndDelete({
+    _id: objectId,
+  });
+
+  return result.value != null;
+}
+
+export {
+  getQuestions,
+  getQuestionById,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
+};
