@@ -23,7 +23,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 112px; /* 64 + 48*/
+  margin-top: 96px; /* 64 + 48*/
   padding-left: 24px;
   padding-right: 24px;
 }

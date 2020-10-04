@@ -23,14 +23,15 @@ const Forum = (_): JSX.Element => {
   const router = useRouter()
   const dummy = (e) => {
     e.preventDefault()
-    router.push(`${routesObject.question}/1`)
+    //router.push(`${routesObject.question}/1`)
+    router.push(`${routesObject.question}/ask`)
   }
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       {
         <div>
           <h1>Forum</h1>
-          <Button onClick={dummy}>Question</Button>
+          <Button onClick={dummy}>Ask Question</Button>
 
           <Table columns={columns} dataSource={tableData} />
         </div>
