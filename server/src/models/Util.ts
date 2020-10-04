@@ -5,15 +5,3 @@ export interface Util {
   created_at: Date;
   updated_at: Date;
 }
-
-export enum Level {
-  SECONDARY = "secondary",
-  DEFAULT = "others",
-}
-
-export enum Subject {
-  GENERAL = "general",
-  MATHEMATICS = "mathematics",
-  CHEMISTRY = "chemistry",
-  DEFAULT = "others",
-}
