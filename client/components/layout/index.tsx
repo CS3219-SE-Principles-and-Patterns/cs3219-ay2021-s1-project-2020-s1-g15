@@ -16,18 +16,17 @@ const FluidPage: FC<props> = ({ children, title }) => {
     <>
       <Head>
         <title>{title}</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Layout>
-        <Header
-          className={styles.header}
-          style={{ position: 'fixed', zIndex: 1, width: '100%' }}
-        >
+        <Header className={styles.header}>
+          <div className={styles.logo}>AnswerLeh</div>
           <Menu theme="dark" mode="horizontal">
             <Menu.Item key="1">
               <Link href={routesObject.home}>Home</Link>
             </Menu.Item>
             <Menu.Item key="2">
-              {' '}
               <Link href={routesObject.login}>Login</Link>
             </Menu.Item>
             <Menu.Item key="3">
