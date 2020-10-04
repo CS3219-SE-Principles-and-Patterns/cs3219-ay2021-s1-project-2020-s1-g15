@@ -4,7 +4,7 @@ import { Card, Form, Input, Checkbox, Button, Divider } from 'antd'
 
 import styles from './login.module.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { routesObject } from '../../util'
+import { menuKeys, routesObject } from '../../util'
 import Link from 'next/link'
 import { pageTitles } from '../../util'
 
@@ -15,7 +15,7 @@ const Login = (): JSX.Element => {
 
   const layout = {}
   return (
-    <FluidPage title={pageTitles.login}>
+    <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
       {
         <Card className={styles.card}>
           <h1>Log in to AnswerLeh</h1>

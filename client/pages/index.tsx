@@ -1,7 +1,8 @@
 import FluidPage from '../components/layout'
+import { menuKeys } from '../util'
 
 export const Home = (): JSX.Element => (
-  <FluidPage title="AnswerLeh">
+  <FluidPage title="AnswerLeh" selectedkey={menuKeys.home}>
     <div className="container">
       <main>
         <h1 className="title">

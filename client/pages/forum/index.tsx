@@ -1,7 +1,7 @@
 import { Table } from 'antd'
 /* eslint-disable no-console */
 import FluidPage from '../../components/layout'
-import { pageTitles } from '../../util'
+import { menuKeys, pageTitles } from '../../util'
 
 const columns = [
   {
@@ -32,7 +32,7 @@ const tableData = [
 
 const Forum = (_): JSX.Element => {
   return (
-    <FluidPage title={pageTitles.forum}>
+    <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       {
         <div>
           <Table columns={columns} dataSource={tableData} />

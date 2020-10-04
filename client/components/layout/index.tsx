@@ -1,17 +1,24 @@
-import { FC } from 'react'
-import { Layout, Menu } from 'antd'
+/* eslint-disable no-console */
+import React, { FC } from 'react'
+import { Avatar, Layout, Menu } from 'antd'
 import styles from './Layout.module.css'
 import Link from 'next/link'
-import { routesObject } from '../../util'
+import { routesObject, menuKeys } from '../../util'
 import Head from 'next/head'
+import { useAuth } from '../authentication'
+import { UserOutlined } from '@ant-design/icons'
 const { Header, Footer, Content } = Layout
 
 type props = {
   children: React.ReactNode
   title: string
+  selectedkey?: string
 }
 
-const FluidPage: FC<props> = ({ children, title }) => {
+const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
+  const { isAuthenticated } = useAuth()
+  console.log(isAuthenticated)
+
   return (
     <>
       <Head>
@@ -22,15 +29,19 @@ const FluidPage: FC<props> = ({ children, title }) => {
       <Layout>
         <Header className={styles.header}>
           <div className={styles.logo}>AnswerLeh</div>
-          <Menu theme="dark" mode="horizontal">
-            <Menu.Item key="1">
+          <Menu theme="dark" mode="horizontal" selectedKeys={[selectedkey]}>
+            <Menu.Item key={menuKeys.home}>
               <Link href={routesObject.home}>Home</Link>
             </Menu.Item>
-            <Menu.Item key="2">
-              <Link href={routesObject.login}>Login</Link>
-            </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key={menuKeys.forum}>
               <Link href={routesObject.forum}>Forum</Link>
+            </Menu.Item>
+            <Menu.Item key={menuKeys.login} className={styles.userProfile}>
+              {isAuthenticated ? (
+                <Avatar icon={<UserOutlined />} />
+              ) : (
+                <Link href={routesObject.login}>Login</Link>
+              )}
             </Menu.Item>
           </Menu>
         </Header>

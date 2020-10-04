@@ -7,10 +7,16 @@
 
 .logo {
   background: rgba(255, 255, 255, 0.2);
-  padding: 0px 16px 0px 16px;
+  padding: 0px 32px 0px 32px;
   margin: 0px;
   float: left;
   color: white;
+}
+
+.userProfile {
+  float: right;
+  padding: 0px 16px 0px 16px;
+  margin: 0px;
 }
 
 .content {
