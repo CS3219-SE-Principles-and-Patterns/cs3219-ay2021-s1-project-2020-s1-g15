@@ -11,7 +11,7 @@ export enum Level {
   DEFAULT = "others",
 }
 
-export enum Subjects {
+export enum Subject {
   GENERAL = "general",
   MATHEMATICS = "mathematics",
   CHEMISTRY = "chemistry",
