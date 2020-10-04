@@ -1,7 +1,8 @@
-import { Table } from 'antd'
+import { Button, Table } from 'antd'
+import { useRouter } from 'next/router'
 /* eslint-disable no-console */
 import FluidPage from '../../components/layout'
-import { menuKeys, pageTitles } from '../../util'
+import { menuKeys, pageTitles, routesObject } from '../../util'
 
 const columns = [
   {
@@ -9,32 +10,28 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
   },
-  {
-    title: 'Age (medium screen or bigger)',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address (large screen or bigger)',
-    dataIndex: 'address',
-    key: 'address',
-  },
 ]
 
 const tableData = [
   {
     key: '1',
     name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
   },
 ]
 
 const Forum = (_): JSX.Element => {
+  const router = useRouter()
+  const dummy = (e) => {
+    e.preventDefault()
+    router.push(`${routesObject.question}/1`)
+  }
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       {
         <div>
+          <h1>Forum</h1>
+          <Button onClick={dummy}>Question</Button>
+
           <Table columns={columns} dataSource={tableData} />
         </div>
       }

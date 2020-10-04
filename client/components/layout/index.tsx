@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { FC } from 'react'
 import { Avatar, Layout, Menu } from 'antd'
 import styles from './Layout.module.css'
@@ -17,8 +16,6 @@ type props = {
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
   const { isAuthenticated } = useAuth()
-  console.log(isAuthenticated)
-
   return (
     <>
       <Head>

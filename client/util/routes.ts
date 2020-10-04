@@ -13,5 +13,5 @@ export const menuKeys = {
   forum: 'forum',
   register: 'register',
   question: 'question',
-  user: 'user',
+  user: '',
 }
