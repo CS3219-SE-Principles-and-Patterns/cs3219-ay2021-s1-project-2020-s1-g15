@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 import FluidPage from '../../components/layout'
+import { pageTitles } from '../../util'
 
 const Forum = ({ data }): JSX.Element => {
   console.log(data)
-  return <FluidPage>{<p>I am forum</p>}</FluidPage>
+  return <FluidPage title={pageTitles.forum}>{<p>I am forum</p>}</FluidPage>
 }
 
 // This gets called on every request

@@ -6,6 +6,7 @@ import styles from './login.module.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { routesObject } from '../../util'
 import Link from 'next/link'
+import { pageTitles } from '../../util'
 
 const Register = (): JSX.Element => {
   const onFinish = (values) => {
@@ -14,7 +15,7 @@ const Register = (): JSX.Element => {
 
   const layout = {}
   return (
-    <FluidPage>
+    <FluidPage title={pageTitles.register}>
       {
         <Card className={styles.card}>
           <h1>Register with AnswerLeh</h1>

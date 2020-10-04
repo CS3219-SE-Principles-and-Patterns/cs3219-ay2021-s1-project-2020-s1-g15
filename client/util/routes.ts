@@ -3,4 +3,6 @@ export const routesObject = {
   home: '/',
   forum: '/forum',
   register: '/register',
+  question: '/question',
+  user: '/user',
 }
