@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
+    "@toast-ui/react-editor": "^2.4.0",
     "antd": "^4.6.2",
     "jodit-react": "^1.0.65",
     "next": "latest",

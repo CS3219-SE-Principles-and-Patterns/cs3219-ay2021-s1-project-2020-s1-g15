@@ -9,20 +9,9 @@ import FluidPage from '../../components/layout'
 import { pageTitles } from '../../util'
 import styles from './question.module.css'
 
-import dynamic from 'next/dynamic'
-/*
-import MarkdownIt from 'markdown-it'
-import * as ReactMarkdown from 'react-markdown'*/
+import Editor from '../../components/util/editor'
 
-const JoditEditor = dynamic(() => import('jodit-react'), {
-  ssr: false,
-})
-/*
-const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
-  ssr: false,
-})
-const mdParser = new MarkdownIt()
-*/
+// TODO: remove extra packages
 
 const { CheckableTag } = Tag
 
@@ -30,13 +19,7 @@ const tagsData = ['Movies', 'Books', 'Music', 'Sports']
 
 const AskQuestions = (): JSX.Element => {
   const [selectedTags, setSelectedTags] = useState([])
-
-  const editor = useRef(null)
-  const [content, setContent] = useState('')
-
-  const config = {
-    readonly: false, // all options from https://xdsoft.net/jodit/doc/
-  }
+  const editor = useRef()
 
   const handleChange = (tag, checked) => {
     const nextSelectedTags = checked
@@ -48,6 +31,8 @@ const AskQuestions = (): JSX.Element => {
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values)
+    //@ts-ignore
+    console.log(editor.current.getInstance().getMarkdown())
   }
 
   const layout = {}
@@ -71,7 +56,7 @@ const AskQuestions = (): JSX.Element => {
               </h4>
               <Form.Item name="username" rules={[]}>
                 <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
+                  prefix={<UserOutlined />}
                   placeholder="e.g is there an R function?"
                 />
               </Form.Item>
@@ -80,16 +65,13 @@ const AskQuestions = (): JSX.Element => {
                 Include all the information someone would need to answer your
                 question
               </h4>
-              <JoditEditor
+              <Editor
+                //@ts-ignore
+                previewStyle="vertical"
+                height="40vh"
+                initialEditType="markdown"
+                initialValue="hello"
                 ref={editor}
-                value={content}
-                //@ts-ignore
-                config={config}
-                tabIndex={1} // tabIndex of textarea
-                // fix for type error here
-                //@ts-ignore
-                onBlur={(newContent) => setContent(newContent.target.innerHTML)}
-                // preferred to use only this option to update the content for performance reasons
               />
               <h2>Category:</h2>
               <h4>
