@@ -2,6 +2,7 @@ import { ObjectId, ObjectID } from "mongodb";
 
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
+import { Level, Subject } from "../utils/constants";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
@@ -23,10 +24,17 @@ async function getQuestionById(id: string): Promise<Question | null> {
 async function createQuestion(markdown: string): Promise<Question> {
   const doc: Question = {
     _id: new ObjectId(),
-    markdown: markdown,
-    answer_ids: [],
     created_at: new Date(),
     updated_at: new Date(),
+    title: "", // TODO
+    slug: "", // TODO
+    markdown: markdown,
+    user_id: new ObjectId(), // TODO
+    answer_ids: [],
+    level: Level.DEFAULT, // TODO
+    subject: Subject.GENERAL, // TODO
+    upvotes: 0,
+    downvotes: 0,
   };
 
   await getQuestionsCollection().insertOne(doc);
