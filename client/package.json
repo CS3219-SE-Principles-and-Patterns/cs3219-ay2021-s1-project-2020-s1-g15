@@ -30,7 +30,8 @@
     "antd": "^4.6.2",
     "next": "latest",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "suneditor-react": "^2.14.2"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",

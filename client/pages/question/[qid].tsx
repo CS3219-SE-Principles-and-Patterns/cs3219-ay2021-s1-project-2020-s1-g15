@@ -7,7 +7,6 @@ const Questions = (): JSX.Element => {
   const { qid } = router.query
   return (
     <FluidPage title={pageTitles.question}>
-      <div></div>
       {<p>I am a single question :{qid}</p>}
     </FluidPage>
   )
