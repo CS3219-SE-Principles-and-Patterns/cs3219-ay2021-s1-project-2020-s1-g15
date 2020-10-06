@@ -17,11 +17,12 @@ const AskQuestions = (): JSX.Element => {
   if (typeof window !== 'undefined') {
     // client-side-only code
     const AskQuestionsForm = dynamic(
-      () => import('../../components/util/editor')
+      () => import('../../components/questions/askQuestionsForm')
     )
     return <AskQuestionsForm />
+  } else {
+    return null
   }
-  return <></>
 }
 
 export default AskQuestions

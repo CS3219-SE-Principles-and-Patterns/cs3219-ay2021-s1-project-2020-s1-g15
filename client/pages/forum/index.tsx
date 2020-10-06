@@ -1,4 +1,4 @@
-import { Button, Table } from 'antd'
+import { Button, Table, PageHeader } from 'antd'
 import { useRouter } from 'next/router'
 /* eslint-disable no-console */
 import FluidPage from '../../components/layout'
@@ -6,7 +6,7 @@ import { menuKeys, pageTitles, routesObject } from '../../util'
 
 const columns = [
   {
-    title: 'Name (all screens)',
+    title: 'Name',
     dataIndex: 'name',
     key: 'name',
   },
@@ -21,18 +21,34 @@ const tableData = [
 
 const Forum = (_): JSX.Element => {
   const router = useRouter()
-  const dummy = (e) => {
+  const dummyAsk = (e) => {
     e.preventDefault()
-    //router.push(`${routesObject.question}/1`)
     router.push(`${routesObject.question}/ask`)
   }
+
+  const view = (e) => {
+    e.preventDefault()
+    router.push(`${routesObject.question}/1`)
+  }
+
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       {
         <div>
-          <h1>Forum</h1>
-          <Button onClick={dummy}>Ask Question</Button>
+          <PageHeader
+            title={<h1>Forum</h1>}
+            subTitle="This is the forum"
+            extra={[
+              <Button key="3" onClick={dummyAsk}>
+                Ask Question
+              </Button>,
+              <Button key="2" onClick={view} type="primary">
+                View Question
+              </Button>,
+            ]}
+          />
 
+          <br />
           <Table columns={columns} dataSource={tableData} />
         </div>
       }

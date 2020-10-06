@@ -10,6 +10,8 @@ import { pageTitles } from '../../util'
 import styles from './question.module.css'
 import { Editor } from '@toast-ui/react-editor'
 
+//TODO: refactor client side checking
+
 const { Option } = Select
 const subjectOptions = ['test']
 
@@ -104,11 +106,9 @@ const AskQuestionsForm = (): JSX.Element => {
             </div>
           </Card>
           <br />
-          <div className={styles.mainContent}>
-            <Button htmlType="submit" type="primary">
-              Submit Question
-            </Button>
-          </div>
+          <Button htmlType="submit" type="primary">
+            Submit Question
+          </Button>
         </Form>
       </div>
     </FluidPage>
