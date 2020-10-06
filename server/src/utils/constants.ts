@@ -16,4 +16,9 @@ enum Subject {
   DEFAULT = "others",
 }
 
-export { Level, Subject };
+enum VoteType {
+  UPVOTE = 1,
+  DOWNVOTE = -1,
+}
+
+export { Level, Subject, VoteType };
