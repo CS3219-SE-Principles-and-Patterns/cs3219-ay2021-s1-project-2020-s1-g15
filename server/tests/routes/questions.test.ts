@@ -1,18 +1,29 @@
 import request from "supertest";
-import { ObjectID } from "mongodb";
+import { ObjectID, ObjectId } from "mongodb";
 
 import server from "../../src/services/server";
 import HttpStatusCode from "../../src/utils/HttpStatusCode";
 import { initDb, closeDb } from "../../src/services/database";
 import { createQuestion } from "../../src/controllers/questions";
+import { Level, Subject } from "../../src/utils/constants";
 
 const API_ENDPOINT = "/api/questions";
 
 const INVALID_ID = "123";
 const VALID_ID_UNUSED = new ObjectID();
 const INVALID_DATA = { markdown: "" };
-const VALID_DATA_1 = { markdown: "hello" };
-const VALID_DATA_2 = { markdown: "world!!" };
+const VALID_DATA_1 = {
+  title: "my title",
+  markdown: "hello",
+  level: Level.DEFAULT,
+  subject: Subject.BIOLOGY,
+};
+const VALID_DATA_2 = {
+  title: "my title",
+  markdown: "world",
+  level: Level.DEFAULT,
+  subject: Subject.SCIENCE,
+};
 
 beforeAll(async (done) => {
   // initialise the testing DB before starting
@@ -56,7 +67,14 @@ describe("GET request - find single question by id", () => {
   });
 
   it("should return 200 and the question on success", async (done) => {
-    const createdQuestion = await createQuestion(VALID_DATA_1.markdown);
+    const { title, markdown, level, subject } = VALID_DATA_1;
+    const createdQuestion = await createQuestion(
+      title,
+      markdown,
+      new ObjectId(),
+      level,
+      subject
+    );
 
     const res = await request(server)
       .get(`${API_ENDPOINT}/${createdQuestion._id}`)
@@ -72,14 +90,14 @@ describe("GET request - find single question by id", () => {
 });
 
 describe("POST request - create a question", () => {
-  it("should return 400 if markdown field is missing", async (done) => {
+  it("should return 400 if any required fields are missing", async (done) => {
     const res = await request(server).post(API_ENDPOINT).send();
 
     expect(res.status).toEqual(HttpStatusCode.BAD_REQUEST);
     done();
   });
 
-  it("should return 400 if markdown field is invalid", async (done) => {
+  it("should return 400 if any fields are invalid", async (done) => {
     const res = await request(server).post(API_ENDPOINT).send(INVALID_DATA);
 
     expect(res.status).toEqual(HttpStatusCode.BAD_REQUEST);
@@ -105,7 +123,7 @@ describe("PUT request - update a single question", () => {
     done();
   });
 
-  it("should return 400 if markdown field is missing", async (done) => {
+  it("should return 400 if any required fields are missing", async (done) => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${VALID_ID_UNUSED}`)
       .send();
@@ -114,7 +132,7 @@ describe("PUT request - update a single question", () => {
     done();
   });
 
-  it("should return 400 if markdown field is invalid", async (done) => {
+  it("should return 400 if any fields are invalid", async (done) => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${VALID_ID_UNUSED}`)
       .send(INVALID_DATA);
@@ -133,7 +151,14 @@ describe("PUT request - update a single question", () => {
   });
 
   it("should return 200 and the updated question on success", async (done) => {
-    const createdQuestion = await createQuestion(VALID_DATA_1.markdown);
+    const { title, markdown, level, subject } = VALID_DATA_1;
+    const createdQuestion = await createQuestion(
+      title,
+      markdown,
+      new ObjectId(),
+      level,
+      subject
+    );
 
     const res = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}`)
@@ -168,7 +193,14 @@ describe("DELETE request", () => {
   });
 
   it("should return 204 on success", async (done) => {
-    const createdQuestion = await createQuestion(VALID_DATA_1.markdown);
+    const { title, markdown, level, subject } = VALID_DATA_1;
+    const createdQuestion = await createQuestion(
+      title,
+      markdown,
+      new ObjectId(),
+      level,
+      subject
+    );
 
     const res = await request(server)
       .delete(`${API_ENDPOINT}/${createdQuestion._id}`)
