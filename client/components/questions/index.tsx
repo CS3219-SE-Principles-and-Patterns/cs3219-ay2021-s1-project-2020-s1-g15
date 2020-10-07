@@ -1,2 +1,2 @@
-export * from './askQuestionsForm'
-export * from './view'
+export * from './ask-question'
+export * from './view-question'

@@ -1,27 +1,44 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, LeftOutlined } from '@ant-design/icons'
 
-import { Button, Card, Divider, Form, Input, Select } from 'antd'
+import {
+  Button,
+  Card,
+  Divider,
+  Form,
+  Input,
+  PageHeader,
+  Select,
+  Typography,
+} from 'antd'
 import React, { useRef, useState } from 'react'
 import FluidPage from '../layout'
 
 import { pageTitles } from '../../util'
 import styles from './question.module.css'
 import { Editor } from '@toast-ui/react-editor'
+import { Question } from '../../util/types'
 
-//TODO: refactor client side checking
+const { Title } = Typography
 
 const { Option } = Select
 const subjectOptions = ['test']
 
 const levelOptions = ['Movies', 'Books', 'Music', 'Sports']
 
-const AskQuestionsForm = (): JSX.Element => {
+type AskQuestionProp = {
+  question?: Question | undefined
+}
+
+const AskQuestionsForm: React.FC<AskQuestionProp> = ({
+  question,
+}): JSX.Element => {
   const editor = useRef()
 
-  const [subject, setSubject] = useState<string>('')
-  const [level, setLevel] = useState<string>('')
+  const [questionLocal, setQuestion] = useState<Question | undefined>(question)
+  const [subject, setSubject] = useState<string>(question?.level ?? '')
+  const [level, setLevel] = useState<string>(question?.subject ?? '')
 
   const onFinish = (_) => {
     //console.log('Received values of form: ', values)
@@ -36,11 +53,20 @@ const AskQuestionsForm = (): JSX.Element => {
   return (
     <FluidPage title={pageTitles.askQuestion}>
       <div className={styles.mainContent}>
-        <h1>Ask a Public Question</h1>
+        <PageHeader
+          title={
+            questionLocal ? (
+              <h1>Editing question</h1>
+            ) : (
+              <h1>Ask a new Public Question</h1>
+            )
+          }
+          backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
+          onBack={() => window.history.back()}
+        />
+
         <Form
           {...layout}
-          name="normal_login"
-          className={styles.loginForm}
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
@@ -51,25 +77,39 @@ const AskQuestionsForm = (): JSX.Element => {
                 Be specific and imagine you are asking a question to another
                 person
               </h4>
-              <Form.Item name="username" rules={[]}>
-                <Input
-                  prefix={<QuestionCircleOutlined />}
-                  placeholder="e.g is there an R function?"
-                />
-              </Form.Item>
+              {questionLocal ? (
+                <Typography>
+                  <Title>{question.title}</Title>
+                </Typography>
+              ) : (
+                <Form.Item name="username" rules={[]}>
+                  <Input
+                    prefix={<QuestionCircleOutlined />}
+                    placeholder="e.g is there an R function?"
+                  />
+                </Form.Item>
+              )}
+
               <h2>Body</h2>
               <h4>
                 Include all the information someone would need to answer your
                 question
               </h4>
 
-              <Editor
-                previewStyle="vertical"
-                height="40vh"
-                initialEditType="markdown"
-                initialValue="hello"
-                ref={editor}
-              />
+              {
+                <Editor
+                  //@ts-ignore
+                  previewStyle="vertical"
+                  height="40vh"
+                  initialEditType="markdown"
+                  initialValue={
+                    questionLocal
+                      ? questionLocal.markdown
+                      : 'Your question here...'
+                  }
+                  ref={editor}
+                />
+              }
 
               <Divider />
               <h2>Level:</h2>
@@ -107,7 +147,7 @@ const AskQuestionsForm = (): JSX.Element => {
           </Card>
           <br />
           <Button htmlType="submit" type="primary">
-            Submit Question
+            {questionLocal ? 'Edit Question' : 'Submit Question'}
           </Button>
         </Form>
       </div>

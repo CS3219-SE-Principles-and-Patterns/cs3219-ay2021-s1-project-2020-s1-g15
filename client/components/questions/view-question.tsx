@@ -38,10 +38,13 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
   question,
   answers,
 }): JSX.Element => {
+  //TODO: Handle SEO with this?
   const renderQuestionWithMarkdown = () => {
     if (typeof window !== 'undefined') {
       const ViewRender = dynamic(() =>
-        import('./viewRender').then((val) => val.RenderMarkdown)
+        import('./render-markdown-viewer').then(
+          (val) => val.RenderMarkdownViewer
+        )
       )
       return <ViewRender markdown={question.markdown} />
     } else {
@@ -52,14 +55,15 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
   const renderCommentWithMarkdown = (markdown: string) => {
     if (typeof window !== 'undefined') {
       const ViewRender = dynamic(() =>
-        import('./viewRender').then((val) => val.RenderMarkdown)
+        import('./render-markdown-viewer').then(
+          (val) => val.RenderMarkdownViewer
+        )
       )
       return <ViewRender markdown={markdown} />
     } else {
       return null
     }
   }
-  // eslint-disable-next-line react/jsx-key
   const action = [
     <Button icon={<LikeFilled />} key="1">
       Upvote
@@ -104,10 +108,10 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
       </Card>
       <br />
       <Button icon={<PlusCircleFilled />} type="primary">
-        Add a Comment
+        Add a Answer
       </Button>
       <br />
-      <h1>Comments</h1>
+      <h1>Answer</h1>
       {answers.map((x: Answer, index: number) => (
         <>
           <Comment

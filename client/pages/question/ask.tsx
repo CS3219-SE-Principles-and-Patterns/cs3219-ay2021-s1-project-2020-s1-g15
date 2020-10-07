@@ -1,9 +1,25 @@
+import dynamic from 'next/dynamic'
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-import dynamic from 'next/dynamic'
+const AskQuestions = (): JSX.Element => {
+  if (typeof window !== 'undefined') {
+    // client-side-only code
+    const AskQuestionsForm = dynamic(
+      () => import('../../components/questions/ask-question')
+    )
+    return <AskQuestionsForm />
+  } else {
+    return null
+  }
+}
+
+export default AskQuestions
+
+/**
+ * Example hook on checking for SSR-ed
 
 const AskQuestions = (): JSX.Element => {
   const [isComponentMounted, setIsComponentMounted] = useState(false)
@@ -17,12 +33,11 @@ const AskQuestions = (): JSX.Element => {
   if (typeof window !== 'undefined') {
     // client-side-only code
     const AskQuestionsForm = dynamic(
-      () => import('../../components/questions/askQuestionsForm')
+      () => import('../../components/questions/ask-question')
     )
     return <AskQuestionsForm />
   } else {
     return null
   }
 }
-
-export default AskQuestions
+*/
