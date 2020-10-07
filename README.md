@@ -175,6 +175,8 @@ The following base URLs are assumed:
 - Method: `GET`
 - URL: `/api/questions`
 
+- Pagination note: Should accept three parmeters: `page` , `pageSize` , `total` (simple offset based pagination)
+
 **Success response**:
 
 - Condition: if everything is OK
