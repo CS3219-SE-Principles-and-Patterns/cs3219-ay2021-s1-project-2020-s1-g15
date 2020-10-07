@@ -48,7 +48,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
-  const user_id: ObjectId | undefined = new ObjectID(); // TODO
+  const userId: ObjectId | undefined = new ObjectID(); // TODO
   const level: Level | undefined = req.body.level;
   const subject: Subject | undefined = req.body.subject;
 
@@ -71,7 +71,7 @@ router.post("/", async (req: Request, res: Response) => {
   const createdQuestion: Question = await createQuestion(
     trimmedTitle,
     trimmedMarkdown,
-    user_id,
+    userId,
     level,
     subject
   );

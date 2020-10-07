@@ -4,8 +4,8 @@ import { Util } from "./Util";
 
 export interface Answer extends Util {
   markdown: string;
-  question_id: ObjectId;
-  user_id: ObjectId;
+  questionId: ObjectId;
+  userId: ObjectId;
   upvotes: number;
   downvotes: number;
 }

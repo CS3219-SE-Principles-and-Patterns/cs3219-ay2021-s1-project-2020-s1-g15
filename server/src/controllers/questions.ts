@@ -25,19 +25,19 @@ async function getQuestionById(id: string): Promise<Question | null> {
 async function createQuestion(
   title: string,
   markdown: string,
-  user_id: ObjectId,
+  userId: ObjectId,
   level: Level,
   subject: Subject
 ): Promise<Question> {
   const doc: Question = {
     _id: new ObjectId(),
-    created_at: new Date(),
-    updated_at: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     title: title,
     slug: titleToSlug(title),
     markdown: markdown,
-    user_id: user_id,
-    answer_ids: [],
+    userId: userId,
+    answerIds: [],
     level: level,
     subject: subject,
     upvotes: 0,
@@ -67,7 +67,7 @@ async function updateQuestion(
         markdown: markdown,
         level: level,
         subject: subject,
-        updated_at: new Date(),
+        updatedAt: new Date(),
       },
     },
     { returnOriginal: false }
