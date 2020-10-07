@@ -135,7 +135,10 @@ The following base URLs are assumed:
 - Body data (example):
   ```js
   {
-    "markdown": "hello" // string; required!
+    "title": "How do I do this?", // string; required!
+    "markdown": "hello", // string; required!
+    "level": "primary", // string; required
+    "subject": "mathematics" // string; required
   }
   ```
 
@@ -146,17 +149,24 @@ The following base URLs are assumed:
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
+    "_id": "5f7d327766aa52759df235ff",
+    "created_at": "2020-10-07T03:13:59.223Z",
+    "updated_at": "2020-10-07T03:13:59.223Z",
+    "title": "How do I do this?",
+    "slug": "how-do-i-do-this",
     "markdown": "hello",
+    "user_id": "5f7d327766aa52759df235fe",
     "answer_ids": [],
-    "created_at": "2020-09-08T04:02:59.081Z",
-    "updated_at": "2020-09-08T04:02:59.081Z"
+    "level": "primary",
+    "subject": "mathematics",
+    "upvotes": 0,
+    "downvotes": 0
   }
   ```
 
 **Error response**:
 
-- Condition: if `markdown` field is missing or the empty string
+- Condition: if any required fields are missing or the empty string
 - Status: `400 BAD REQUEST`
 - Content: description of error
 
@@ -174,11 +184,18 @@ The following base URLs are assumed:
   [
     // ...
     {
-      "_id": "5f570273a83adf5417b48026",
+      "_id": "5f7d327766aa52759df235ff",
+      "created_at": "2020-10-07T03:13:59.223Z",
+      "updated_at": "2020-10-07T03:13:59.223Z",
+      "title": "How do I do this?",
+      "slug": "how-do-i-do-this",
       "markdown": "hello",
+      "user_id": "5f7d327766aa52759df235fe",
       "answer_ids": [],
-      "createdAt": "2020-09-08T04:02:59.081Z",
-      "updatedAt": "2020-09-08T04:02:59.081Z"
+      "level": "primary",
+      "subject": "mathematics",
+      "upvotes": 0,
+      "downvotes": 0
     },
     // ...
   ]
@@ -188,7 +205,7 @@ The following base URLs are assumed:
 
 - Method: `GET`
 - URL: `/api/questions/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 
 **Success response**:
@@ -198,17 +215,24 @@ The following base URLs are assumed:
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
+    "_id": "5f7d327766aa52759df235ff",
+    "created_at": "2020-10-07T03:13:59.223Z",
+    "updated_at": "2020-10-07T03:13:59.223Z",
+    "title": "How do I do this?",
+    "slug": "how-do-i-do-this",
     "markdown": "hello",
+    "user_id": "5f7d327766aa52759df235fe",
     "answer_ids": [],
-    "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T04:02:59.081Z"
-  },
+    "level": "primary",
+    "subject": "mathematics",
+    "upvotes": 0,
+    "downvotes": 0
+  }
   ```
 
 **Error response**:
 
-- Condition: if `id` is not valid
+- Condition: if `id` is not a valid `ObjectId`
 - Status: `400 BAD REQUEST`
 - Content: description of error
 
@@ -222,33 +246,43 @@ OR
 
 - Method: `PUT`
 - URL: `/api/questions/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
   ```js
   {
-    "markdown": "updated" // string; required!
+    "title": "I'm going to CHANGE the title!", // string; required!
+    "markdown": "hello", // string; required!
+    "level": "primary", // string; required
+    "subject": "mathematics" // string; required
   }
   ```
 
 **Success response**:
 
-- Condition: if question exists, and the `markdown` field is valid
+- Condition: if question exists, and all required fields are present
 - Code: `200 OK`
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
-    "markdown": "updated",
+    "_id": "5f7d327766aa52759df235ff",
+    "created_at": "2020-10-07T03:13:59.223Z",
+    "updated_at": "2020-10-07T03:17:37.627Z",
+    "title": "I'm going to CHANGE the title!",
+    "slug": "im-going-to-change-the-title",
+    "markdown": "hello",
+    "user_id": "5f7d327766aa52759df235fe",
     "answer_ids": [],
-    "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T09:03:21.081Z"
-  },
+    "level": "primary",
+    "subject": "mathematics",
+    "upvotes": 0,
+    "downvotes": 0
+  }
   ```
 
 **Error response**:
 
-- Condition: if `id` is not valid, or if `markdown` field is missing or the empty string
+- Condition: if `id` is not a valid `ObjectId`, or if any required fields are missing or the empty string
 - Status: `400 BAD REQUEST`
 - Content: description of error
 
@@ -262,7 +296,7 @@ OR
 
 - Method: `DELETE`
 - URL: `/api/questions/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 
 **Success response**:
