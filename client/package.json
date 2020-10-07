@@ -4,7 +4,7 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
@@ -15,8 +15,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -27,10 +26,13 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
+    "@toast-ui/react-editor": "^2.4.0",
     "antd": "^4.6.2",
     "next": "latest",
+    "nprogress": "^0.2.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "suneditor-react": "^2.14.2"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",

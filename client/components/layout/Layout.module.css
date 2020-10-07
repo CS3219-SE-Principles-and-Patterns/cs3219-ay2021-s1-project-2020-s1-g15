@@ -1,13 +1,31 @@
 .header {
+  position: fixed;
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+  z-index: 1;
+}
+
+.logo {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0px 32px 0px 32px;
+  margin: 0px;
+  float: left;
+  color: white;
+}
+
+.userProfile {
+  float: right;
+  padding: 0px 16px 0px 16px;
+  margin: 0px;
 }
 
 .content {
   min-height: 100vh;
-  padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-top: 96px; /* 64 + 48*/
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 .footer {

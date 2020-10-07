@@ -1,24 +1,24 @@
 /* eslint-disable no-console */
 import FluidPage from '../../components/layout'
-import { Card, Form, Input, Checkbox, Button, Divider } from 'antd'
+import { Card, Form, Input, Button } from 'antd'
 
 import styles from './login.module.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { menuKeys, routesObject } from '../../util'
+import { routesObject } from '../../util'
 import Link from 'next/link'
 import { pageTitles } from '../../util'
 
-const Login = (): JSX.Element => {
+const Register = (): JSX.Element => {
   const onFinish = (values) => {
     console.log('Received values of form: ', values)
   }
 
   const layout = {}
   return (
-    <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
+    <FluidPage title={pageTitles.register}>
       {
         <Card className={styles.card}>
-          <h1>Log in to AnswerLeh</h1>
+          <h1>Register with AnswerLeh</h1>
           <Form
             {...layout}
             name="normal_login"
@@ -50,34 +50,20 @@ const Login = (): JSX.Element => {
               />
             </Form.Item>
             <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
-              <a className={styles.loginFormForgot} href="">
-                Forgot password
-              </a>
-            </Form.Item>
-
-            <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
                 className={styles.loginFormButton}
               >
-                Log in
+                Sign Up
               </Button>
-              Or <Link href={routesObject.register}>register now!</Link>
+              Or <Link href={routesObject.login}>Log in!</Link>
             </Form.Item>
           </Form>
-          <Divider />
-          <Button type="primary" className={styles.loginFormButton}>
-            Other Log in 1
-          </Button>
         </Card>
       }
     </FluidPage>
   )
 }
 
-export default Login
+export default Register

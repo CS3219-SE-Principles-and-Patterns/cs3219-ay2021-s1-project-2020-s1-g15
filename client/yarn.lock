@@ -1363,6 +1363,21 @@
     "@babel/runtime" "^7.10.3"
     "@testing-library/dom" "^7.22.3"
 
+"@toast-ui/editor@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@toast-ui/editor/-/editor-2.4.0.tgz#0ed082da7e0160162dbc8f69d00ad3ab2adf81bc"
+  integrity sha512-49YCYcDnCjv4mC9VVNlytJ23SA5t6ox540GnmysluJHJ8aGRdWcVoH8hiyCZi9ZVIXi90B/TU+2HUQ7mOCHHRQ==
+  dependencies:
+    "@types/codemirror" "0.0.71"
+    codemirror "^5.48.4"
+
+"@toast-ui/react-editor@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@toast-ui/react-editor/-/react-editor-2.4.0.tgz#2b353abff4a734f3b484bd68ed16b974b3316fb3"
+  integrity sha512-PhwzIvD6mPoCH6NozrINrv/Us7X47haybSpop8xX8wl0d3eTstSOopUdjboo7x7hbsm8fvqMUOL8YXXNrbvhRw==
+  dependencies:
+    "@toast-ui/editor" "^2.4.0"
+
 "@types/aria-query@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@types/aria-query/-/aria-query-4.2.0.tgz#14264692a9d6e2fa4db3df5e56e94b5e25647ac0"
@@ -1401,6 +1416,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/codemirror@0.0.71":
+  version "0.0.71"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.71.tgz#861f1bcb3100c0a064567c5400f2981cf4ae8ca7"
+  integrity sha512-b2oEEnno1LIGKMR7uBEsr40al1UijF1HEpRn0+Yf1xOLl24iQgB7DBpZVMM7y54G5wCNoclDrRO65E6KHPNO2w==
+  dependencies:
+    "@types/tern" "*"
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -1410,6 +1432,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
   integrity sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==
+
+"@types/estree@*":
+  version "0.0.45"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
+  integrity sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.3"
@@ -1500,6 +1527,13 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
+
+"@types/tern@*":
+  version "0.23.3"
+  resolved "https://registry.yarnpkg.com/@types/tern/-/tern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  integrity sha512-imDtS4TAoTcXk0g7u4kkWqedB3E4qpjXzCpD2LU5M5NAXHzCDsypyvXSaG7mM8DKYkCRa7tFp4tS/lp/Wo7Q3w==
+  dependencies:
+    "@types/estree" "*"
 
 "@types/testing-library__react@^10.0.0":
   version "10.2.0"
@@ -2652,6 +2686,11 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha1-bqa989hTrlTMuOR7+gvz+QMfsYQ=
+
+codemirror@^5.48.4:
+  version "5.58.1"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.58.1.tgz#ec6bf38ad2a17f74c61bd00cc6dc5a69bd167854"
+  integrity sha512-UGb/ueu20U4xqWk8hZB3xIfV2/SFqnSLYONiM3wTMDqko0bsYrsAkGGhqUzbRkYm89aBKPyHtuNEbVWF9FTFzw==
 
 collect-v8-coverage@^1.0.0:
   version "1.0.1"
@@ -5806,6 +5845,11 @@ npm-run-path@^4.0.0:
   dependencies:
     path-key "^3.0.0"
 
+nprogress@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
+  integrity sha1-y480xTIT2JVyP8urkH6UIq28r7E=
+
 nwsapi@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"
@@ -7766,6 +7810,19 @@ stylis@3.5.4:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.4.tgz#f665f25f5e299cf3d64654ab949a57c768b73fbe"
   integrity sha512-8/3pSmthWM7lsPBKv7NXkzn2Uc9W7NotcwGNpJaa3k7WMM1XDCA4MgT5k/8BIexd5ydZdboXtU90XH9Ec4Bv/Q==
+
+suneditor-react@^2.14.2:
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/suneditor-react/-/suneditor-react-2.14.2.tgz#657079e3450f91d45e04b77cd72ec8cf82b64327"
+  integrity sha512-kZ34oQGyLELoq0ddrh32p2aOPOKF+V8KHhGjq/g8nd8T3Tb4+RzoIrwUEk0kRLfQo6Zdw4XhKrl6IXMKaUFB2A==
+  dependencies:
+    prop-types "^15.7.2"
+    suneditor "^2.33.3"
+
+suneditor@^2.33.3:
+  version "2.33.3"
+  resolved "https://registry.yarnpkg.com/suneditor/-/suneditor-2.33.3.tgz#23fa8cb038355ee5d2e42029ce87bc1ffa4752f9"
+  integrity sha512-jvNmhI2DpkaYr7Vmk9nOzFRb++bX9u/VjiJ4fSTq7bQvOLQQAs78P7dYc2my6chMFzQGY86tiHwqHVFv38APww==
 
 supports-color@^5.3.0:
   version "5.5.0"

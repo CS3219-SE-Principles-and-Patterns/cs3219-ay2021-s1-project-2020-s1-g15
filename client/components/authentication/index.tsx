@@ -13,7 +13,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   user: {},
-  isAuthenticated: false,
+  isAuthenticated: true,
   loading: false,
 })
 
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!user, user, login, loading, logout }}
+      value={{ isAuthenticated: false, user, login, loading, logout }}
     >
       {children}
     </AuthContext.Provider>

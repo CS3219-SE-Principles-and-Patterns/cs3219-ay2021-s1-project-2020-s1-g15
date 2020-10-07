@@ -1,15 +1,9 @@
-import Head from 'next/head'
 import FluidPage from '../components/layout'
+import { menuKeys } from '../util'
 
 export const Home = (): JSX.Element => (
-  <FluidPage>
-    
+  <FluidPage title="AnswerLeh" selectedkey={menuKeys.home}>
     <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main>
         <h1 className="title">
           Welcome to <a href="https://nextjs.org">Next.js!</a>
