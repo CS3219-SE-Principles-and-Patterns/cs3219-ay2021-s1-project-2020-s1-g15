@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ObjectID } from "mongodb";
+import { ObjectID, ObjectId } from "mongodb";
 
 import {
   getQuestions,
@@ -12,6 +12,7 @@ import { Question } from "../models";
 import ApiError from "../utils/errors/ApiError";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 import HttpStatusCode from "../utils/HttpStatusCode";
+import { Level, Subject } from "../utils/constants";
 
 const router: Router = Router();
 
@@ -45,23 +46,35 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 // POST request - create a question
 router.post("/", async (req: Request, res: Response) => {
+  const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
-  if (markdown == null) {
+  const user_id: ObjectId | undefined = new ObjectID(); // TODO
+  const level: Level | undefined = req.body.level;
+  const subject: Subject | undefined = req.body.subject;
+
+  if (!title || !markdown || !level || !subject) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.MISSING_MARKDOWN_FIELD
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
     );
   }
 
+  const trimmedTitle: string = title.trim();
   const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "") {
+  if (trimmedMarkdown === "" || trimmedTitle === "") {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_MAKDOWN_FIELD
+      ApiErrorMessage.Question.INVALID_FIELDS
     );
   }
 
-  const createdQuestion: Question = await createQuestion(trimmedMarkdown);
+  const createdQuestion: Question = await createQuestion(
+    trimmedTitle,
+    trimmedMarkdown,
+    user_id,
+    level,
+    subject
+  );
 
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
@@ -76,25 +89,33 @@ router.put("/:id", async (req: Request, res: Response) => {
     );
   }
 
+  const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
-  if (markdown == null) {
+  const level: Level | undefined = req.body.level;
+  const subject: Subject | undefined = req.body.subject;
+
+  if (!title || !markdown || !level || !subject) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.MISSING_MARKDOWN_FIELD
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
     );
   }
 
+  const trimmedTitle: string = title.trim();
   const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "") {
+  if (trimmedTitle === "" || trimmedMarkdown === "") {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_MAKDOWN_FIELD
+      ApiErrorMessage.Question.INVALID_FIELDS
     );
   }
 
   const updatedQuestion: Question | undefined = await updateQuestion(
     id,
-    trimmedMarkdown
+    trimmedTitle,
+    trimmedMarkdown,
+    level,
+    subject
   );
   if (updatedQuestion == null) {
     throw new ApiError(
