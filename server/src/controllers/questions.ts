@@ -3,6 +3,7 @@ import { ObjectId, ObjectID } from "mongodb";
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import { Level, Subject } from "../utils/constants";
+import titleToSlug from "../utils/titleToSlug";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
@@ -33,7 +34,7 @@ async function createQuestion(
     created_at: new Date(),
     updated_at: new Date(),
     title: title,
-    slug: "", // TODO
+    slug: titleToSlug(title),
     markdown: markdown,
     user_id: user_id,
     answer_ids: [],
