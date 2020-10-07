@@ -9,7 +9,7 @@ const Questions = (): JSX.Element => {
   const { qid } = router.query
   return (
     <FluidPage title={pageTitles.question}>
-      {<ViewQuestion question={questionMock} answers={answersMock} />}
+      <ViewQuestion question={questionMock} answers={answersMock} />
     </FluidPage>
   )
 }

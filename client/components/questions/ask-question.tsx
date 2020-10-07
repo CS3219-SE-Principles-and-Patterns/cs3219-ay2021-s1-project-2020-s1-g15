@@ -40,7 +40,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const [subject, setSubject] = useState<string>(question?.level ?? '')
   const [level, setLevel] = useState<string>(question?.subject ?? '')
 
-  const onFinish = (_) => {
+  const onFinish = (values) => {
     //console.log('Received values of form: ', values)
     //@ts-ignore
     console.log(editor.current.getInstance().getMarkdown())
@@ -52,19 +52,18 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const layout = {}
   return (
     <FluidPage title={pageTitles.askQuestion}>
+      <PageHeader
+        title={
+          questionLocal ? (
+            <h1>Editing question</h1>
+          ) : (
+            <h1>Ask a new Public Question</h1>
+          )
+        }
+        backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
+        onBack={() => window.history.back()}
+      />
       <div className={styles.mainContent}>
-        <PageHeader
-          title={
-            questionLocal ? (
-              <h1>Editing question</h1>
-            ) : (
-              <h1>Ask a new Public Question</h1>
-            )
-          }
-          backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
-          onBack={() => window.history.back()}
-        />
-
         <Form
           {...layout}
           initialValues={{ remember: true }}
