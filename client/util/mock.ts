@@ -1,7 +1,7 @@
 import { Question, Answer } from './types'
 
 const questionMock: Question = {
-  id: 'test_id',
+  _id: 'test_id',
   createdAt: new Date(),
   updatedAt: new Date(),
   title: 'test_question', // title of the question, created by user
@@ -12,35 +12,36 @@ const questionMock: Question = {
   subject: 'level',
   upvotes: 0, // number of upvotes, updated when adding upvotes
   downvotes: 0,
+  slug: 'slug-test',
 }
 
 const answersMock: Answer[] = [
   {
-    id: '01',
+    _id: '01',
     markdown: 'test_markdown \n asdas\n## addada adada',
     upvotes: 10,
     downvotes: 0,
   },
   {
-    id: '02',
+    _id: '02',
     upvotes: 10,
     downvotes: 0,
     markdown: 'test_markdown \n asdas\n## addada adada',
   },
   {
-    id: '03',
+    _id: '03',
     markdown: 'test_markdown \n asdas\n## addada adada',
     upvotes: 10,
     downvotes: 0,
   },
   {
-    id: '04',
+    _id: '04',
     markdown: 'test_markdown \n asdas\n## addada adada',
     upvotes: 10,
     downvotes: 0,
   },
   {
-    id: '05',
+    _id: '05',
     markdown: 'test_markdown \n asdas\n## addada adada',
     upvotes: 10,
     downvotes: 0,

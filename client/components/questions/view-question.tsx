@@ -13,9 +13,6 @@ import {
   Button,
   Card,
   Divider,
-  Form,
-  Input,
-  Select,
   Typography,
   Comment,
   Avatar,
@@ -120,7 +117,7 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
           <>
             <Comment
               actions={action}
-              author={<a>Reply by user: {x.id}</a>}
+              author={<a>Reply by user: {x._id}</a>}
               avatar={
                 <Avatar
                   src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
