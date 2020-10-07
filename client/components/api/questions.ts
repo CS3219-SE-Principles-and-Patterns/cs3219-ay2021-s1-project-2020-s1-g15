@@ -7,17 +7,19 @@ type GetAllQuestionsParam = {
   pageSize: number
 }
 
-export const getAllQuestion = ({
+export const getAllQuestion = async ({
   page,
   pageSize,
 }: GetAllQuestionsParam): Promise<Question[]> => {
-  return fetch(baseUrl, {
+  const res = await fetch(baseUrl, {
     method: 'GET',
-  }).then((res) => res.json())
+  })
+  return await res.json()
 }
 
-export const getSingleQuestion = ({ id }): Promise<Question> => {
-  return fetch(baseUrl + '/' + id, {
+export const getSingleQuestion = async ({ id }): Promise<Question> => {
+  const res = await fetch(baseUrl + id, {
     method: 'GET',
-  }).then((res) => res.json())
+  })
+  return await res.json()
 }

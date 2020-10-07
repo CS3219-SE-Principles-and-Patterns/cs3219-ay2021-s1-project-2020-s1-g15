@@ -1,15 +1,39 @@
 import FluidPage from '../../components/layout'
 import { useRouter } from 'next/router'
-import { answersMock, pageTitles, questionMock } from '../../util'
-import React from 'react'
+import { answersMock, pageTitles, Question, questionMock } from '../../util'
+import React, { useEffect, useState } from 'react'
 import ViewQuestion from '../../components/questions/view-question'
+import { getAllQuestion, getSingleQuestion } from '../../components/api'
+import { Spin } from 'antd'
 
-const Questions = (): JSX.Element => {
+const Questions = ({ query }): JSX.Element => {
   const router = useRouter()
   const { qid } = router.query
+
+  const [question, setQuestion] = useState<Question | undefined>(undefined)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log('triggered fetch')
+      setLoading(true)
+      const data = await getSingleQuestion({ id: qid })
+      setQuestion(data)
+      setLoading(false)
+    }
+    console.log(qid)
+    fetchData()
+  }, [])
+
   return (
     <FluidPage title={pageTitles.question}>
-      <ViewQuestion question={questionMock} answers={answersMock} />
+      <Spin spinning={loading}>
+        {question ? (
+          <ViewQuestion question={question} answers={answersMock} />
+        ) : (
+          <></>
+        )}
+      </Spin>
     </FluidPage>
   )
 }

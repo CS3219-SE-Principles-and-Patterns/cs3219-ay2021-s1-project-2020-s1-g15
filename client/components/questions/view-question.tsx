@@ -34,7 +34,7 @@ const { Content } = Layout
 const { Title, Paragraph, Text } = Typography
 
 type ViewQuestionProp = {
-  question: Question
+  question: Question | undefined
   answers: Answer[]
 }
 
