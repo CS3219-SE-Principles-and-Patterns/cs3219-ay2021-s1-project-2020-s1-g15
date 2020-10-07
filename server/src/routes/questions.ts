@@ -89,19 +89,21 @@ router.put("/:id", async (req: Request, res: Response) => {
     );
   }
 
+  const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
   const level: Level | undefined = req.body.level;
   const subject: Subject | undefined = req.body.subject;
 
-  if (!markdown || !level || !subject) {
+  if (!title || !markdown || !level || !subject) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
     );
   }
 
+  const trimmedTitle: string = title.trim();
   const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "") {
+  if (trimmedTitle === "" || trimmedMarkdown === "") {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_FIELDS
@@ -110,6 +112,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 
   const updatedQuestion: Question | undefined = await updateQuestion(
     id,
+    trimmedTitle,
     trimmedMarkdown,
     level,
     subject

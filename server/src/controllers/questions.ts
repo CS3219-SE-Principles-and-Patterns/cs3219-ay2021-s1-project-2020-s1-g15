@@ -51,6 +51,7 @@ async function createQuestion(
 
 async function updateQuestion(
   id: string,
+  title: string,
   markdown: string,
   level: Level,
   subject: Subject
@@ -61,6 +62,8 @@ async function updateQuestion(
     { _id: objectId },
     {
       $set: {
+        title: title,
+        slug: titleToSlug(title),
         markdown: markdown,
         level: level,
         subject: subject,
