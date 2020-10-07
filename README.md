@@ -150,13 +150,13 @@ The following base URLs are assumed:
   ```js
   {
     "_id": "5f7d327766aa52759df235ff",
-    "created_at": "2020-10-07T03:13:59.223Z",
-    "updated_at": "2020-10-07T03:13:59.223Z",
+    "createdAt": "2020-10-07T03:13:59.223Z",
+    "updatedAt": "2020-10-07T03:13:59.223Z",
     "title": "How do I do this?",
     "slug": "how-do-i-do-this",
     "markdown": "hello",
-    "user_id": "5f7d327766aa52759df235fe",
-    "answer_ids": [],
+    "userId": "5f7d327766aa52759df235fe",
+    "answerIds": [],
     "level": "primary",
     "subject": "mathematics",
     "upvotes": 0,
@@ -185,13 +185,13 @@ The following base URLs are assumed:
     // ...
     {
       "_id": "5f7d327766aa52759df235ff",
-      "created_at": "2020-10-07T03:13:59.223Z",
-      "updated_at": "2020-10-07T03:13:59.223Z",
+      "createdAt": "2020-10-07T03:13:59.223Z",
+      "updatedAt": "2020-10-07T03:13:59.223Z",
       "title": "How do I do this?",
       "slug": "how-do-i-do-this",
       "markdown": "hello",
-      "user_id": "5f7d327766aa52759df235fe",
-      "answer_ids": [],
+      "userId": "5f7d327766aa52759df235fe",
+      "answerIds": [],
       "level": "primary",
       "subject": "mathematics",
       "upvotes": 0,
@@ -216,13 +216,13 @@ The following base URLs are assumed:
   ```js
   {
     "_id": "5f7d327766aa52759df235ff",
-    "created_at": "2020-10-07T03:13:59.223Z",
-    "updated_at": "2020-10-07T03:13:59.223Z",
+    "createdAt": "2020-10-07T03:13:59.223Z",
+    "updatedAt": "2020-10-07T03:13:59.223Z",
     "title": "How do I do this?",
     "slug": "how-do-i-do-this",
     "markdown": "hello",
-    "user_id": "5f7d327766aa52759df235fe",
-    "answer_ids": [],
+    "userId": "5f7d327766aa52759df235fe",
+    "answerIds": [],
     "level": "primary",
     "subject": "mathematics",
     "upvotes": 0,
@@ -266,13 +266,13 @@ OR
   ```js
   {
     "_id": "5f7d327766aa52759df235ff",
-    "created_at": "2020-10-07T03:13:59.223Z",
-    "updated_at": "2020-10-07T03:17:37.627Z",
+    "createdAt": "2020-10-07T03:13:59.223Z",
+    "updatedAt": "2020-10-07T03:17:37.627Z",
     "title": "I'm going to CHANGE the title!",
     "slug": "im-going-to-change-the-title",
     "markdown": "hello",
-    "user_id": "5f7d327766aa52759df235fe",
-    "answer_ids": [],
+    "userId": "5f7d327766aa52759df235fe",
+    "answerIds": [],
     "level": "primary",
     "subject": "mathematics",
     "upvotes": 0,
@@ -319,7 +319,7 @@ OR
 - Body data (example):
   ```js
   {
-    "question_id": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
     "markdown": "hello" // string; required!
   }
   ```
@@ -333,9 +333,9 @@ OR
   {
     "_id": "5f570273a83adf5417b48028",
     "markdown": "hello",
-    "question_id": "5f570273a83adf5417b48026",
-    "created_at": "2020-09-08T04:02:59.081Z",
-    "updated_at": "2020-09-08T04:02:59.081Z"
+    "questionId": "5f570273a83adf5417b48026",
+    "createdAt": "2020-09-08T04:02:59.081Z",
+    "updatedAt": "2020-09-08T04:02:59.081Z"
   }
   ```
 
@@ -347,7 +347,7 @@ OR
 
 OR
 
-- Condition: if question (`question_id`) is not found
+- Condition: if question (`questionId`) is not found
 - Status: `404 NOT FOUND`
 - Content: description of error
 
@@ -358,7 +358,7 @@ OR
 - Body data (example):
   ```js
   {
-    "question_id": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
     "markdown": "hello" // string; required!
   }
   ```
@@ -374,7 +374,7 @@ OR
     {
       "_id": "5f570273a83adf5417b48028",
       "markdown": "hello",
-      "question_id": "5f570273a83adf5417b48026",
+      "questionId": "5f570273a83adf5417b48026",
       "createdAt": "2020-09-08T04:02:59.081Z",
       "updatedAt": "2020-09-08T04:02:59.081Z"
     },
@@ -384,7 +384,7 @@ OR
 
 **Error response**:
 
-- Condition: if question (`question_id`) is not found
+- Condition: if question (`questionId`) is not found
 - Status: `404 NOT FOUND`
 - Content: description of error
 
@@ -410,7 +410,7 @@ OR
   {
     "_id": "5f570273a83adf5417b48026",
     "markdown": "updated",
-    "question_id": "5f570273a83adf5417b48026",
+    "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
     "updatedAt": "2020-09-08T09:03:21.081Z"
   },

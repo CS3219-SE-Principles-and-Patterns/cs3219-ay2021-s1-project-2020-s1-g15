@@ -4,18 +4,18 @@ import { Util } from "./Util";
 import { VoteType } from "../utils/constants";
 
 interface BaseVote extends Util {
-  user_id: ObjectId;
+  userId: ObjectId;
   type: VoteType;
 }
 
 interface AnswerVote extends BaseVote {
-  answer_id: ObjectId;
-  question_id?: never;
+  answerId: ObjectId;
+  questionId?: never;
 }
 
 interface QuestionVote extends BaseVote {
-  question_id: ObjectId;
-  answer_id?: never;
+  questionId: ObjectId;
+  answerId?: never;
 }
 
 export type Vote = AnswerVote | QuestionVote;
