@@ -65,9 +65,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const onFinish = (values) => {
     console.log(values)
     //console.log('Received values of form: ', values)
-
     //@ts-ignore
-
     try {
       setLoading(true)
       form.validateFields().then(async (_) => {
@@ -160,7 +158,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
                   <Editor
                     //@ts-ignore
                     previewStyle="vertical"
-                    height="40vh"
+                    height="35vh"
                     initialEditType="markdown"
                     initialValue={
                       questionLocal
