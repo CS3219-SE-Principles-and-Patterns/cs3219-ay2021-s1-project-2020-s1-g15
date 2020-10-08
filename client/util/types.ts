@@ -35,3 +35,37 @@ export type Answer = {
   upvotes: number
   downvotes: number
 }
+
+export enum Level {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  JUNIOR_COLLEGE = 'junior college',
+  DEFAULT = 'others',
+}
+
+export enum Subject {
+  ENGLISH = 'english',
+  MATHEMATICS = 'mathematics',
+  SCIENCE = 'science',
+  PHYSICS = 'physics',
+  CHEMISTRY = 'chemistry',
+  BIOLOGY = 'biology',
+  GENERAL = 'general',
+  DEFAULT = 'others',
+}
+
+// -----------------------------------------------------------------------------
+// API Types
+// -----------------------------------------------------------------------------
+
+export type GetAllQuestionsParam = {
+  page: number
+  pageSize: number
+}
+
+export type CreateQuestionParam = {
+  title: string
+  markdown: string
+  level: string
+  subject: string
+}

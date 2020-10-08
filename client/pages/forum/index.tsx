@@ -116,7 +116,7 @@ const Forum = ({ data }): JSX.Element => {
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       {
-        <div>
+        <div className={styles.mainContent}>
           <PageHeader
             className={styles.pageHeader}
             title={<h1>Forum</h1>}

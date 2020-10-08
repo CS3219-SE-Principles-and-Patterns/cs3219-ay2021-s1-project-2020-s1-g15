@@ -12,3 +12,8 @@
 .pagination {
   margin: 8px 0px 8px 0px !important;
 }
+
+.mainContent {
+  padding-left: 48px;
+  padding-right: 48px;
+}
