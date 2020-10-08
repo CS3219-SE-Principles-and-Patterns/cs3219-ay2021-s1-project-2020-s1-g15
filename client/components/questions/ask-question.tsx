@@ -8,6 +8,8 @@ import {
   Divider,
   Form,
   Input,
+  message,
+  notification,
   PageHeader,
   Select,
   Spin,
@@ -16,12 +18,13 @@ import {
 import React, { useRef, useState } from 'react'
 import FluidPage from '../layout'
 
-import { pageTitles } from '../../util'
+import { pageTitles, routesObject } from '../../util'
 import styles from './question.module.css'
 import { Editor } from '@toast-ui/react-editor'
 import { CreateQuestionParam, Level, Question, Subject } from '../../util/types'
 import { useForm } from 'antd/lib/form/Form'
 import { createQuestion } from '../api'
+import router from 'next/router'
 
 const { Title } = Typography
 
@@ -64,7 +67,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
     //console.log('Received values of form: ', values)
 
     //@ts-ignore
-    console.log(editor.current.getInstance().getMarkdown())
+
     try {
       setLoading(true)
       form.validateFields().then(async (_) => {
@@ -84,12 +87,17 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
           level,
           subject,
         }
-        console.log(questionArg)
-        const res = createQuestion(questionArg)
+        const res: Question = await createQuestion(questionArg)
         console.log(res)
+        notification.open({
+          message: 'Success',
+          duration: 2,
+        })
+        router.push(`${routesObject.question}/${res._id}`)
       })
     } catch (err) {
       console.log(err)
+      setLoading(false)
     } finally {
       setLoading(false)
     }
