@@ -37,13 +37,13 @@ router.post("/", async (req: Request, res: Response) => {
     );
   }
 
-  const createdQuestion: Answer = await createAnswer(
+  const createdAnswer: Answer = await createAnswer(
     trimmedMarkdown,
     questionId,
     userId
   );
 
-  return res.status(HttpStatusCode.CREATED).json(createdQuestion);
+  return res.status(HttpStatusCode.CREATED).json(createdAnswer);
 });
 
 export default router;
