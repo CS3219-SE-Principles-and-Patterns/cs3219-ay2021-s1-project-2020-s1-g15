@@ -12,7 +12,7 @@ const AskQuestions = (): JSX.Element => {
     );
     return <AskQuestionsForm />;
   } else {
-    return null;
+    return <></>;
   }
 };
 

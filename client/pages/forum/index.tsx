@@ -24,13 +24,13 @@ const Forum = ({ data }): JSX.Element => {
   const [isLoading, setLoading] = useState(false); //State for loading indicator
 
   const router = useRouter();
-  const dummyAsk = (e) => {
+  const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push(`${routesObject.question}/ask`);
   };
 
   const ViewQuestion = (_id: string) =>
-    router.push(`${routesObject.question}/${_id}`);
+    router.push(`${routesObject.question}/[qid]`, _id);
 
   const onPageChange = (page: number) => {
     console.log(page);

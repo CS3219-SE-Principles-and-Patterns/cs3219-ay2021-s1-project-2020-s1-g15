@@ -19,13 +19,11 @@ const Questions: FC<QuestionsProps> = ({ query }): JSX.Element => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("triggered fetch");
       setLoading(true);
       const data = await getSingleQuestion({ id: qid });
       setQuestion(data);
       setLoading(false);
     };
-    console.log(qid);
     fetchData();
   }, [qid]);
 

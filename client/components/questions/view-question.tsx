@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import {
   MinusCircleFilled,
   LeftOutlined,
@@ -32,7 +33,7 @@ const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
 type ViewQuestionProp = {
-  question: Question | undefined;
+  question: Question;
   answers: Answer[];
 };
 
@@ -56,6 +57,7 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
   // fix now is to encapsulate the state changes into child components. - Eugene
   const renderQuestionWithMarkdown = () => {
     if (typeof window !== "undefined") {
+      //@ts-ignore
       const ViewRender = dynamic(() =>
         import("./render-markdown-viewer").then(
           (val) => val.RenderMarkdownViewer
@@ -69,6 +71,7 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
 
   const renderCommentWithMarkdown = (markdown: string) => {
     if (typeof window !== "undefined") {
+      //@ts-ignore
       const ViewRender = dynamic(() =>
         import("./render-markdown-viewer").then(
           (val) => val.RenderMarkdownViewer
@@ -205,6 +208,7 @@ const AnswerComponent: React.FC = () => {
   const [commentVisible, setCommentVisible] = useState<boolean>(false);
   const renderAnswerEditorWithMarkdown = () => {
     if (typeof window !== "undefined") {
+      //@ts-ignore
       const EditorRender = dynamic(() =>
         import("./render-markdown-editor").then(
           (val) => val.RenderMarkdownEditor

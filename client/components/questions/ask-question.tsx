@@ -106,9 +106,6 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const handleSubject = (value: string) => setSubject(value);
 
   const layout = {};
-  if (!question) {
-    return <>Question is null</>;
-  }
 
   return (
     <FluidPage title={pageTitles.askQuestion}>
@@ -142,7 +139,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
                 </h4>
                 {questionLocal ? (
                   <Typography>
-                    <Title>{question.title}</Title>
+                    <Title>{}</Title>
                   </Typography>
                 ) : (
                   <Form.Item name="title" rules={[]}>
