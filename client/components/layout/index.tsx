@@ -1,21 +1,21 @@
-import React, { FC } from 'react'
-import { Avatar, Layout, Menu } from 'antd'
-import styles from './Layout.module.css'
-import Link from 'next/link'
-import { routesObject, menuKeys } from '../../util'
-import Head from 'next/head'
-import { useAuth } from '../authentication'
-import { UserOutlined } from '@ant-design/icons'
-const { Header, Footer, Content } = Layout
+import React, { FC } from "react";
+import { Avatar, Layout, Menu } from "antd";
+import styles from "./Layout.module.css";
+import Link from "next/link";
+import { routesObject, menuKeys } from "../../util";
+import Head from "next/head";
+import { useAuth } from "../authentication";
+import { UserOutlined } from "@ant-design/icons";
+const { Header, Footer, Content } = Layout;
 
 type props = {
-  children: React.ReactNode
-  title: string
-  selectedkey?: string
-}
+  children: React.ReactNode;
+  title: string;
+  selectedkey?: string;
+};
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
   return (
     <>
       <Head>
@@ -46,7 +46,7 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
         <Footer className={styles.footer}></Footer>
       </Layout>
     </>
-  )
-}
+  );
+};
 
-export default FluidPage
+export default FluidPage;

@@ -1,6 +1,6 @@
-import FluidPage from '../components/layout'
-import { menuKeys } from '../util'
-import Landing from '../components/landing'
+import FluidPage from "../components/layout";
+import { menuKeys } from "../util";
+import Landing from "../components/landing";
 
 export const Home = (): JSX.Element => (
   <FluidPage title="AnswerLeh" selectedkey={menuKeys.home}>
@@ -188,6 +188,6 @@ export const Home = (): JSX.Element => (
     `}</style>
     */}
   </FluidPage>
-)
+);
 
-export default Home
+export default Home;

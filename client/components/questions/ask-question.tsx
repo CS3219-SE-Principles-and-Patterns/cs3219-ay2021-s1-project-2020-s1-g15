@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import { QuestionCircleOutlined, LeftOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, LeftOutlined } from "@ant-design/icons";
 
 import {
   Button,
@@ -14,21 +14,26 @@ import {
   Select,
   Spin,
   Typography,
-} from 'antd'
-import React, { useRef, useState } from 'react'
-import FluidPage from '../layout'
+} from "antd";
+import React, { useRef, useState } from "react";
+import FluidPage from "../layout";
 
-import { pageTitles, routesObject } from '../../util'
-import styles from './question.module.css'
-import { Editor } from '@toast-ui/react-editor'
-import { CreateQuestionParam, Level, Question, Subject } from '../../util/types'
-import { useForm } from 'antd/lib/form/Form'
-import { createQuestion } from '../api'
-import router from 'next/router'
+import { pageTitles, routesObject } from "../../util";
+import styles from "./question.module.css";
+import { Editor } from "@toast-ui/react-editor";
+import {
+  CreateQuestionParam,
+  Level,
+  Question,
+  Subject,
+} from "../../util/types";
+import { useForm } from "antd/lib/form/Form";
+import { createQuestion } from "../api";
+import router from "next/router";
 
-const { Title } = Typography
+const { Title } = Typography;
 
-const { Option } = Select
+const { Option } = Select;
 
 const subjectOptions = [
   Subject.BIOLOGY,
@@ -39,72 +44,72 @@ const subjectOptions = [
   Subject.MATHEMATICS,
   Subject.PHYSICS,
   Subject.SCIENCE,
-]
+];
 
 const levelOptions = [
   Level.DEFAULT,
   Level.JUNIOR_COLLEGE,
   Level.SECONDARY,
   Level.PRIMARY,
-]
+];
 
 type AskQuestionProp = {
-  question?: Question | undefined
-}
+  question?: Question | undefined;
+};
 
 const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   question,
 }): JSX.Element => {
-  const editor = useRef()
-  const [form] = useForm()
-  const [questionLocal, setQuestion] = useState<Question | undefined>(question)
-  const [subject, setSubject] = useState<string>(question?.level ?? '')
-  const [level, setLevel] = useState<string>(question?.subject ?? '')
-  const [loading, setLoading] = useState<boolean>(false)
+  const editor = useRef();
+  const [form] = useForm();
+  const [questionLocal, setQuestion] = useState<Question | undefined>(question);
+  const [subject, setSubject] = useState<string>(question?.level ?? "");
+  const [level, setLevel] = useState<string>(question?.subject ?? "");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish = (values) => {
-    console.log(values)
+    console.log(values);
     //console.log('Received values of form: ', values)
     //@ts-ignore
     try {
-      setLoading(true)
+      setLoading(true);
       form.validateFields().then(async (_) => {
-        const { title } = values
+        const { title } = values;
         if (editor == undefined) {
-          throw new Error('editor ref undefined')
+          throw new Error("editor ref undefined");
         }
         if (editor.current == undefined) {
-          throw new Error('curent instance undefined')
+          throw new Error("curent instance undefined");
         }
         //TODO: remove type error here
         //@ts-ignore
-        const markdown = editor.current.getInstance().getMarkdown()
+        const markdown = editor.current.getInstance().getMarkdown();
         const questionArg: CreateQuestionParam = {
           title,
           markdown,
           level,
           subject,
-        }
-        const res: Question = await createQuestion(questionArg)
-        console.log(res)
+        };
+        const res: Question = await createQuestion(questionArg);
+        console.log(res);
         notification.open({
-          message: 'Success',
+          message: "Success",
           duration: 2,
-        })
-        router.push(`${routesObject.question}/${res._id}`)
-      })
+        });
+        router.push(`${routesObject.question}/${res._id}`);
+      });
     } catch (err) {
-      console.log(err)
-      setLoading(false)
+      console.log(err);
+      setLoading(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleLevel = (value: string) => setLevel(value)
-  const handleSubject = (value: string) => setSubject(value)
+  const handleLevel = (value: string) => setLevel(value);
+  const handleSubject = (value: string) => setSubject(value);
 
-  const layout = {}
+  const layout = {};
   return (
     <FluidPage title={pageTitles.askQuestion}>
       <PageHeader
@@ -163,7 +168,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
                     initialValue={
                       questionLocal
                         ? questionLocal.markdown
-                        : 'Your question here...'
+                        : "Your question here..."
                     }
                     ref={editor}
                   />
@@ -204,13 +209,13 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
             </Card>
             <br />
             <Button htmlType="submit" type="primary">
-              {questionLocal ? 'Edit Question' : 'Submit Question'}
+              {questionLocal ? "Edit Question" : "Submit Question"}
             </Button>
           </Form>
         </div>
       )}
     </FluidPage>
-  )
-}
+  );
+};
 
-export default AskQuestionsForm
+export default AskQuestionsForm;

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import React, { FC } from 'react'
-import styles from './landing.module.css'
-import Particles from 'react-tsparticles'
-import { Typography, PageHeader, Button, Divider, Card } from 'antd'
+import React, { FC } from "react";
+import styles from "./landing.module.css";
+import Particles from "react-tsparticles";
+import { Typography, PageHeader, Button, Divider, Card } from "antd";
 
-const { Paragraph, Title, Text } = Typography
+const { Paragraph, Title, Text } = Typography;
 
 const LandingPage: FC = () => {
   return (
@@ -17,20 +17,20 @@ const LandingPage: FC = () => {
           options={{
             background: {
               color: {
-                value: '#001529',
+                value: "#001529",
               },
             },
             fpsLimit: 60,
             interactivity: {
-              detectsOn: 'canvas',
+              detectsOn: "canvas",
               events: {
                 onClick: {
                   enable: true,
-                  mode: 'push',
+                  mode: "push",
                 },
                 onHover: {
                   enable: true,
-                  mode: 'repulse',
+                  mode: "repulse",
                 },
                 resize: true,
               },
@@ -52,10 +52,10 @@ const LandingPage: FC = () => {
             },
             particles: {
               color: {
-                value: '#ffffff',
+                value: "#ffffff",
               },
               links: {
-                color: '#ffffff',
+                color: "#ffffff",
                 distance: 150,
                 enable: true,
                 opacity: 0.5,
@@ -65,9 +65,9 @@ const LandingPage: FC = () => {
                 enable: true,
               },
               move: {
-                direction: 'none',
+                direction: "none",
                 enable: true,
-                outMode: 'bounce',
+                outMode: "bounce",
                 random: false,
                 speed: 6,
                 straight: false,
@@ -83,7 +83,7 @@ const LandingPage: FC = () => {
                 value: 0.5,
               },
               shape: {
-                type: 'circle',
+                type: "circle",
               },
               size: {
                 random: true,
@@ -102,7 +102,7 @@ const LandingPage: FC = () => {
           <div className={styles.firstSection}>
             <div className={styles.pitchBox}>
               <div className={`${styles.alignCenter} ${styles.headerText}`}>
-                {' '}
+                {" "}
                 <Typography>
                   Lorem iptsum
                   <Paragraph>
@@ -129,23 +129,23 @@ const LandingPage: FC = () => {
           <div className={styles.infoColumn}>
             <div className={`${styles.box}`}>
               <Typography>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: "flex" }}>
                   <Title>Lorem iptsum</Title>
                 </div>
               </Typography>
             </div>
             <div className={`${styles.box} ${styles.boxTask}`}>
-              {' '}
+              {" "}
               <Typography>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: "flex" }}>
                   <Title>Lorem iptsum</Title>
                 </div>
               </Typography>
             </div>
             <div className={`${styles.box} ${styles.boxOffer}`}>
-              {' '}
+              {" "}
               <Typography>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: "flex" }}>
                   <Title>Lorem iptsum</Title>
                 </div>
               </Typography>
@@ -165,7 +165,7 @@ const LandingPage: FC = () => {
           <div className={styles.infoColumnDev}>
             <div className={styles.box}>
               <Typography>
-                Lorem iptsum{' '}
+                Lorem iptsum{" "}
                 <Paragraph>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                   leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
@@ -174,7 +174,7 @@ const LandingPage: FC = () => {
             </div>
             <div className={styles.box}>
               <Typography>
-                Lorem iptsum{' '}
+                Lorem iptsum{" "}
                 <Paragraph>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
                   leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
@@ -195,7 +195,7 @@ const LandingPage: FC = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;

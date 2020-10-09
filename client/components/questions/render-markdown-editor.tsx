@@ -1,12 +1,12 @@
-import { Editor } from '@toast-ui/react-editor'
-import { Card, Form, Button } from 'antd'
-import React, { useRef } from 'react'
+import { Editor } from "@toast-ui/react-editor";
+import { Card, Form, Button } from "antd";
+import React, { useRef } from "react";
 
 export const RenderMarkdownEditor: React.FC = (): JSX.Element => {
-  const editor = useRef()
+  const editor = useRef();
   const onFinish = (values) => {
-    console.log('Received values of form: ', values)
-  }
+    console.log("Received values of form: ", values);
+  };
   return (
     <Card>
       <Form initialValues={{ remember: true }} onFinish={onFinish}>
@@ -14,7 +14,7 @@ export const RenderMarkdownEditor: React.FC = (): JSX.Element => {
           previewStyle="vertical"
           height="40vh"
           initialEditType="markdown"
-          initialValue={'Your Answer here...'}
+          initialValue={"Your Answer here..."}
           ref={editor}
         />
         <br />
@@ -23,5 +23,5 @@ export const RenderMarkdownEditor: React.FC = (): JSX.Element => {
         </Button>
       </Form>
     </Card>
-  )
-}
+  );
+};

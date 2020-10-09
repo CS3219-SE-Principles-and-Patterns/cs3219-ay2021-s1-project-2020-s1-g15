@@ -8,7 +8,7 @@ import {
   PlusCircleFilled,
   DislikeFilled,
   LikeFilled,
-} from '@ant-design/icons'
+} from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -21,28 +21,28 @@ import {
   Row,
   Col,
   Layout,
-} from 'antd'
-import React, { useRef, useState } from 'react'
-import FluidPage from '../layout'
-import { pageTitles } from '../../util'
-import styles from './question.module.css'
-import { Answer, Question } from '../../util/types'
-import dynamic from 'next/dynamic'
+} from "antd";
+import React, { useRef, useState } from "react";
+import FluidPage from "../layout";
+import { pageTitles } from "../../util";
+import styles from "./question.module.css";
+import { Answer, Question } from "../../util/types";
+import dynamic from "next/dynamic";
 
-import router from 'next/router'
-const { Content } = Layout
-const { Title, Paragraph, Text } = Typography
+import router from "next/router";
+const { Content } = Layout;
+const { Title, Paragraph, Text } = Typography;
 
 type ViewQuestionProp = {
-  question: Question | undefined
-  answers: Answer[]
-}
+  question: Question | undefined;
+  answers: Answer[];
+};
 
 const ViewQuestion: React.FC<ViewQuestionProp> = ({
   question,
   answers,
 }): JSX.Element => {
-  const [commentVisible, setCommentVisible] = useState<boolean>(false)
+  const [commentVisible, setCommentVisible] = useState<boolean>(false);
   const action = [
     <Button icon={<LikeFilled />} key="1">
       Upvote
@@ -50,37 +50,37 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
     <Button icon={<DislikeFilled />} key="2">
       Downvote
     </Button>,
-  ]
+  ];
 
   //TODO: Handle SEO with this?
   //TODO: Need to find a way to meomize these calls.
   // If not every state change will cause this to reload
   // fix now is to encapsulate the state changes into child components. - Eugene
   const renderQuestionWithMarkdown = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const ViewRender = dynamic(() =>
-        import('./render-markdown-viewer').then(
+        import("./render-markdown-viewer").then(
           (val) => val.RenderMarkdownViewer
         )
-      )
-      return <ViewRender markdown={question.markdown} />
+      );
+      return <ViewRender markdown={question.markdown} />;
     } else {
-      return null
+      return null;
     }
-  }
+  };
 
   const renderCommentWithMarkdown = (markdown: string) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const ViewRender = dynamic(() =>
-        import('./render-markdown-viewer').then(
+        import("./render-markdown-viewer").then(
           (val) => val.RenderMarkdownViewer
         )
-      )
-      return <ViewRender markdown={markdown} />
+      );
+      return <ViewRender markdown={markdown} />;
     } else {
-      return null
+      return null;
     }
-  }
+  };
 
   return (
     <div key="view-question2">
@@ -132,36 +132,36 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ViewQuestion
+export default ViewQuestion;
 
 type PageHeaderComponent = {
-  upvotes: number
-  downvotes: number
-}
+  upvotes: number;
+  downvotes: number;
+};
 
 const PageHeaderComponent: React.FC<PageHeaderComponent> = ({
   upvotes,
   downvotes,
 }) => {
-  const [upvotesLocal, setUpvotes] = useState<number>(upvotes)
-  const [downvotesLocal, setDownvotes] = useState<number>(downvotes)
+  const [upvotesLocal, setUpvotes] = useState<number>(upvotes);
+  const [downvotesLocal, setDownvotes] = useState<number>(downvotes);
   const onBack = () => {
-    if (typeof window !== 'undefined') {
-      return window.history.back()
+    if (typeof window !== "undefined") {
+      return window.history.back();
     } else {
-      return router.push('/forum')
+      return router.push("/forum");
     }
-  }
+  };
 
   const upvote = () => {
-    setUpvotes(upvotesLocal + 1)
-  }
+    setUpvotes(upvotesLocal + 1);
+  };
   const downvote = () => {
-    setDownvotes(downvotesLocal + 1)
-  }
+    setDownvotes(downvotesLocal + 1);
+  };
 
   const action = [
     <Button icon={<LikeFilled />} key="1" onClick={upvote}>
@@ -170,7 +170,7 @@ const PageHeaderComponent: React.FC<PageHeaderComponent> = ({
     <Button icon={<DislikeFilled />} key="2" onClick={downvote}>
       Downvote
     </Button>,
-  ]
+  ];
 
   return (
     <PageHeader
@@ -200,23 +200,23 @@ const PageHeaderComponent: React.FC<PageHeaderComponent> = ({
         </Row>
       </Content>
     </PageHeader>
-  )
-}
+  );
+};
 
 const AnswerComponent: React.FC = () => {
-  const [commentVisible, setCommentVisible] = useState<boolean>(false)
+  const [commentVisible, setCommentVisible] = useState<boolean>(false);
   const renderAnswerEditorWithMarkdown = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const EditorRender = dynamic(() =>
-        import('./render-markdown-editor').then(
+        import("./render-markdown-editor").then(
           (val) => val.RenderMarkdownEditor
         )
-      )
-      return <EditorRender />
+      );
+      return <EditorRender />;
     } else {
-      return null
+      return null;
     }
-  }
+  };
   return (
     <>
       {commentVisible ? (
@@ -241,5 +241,5 @@ const AnswerComponent: React.FC = () => {
         </Button>
       )}
     </>
-  )
-}
+  );
+};

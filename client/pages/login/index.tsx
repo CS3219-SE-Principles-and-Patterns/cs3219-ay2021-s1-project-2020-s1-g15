@@ -1,19 +1,19 @@
 /* eslint-disable no-console */
-import FluidPage from '../../components/layout'
-import { Card, Form, Input, Checkbox, Button, Divider } from 'antd'
+import FluidPage from "../../components/layout";
+import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
-import styles from './login.module.css'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { menuKeys, routesObject } from '../../util'
-import Link from 'next/link'
-import { pageTitles } from '../../util'
+import styles from "./login.module.css";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { menuKeys, routesObject } from "../../util";
+import Link from "next/link";
+import { pageTitles } from "../../util";
 
 const Login = (): JSX.Element => {
   const onFinish = (values) => {
-    console.log('Received values of form: ', values)
-  }
+    console.log("Received values of form: ", values);
+  };
 
-  const layout = {}
+  const layout = {};
   return (
     <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
       {
@@ -29,7 +29,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="username"
               rules={[
-                { required: true, message: 'Please input your Username!' },
+                { required: true, message: "Please input your Username!" },
               ]}
             >
               <Input
@@ -40,7 +40,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: 'Please input your Password!' },
+                { required: true, message: "Please input your Password!" },
               ]}
             >
               <Input
@@ -77,7 +77,7 @@ const Login = (): JSX.Element => {
         </Card>
       }
     </FluidPage>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

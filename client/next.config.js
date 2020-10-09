@@ -1,14 +1,14 @@
 module.exports = {
   env: {
-    baseUrlDev: 'http://localhost:8000/api/',
+    baseUrlDev: "http://localhost:8000/api/",
   },
-  basePath: '',
+  basePath: "",
   experimental: {
     modern: false,
     plugins: false,
     profiling: true,
     sprFlushToDisk: true,
-    reactMode: 'legacy',
+    reactMode: "legacy",
     workerThreads: false,
     pageEnv: false,
     productionBrowserSourceMaps: false,
@@ -17,4 +17,4 @@ module.exports = {
     scrollRestoration: false,
     i18n: false,
   },
-}
+};
