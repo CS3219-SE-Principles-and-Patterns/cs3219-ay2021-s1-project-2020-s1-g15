@@ -1,6 +1,7 @@
 import MongoClient, { Collection } from "mongodb";
 
 import { Question } from "../models";
+import { Answer } from "../models";
 
 const { NODE_ENV, MONGO_URL } = process.env;
 const DB_NAME = `answerleh-${NODE_ENV?.toUpperCase()}`;
@@ -54,4 +55,20 @@ function getQuestionsCollection(): Collection<Question> {
   return getDb().collection("questions");
 }
 
-export { DB_NAME, URI, initDb, getDb, closeDb, getQuestionsCollection };
+function getAnswersCollection(): Collection<Answer> {
+  if (!mongoClient.isConnected()) {
+    throw Error("MongoDB: not yet connected");
+  }
+
+  return getDb().collection("answers");
+}
+
+export {
+  DB_NAME,
+  URI,
+  initDb,
+  getDb,
+  closeDb,
+  getQuestionsCollection,
+  getAnswersCollection,
+};

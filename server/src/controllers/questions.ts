@@ -76,6 +76,25 @@ async function updateQuestion(
   return result.value;
 }
 
+async function addAnswerToQuestion(
+  answerId: ObjectId,
+  questionId: string
+): Promise<Question | undefined> {
+  const objectId: ObjectId = new ObjectID(questionId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: objectId },
+    {
+      $addToSet: {
+        answerIds: answerId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
 async function deleteQuestion(id: string): Promise<boolean> {
   const objectId: ObjectId = new ObjectID(id);
 
@@ -91,5 +110,6 @@ export {
   getQuestionById,
   createQuestion,
   updateQuestion,
+  addAnswerToQuestion,
   deleteQuestion,
 };
