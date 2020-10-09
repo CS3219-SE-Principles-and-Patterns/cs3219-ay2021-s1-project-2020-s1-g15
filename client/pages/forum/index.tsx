@@ -30,7 +30,7 @@ const Forum = ({ data }): JSX.Element => {
   };
 
   const ViewQuestion = (_id: string) =>
-    router.push(`${routesObject.question}/[qid]`, _id);
+    router.push(`${routesObject.question}/${_id}`);
 
   const onPageChange = (page: number) => {
     console.log(page);

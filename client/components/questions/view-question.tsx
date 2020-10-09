@@ -115,7 +115,7 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
 
         <h1>Answer</h1>
         {answers.map((x: Answer, index: number) => (
-          <>
+          <div key={index}>
             <Comment
               actions={action}
               author={<a>Reply by user: {x._id}</a>}
@@ -129,7 +129,7 @@ const ViewQuestion: React.FC<ViewQuestionProp> = ({
               key={index}
             ></Comment>
             <Divider />
-          </>
+          </div>
         ))}
       </div>
     </div>
