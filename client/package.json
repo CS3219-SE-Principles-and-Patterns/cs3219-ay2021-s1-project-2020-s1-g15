@@ -28,6 +28,7 @@
     "@ant-design/icons": "^4.2.2",
     "@toast-ui/react-editor": "^2.4.0",
     "antd": "^4.6.2",
+    "firebase": "^7.23.0",
     "next": "latest",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",

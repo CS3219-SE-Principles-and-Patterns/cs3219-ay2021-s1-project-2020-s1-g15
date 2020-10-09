@@ -7,10 +7,12 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { menuKeys, routesObject } from '../../util'
 import Link from 'next/link'
 import { pageTitles } from '../../util'
+import { useAuth } from '../../components/authentication'
 
 const Login = (): JSX.Element => {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values)
+  const { login } = useAuth()
+  const onFinish = async ({ username, password }) => {
+    await login(username, password)
   }
 
   return (
