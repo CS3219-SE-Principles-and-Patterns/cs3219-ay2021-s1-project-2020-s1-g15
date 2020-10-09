@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import FluidPage from "../../components/layout";
 import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 

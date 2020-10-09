@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { QuestionCircleOutlined, LeftOutlined } from "@ant-design/icons";
 
@@ -60,17 +59,15 @@ type AskQuestionProp = {
 const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   question,
 }): JSX.Element => {
-  const editor = useRef();
+  const editor = useRef<Editor | null>(null);
   const [form] = useForm();
   const [questionLocal, setQuestion] = useState<Question | undefined>(question);
   const [subject, setSubject] = useState<string>(question?.level ?? "");
   const [level, setLevel] = useState<string>(question?.subject ?? "");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const onFinish = (values) => {
+  const onFinish = (values: { title: any }) => {
     console.log(values);
-    //console.log('Received values of form: ', values)
-    //@ts-ignore
     try {
       setLoading(true);
       form.validateFields().then(async (_) => {
@@ -81,7 +78,6 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
         if (editor.current == undefined) {
           throw new Error("curent instance undefined");
         }
-        //TODO: remove type error here
         //@ts-ignore
         const markdown = editor.current.getInstance().getMarkdown();
         const questionArg: CreateQuestionParam = {
@@ -110,6 +106,10 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const handleSubject = (value: string) => setSubject(value);
 
   const layout = {};
+  if (!question) {
+    return <>Question is null</>;
+  }
+
   return (
     <FluidPage title={pageTitles.askQuestion}>
       <PageHeader
@@ -161,7 +161,6 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
 
                 {
                   <Editor
-                    //@ts-ignore
                     previewStyle="vertical"
                     height="35vh"
                     initialEditType="markdown"

@@ -1,12 +1,16 @@
 import FluidPage from "../../components/layout";
 import { useRouter } from "next/router";
 import { answersMock, pageTitles, Question, questionMock } from "../../util";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import ViewQuestion from "../../components/questions/view-question";
 import { getAllQuestion, getSingleQuestion } from "../../components/api";
 import { Spin } from "antd";
 
-const Questions = ({ query }): JSX.Element => {
+type QuestionsProps = {
+  query: string;
+};
+
+const Questions: FC<QuestionsProps> = ({ query }): JSX.Element => {
   const router = useRouter();
   const { qid } = router.query;
 
@@ -23,7 +27,7 @@ const Questions = ({ query }): JSX.Element => {
     };
     console.log(qid);
     fetchData();
-  }, []);
+  }, [qid]);
 
   return (
     <FluidPage title={pageTitles.question}>

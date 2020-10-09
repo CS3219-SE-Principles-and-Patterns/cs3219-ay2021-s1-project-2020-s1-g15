@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 //@ts-nocheck
 import React, { createContext, useState, useContext, useEffect } from "react";
@@ -17,7 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: false,
 });
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     loadUserFromCookies();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email: any, password: any) => {
     /*
     const { data: token } = await api.post('auth/login', { email, password })
 
@@ -63,8 +64,8 @@ export const useAuth = () => {
 
   return context;
 };
-
-export const ProtectRoute = ({ Component: Component, ...rest }) => {
+/*
+export const ProtectRoute: React.FC = ({ Component: Component, ...rest }) => {
   return () => {
     const { user, isAuthenticated, loading } = useAuth();
     const router = useRouter();
@@ -76,3 +77,4 @@ export const ProtectRoute = ({ Component: Component, ...rest }) => {
     return <Component {...rest} />;
   };
 };
+*/
