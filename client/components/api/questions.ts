@@ -1,6 +1,5 @@
 import { CreateQuestionParam, GetAllQuestionsParam, Question } from '../../util'
 
-console.log(process.env)
 const baseUrl =
   process.env.NODE_ENV == 'development'
     ? `${process.env.baseUrlDev}questions/`
