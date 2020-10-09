@@ -1,6 +1,10 @@
 import { CreateQuestionParam, GetAllQuestionsParam, Question } from '../../util'
 
-const baseUrl = `${process.env.baseUrlDev}questions/`
+console.log(process.env)
+const baseUrl =
+  process.env.NODE_ENV == 'development'
+    ? `${process.env.baseUrlDev}questions/`
+    : `${process.env.baseUrlDev}questions/`
 
 export const getAllQuestion = async ({
   page,
