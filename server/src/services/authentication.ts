@@ -5,7 +5,7 @@ async function initAuth(): Promise<void> {
   let credential = admin.credential.applicationDefault();
 
   if (process.env.NODE_ENV === "dev") {
-    const serviceAccount = await import("../../firebase-adminsdk.json");
+    const serviceAccount = await import("../firebase-adminsdk.json");
 
     credential = admin.credential.cert({
       privateKey: serviceAccount.private_key,
