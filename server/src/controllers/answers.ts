@@ -1,13 +1,36 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, ObjectID } from "mongodb";
 
-import { getAnswersCollection } from "../services/database";
-import { Answer } from "../models";
+import {
+  getAnswersCollection,
+  getQuestionsCollection,
+} from "../services/database";
+import { Answer, Question } from "../models";
 import { addAnswerToQuestion, getQuestionById } from "./questions";
 import ApiError from "../utils/errors/ApiError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 
-// getAnswersByQuestionId()
+async function getAnswersByQuestionId(questionId: string): Promise<Answer[]> {
+  const questionObjectId: ObjectId = new ObjectID(questionId);
+
+  const question: Question | null = await getQuestionsCollection().findOne({
+    _id: questionObjectId,
+  });
+
+  if (question === null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  const answers: Answer[] = await getAnswersCollection()
+    .find({
+      questionId: questionObjectId,
+    })
+    .toArray();
+  return answers;
+}
 
 async function createAnswer(
   markdown: string,
@@ -42,4 +65,4 @@ async function createAnswer(
   return doc;
 }
 
-export { createAnswer };
+export { createAnswer, getAnswersByQuestionId };
