@@ -1,6 +1,6 @@
 import { CreateQuestionParam, GetAllQuestionsParam, Question } from '../../util'
 
-const baseUrl = 'http://localhost:8000/api/questions/'
+const baseUrl = `${process.env.baseUrlDev}questions/`
 
 export const getAllQuestion = async ({
   page,

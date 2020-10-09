@@ -101,9 +101,17 @@ const LandingPage: FC = () => {
         <div className={styles.content}>
           <div className={styles.firstSection}>
             <div className={styles.pitchBox}>
-              <div
-                className={`${styles.alignCenter} ${styles.headerText}`}
-              ></div>
+              <div className={`${styles.alignCenter} ${styles.headerText}`}>
+                {' '}
+                <Typography>
+                  Lorem iptsum
+                  <Paragraph>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                    leo augue, imperdiet quis viverra ac, accumsan et mauris.
+                    Sed
+                  </Paragraph>
+                </Typography>
+              </div>
             </div>
           </div>
 
@@ -156,18 +164,34 @@ const LandingPage: FC = () => {
           </div>
           <div className={styles.infoColumnDev}>
             <div className={styles.box}>
-              <Typography>Lorem iptsum</Typography>
+              <Typography>
+                Lorem iptsum{' '}
+                <Paragraph>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                </Paragraph>
+              </Typography>
             </div>
             <div className={styles.box}>
-              <Typography>Lorem iptsum</Typography>
+              <Typography>
+                Lorem iptsum{' '}
+                <Paragraph>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                </Paragraph>
+              </Typography>
             </div>
             <div className={styles.box}>
-              <Typography>Lorem iptsum</Typography>
+              <Typography>
+                Lorem iptsum
+                <Paragraph>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                </Paragraph>
+              </Typography>
             </div>
           </div>
-          <div className={styles.introColumn}>
-            <Divider />
-          </div>
+          <div className={styles.introColumn}></div>
         </div>
       </div>
     </>
