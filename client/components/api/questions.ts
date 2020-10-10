@@ -1,8 +1,10 @@
 import {
   CreateQuestionParam,
+  CreateQuestionResponse,
   GetAllQuestionsParam,
   Question,
 } from "../../util";
+import HttpStatusCode from "../../util/HttpStatusCode";
 
 const baseUrl =
   process.env.NODE_ENV == "development"
@@ -28,7 +30,7 @@ export const getSingleQuestion = async ({ id }): Promise<Question> => {
 
 export const createQuestion = async (
   question: CreateQuestionParam
-): Promise<any> => {
+): Promise<CreateQuestionResponse> => {
   const res = await fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify({ ...question }),
@@ -36,5 +38,14 @@ export const createQuestion = async (
       "Content-Type": "application/json",
     },
   });
-  return await res.json();
+  if (res.ok) {
+    const question = (await res.json()) as Question;
+    return {
+      status: HttpStatusCode.CREATED,
+      question,
+      message: "Successfully Created",
+    };
+  } else {
+    return await res.json();
+  }
 };

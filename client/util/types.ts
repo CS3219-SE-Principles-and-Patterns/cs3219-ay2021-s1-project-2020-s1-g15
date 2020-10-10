@@ -1,4 +1,5 @@
 import { type } from "os";
+import HttpStatusCode from "./HttpStatusCode";
 
 export type Question = {
   _id: string;
@@ -68,4 +69,10 @@ export type CreateQuestionParam = {
   markdown: string;
   level: string;
   subject: string;
+};
+
+export type CreateQuestionResponse = {
+  status: HttpStatusCode;
+  question: Question;
+  message: string;
 };

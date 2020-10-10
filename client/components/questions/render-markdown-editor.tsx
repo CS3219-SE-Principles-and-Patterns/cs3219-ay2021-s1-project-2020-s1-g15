@@ -3,7 +3,7 @@ import { Card, Form, Button } from "antd";
 import React, { useRef } from "react";
 
 export const RenderMarkdownEditor: React.FC = (): JSX.Element => {
-  const editor = useRef();
+  const editor = useRef<Editor | null>(null);
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };

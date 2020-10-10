@@ -26,7 +26,11 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
       <Layout>
         <Header className={styles.header}>
           <div className={styles.logo}>AnswerLeh</div>
-          <Menu theme="dark" mode="horizontal" selectedKeys={[selectedkey]}>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={[selectedkey ?? ""]}
+          >
             <Menu.Item key={menuKeys.home}>
               <Link href={routesObject.home}>Home</Link>
             </Menu.Item>

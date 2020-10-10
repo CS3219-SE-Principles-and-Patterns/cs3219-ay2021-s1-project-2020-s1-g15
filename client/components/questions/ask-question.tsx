@@ -22,6 +22,7 @@ import styles from "./question.module.css";
 import { Editor } from "@toast-ui/react-editor";
 import {
   CreateQuestionParam,
+  CreateQuestionResponse,
   Level,
   Question,
   Subject,
@@ -29,6 +30,8 @@ import {
 import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "../api";
 import router from "next/router";
+import { ApiError } from "next/dist/next-server/server/api-utils";
+import HttpStatusCode from "../../util/HttpStatusCode";
 
 const { Title } = Typography;
 
@@ -86,13 +89,19 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
           level,
           subject,
         };
-        const res: Question = await createQuestion(questionArg);
-        console.log(res);
-        notification.open({
-          message: "Success",
-          duration: 2,
-        });
-        router.push(`${routesObject.question}/${res._id}`);
+        const res: CreateQuestionResponse = await createQuestion(questionArg);
+        if (res.status == HttpStatusCode.CREATED) {
+          notification.open({
+            message: res.message,
+            duration: 2,
+          });
+          router.push(`${routesObject.question}/${res.question._id}`);
+        } else {
+          notification.open({
+            message: res.message,
+            duration: 2,
+          });
+        }
       });
     } catch (err) {
       console.log(err);
