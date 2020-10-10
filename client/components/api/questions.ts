@@ -38,6 +38,7 @@ export const createQuestion = async (
       "Content-Type": "application/json",
     },
   });
+  console.log(res);
   if (res.ok) {
     const question = (await res.json()) as Question;
     return {

@@ -91,13 +91,13 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
         };
         const res: CreateQuestionResponse = await createQuestion(questionArg);
         if (res.status == HttpStatusCode.CREATED) {
-          notification.open({
+          notification.success({
             message: res.message,
             duration: 2,
           });
           router.push(`${routesObject.question}/${res.question._id}`);
         } else {
-          notification.open({
+          notification.error({
             message: res.message,
             duration: 2,
           });
