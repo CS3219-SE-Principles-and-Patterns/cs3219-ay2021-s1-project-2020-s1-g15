@@ -65,4 +65,14 @@ async function createAnswer(
   return doc;
 }
 
-export { createAnswer, getAnswersByQuestionId };
+async function deleteAnswer(id: string): Promise<boolean> {
+  const objectId: ObjectId = new ObjectID(id);
+
+  const result = await getAnswersCollection().findOneAndDelete({
+    _id: objectId,
+  });
+
+  return result.value != null;
+}
+
+export { createAnswer, getAnswersByQuestionId, deleteAnswer };
