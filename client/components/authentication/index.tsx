@@ -1,15 +1,27 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-//@ts-nocheck
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  FC,
+} from "react";
 import Router, { useRouter } from "next/router";
 
+type props = {
+  auth: firebase.auth.Auth;
+  children: React.ReactNode;
+};
+
 type AuthContextType = {
-  user: {};
-  isAuthenticated: boolean;
-  loading: boolean;
-  login?: Promise<void>;
-  logout?: Promise<void>;
+  user?: {};
+  isAuthenticated?: boolean;
+  loading?: boolean;
+  login?: (
+    email: string,
+    password: string
+  ) => Promise<firebase.auth.UserCredential>;
+  logout?: () => void;
+  getIdToken?: () => Promise<string>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,8 +30,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: false,
 });
 
-export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const AuthProvider: FC<props> = ({ auth, children }) => {
+  const [user, setUser] = useState<{} | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,37 +41,42 @@ export const AuthProvider: React.FC = ({ children }) => {
     loadUserFromCookies();
   }, []);
 
-  const login = async (email: any, password: any) => {
-    /*
-    const { data: token } = await api.post('auth/login', { email, password })
-
-    if (token) {
-      console.log('Got token')
-      Cookies.set('token', token, { expires: 60 })
-      api.defaults.headers.Authorization = `Bearer ${token.token}`
-      const { data: user } = await api.get('users/me')
-      setUser(user)
-      console.log('Got user', user)
-    }*/
+  const login = async (email: string, password: string) => {
+    const credential = await auth.signInWithEmailAndPassword(email, password);
+    return credential;
   };
 
-  const logout = (email: string, password: string) => {
-    /*
-    Cookies.remove('token')
-    setUser(null)
-    window.location.pathname = '/login'*/
+  const logout = () => {
+    console.log("logout called");
+  };
+
+  const getIdToken = async () => {
+    const userInstance: firebase.User | null = await auth.currentUser;
+    if (userInstance != null) {
+      const idToken = userInstance.getIdToken(/* forceRefresh */ true);
+      return idToken;
+    } else {
+      return "NULL";
+    }
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: false, user, login, loading, logout }}
+      value={{
+        isAuthenticated: false,
+        user,
+        loading,
+        login,
+        logout,
+        getIdToken,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
 
   return context;
