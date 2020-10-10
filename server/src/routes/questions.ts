@@ -13,6 +13,7 @@ import ApiError from "../utils/errors/ApiError";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import { Level, Subject } from "../utils/constants";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 
 const router: Router = Router();
 
@@ -45,10 +46,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST request - create a question
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
-  const userId: ObjectId | undefined = new ObjectID(); // TODO
+  const userId: ObjectId | undefined = new ObjectID(res.locals.uid);
   const level: Level | undefined = req.body.level;
   const subject: Subject | undefined = req.body.subject;
 
@@ -80,7 +81,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // PUT request - update a question
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const id: string = req.params.id;
   if (!ObjectID.isValid(id)) {
     throw new ApiError(
@@ -128,7 +129,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE request
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const id: string = req.params.id;
   if (!ObjectID.isValid(id)) {
     throw new ApiError(
