@@ -71,8 +71,7 @@ export type CreateQuestionParam = {
   subject: string;
 };
 
-export type CreateQuestionResponse = {
-  status: HttpStatusCode;
-  question: Question;
+export type ApiError = {
+  status: string;
   message: string;
 };

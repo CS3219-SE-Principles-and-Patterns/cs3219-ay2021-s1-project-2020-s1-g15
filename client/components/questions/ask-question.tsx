@@ -22,7 +22,6 @@ import styles from "./question.module.css";
 import { Editor } from "@toast-ui/react-editor";
 import {
   CreateQuestionParam,
-  CreateQuestionResponse,
   Level,
   Question,
   Subject,
@@ -71,44 +70,33 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
 
   const onFinish = (values: { title: any }) => {
     console.log(values);
-    try {
-      setLoading(true);
-      form.validateFields().then(async (_) => {
-        const { title } = values;
-        if (editor == undefined) {
-          throw new Error("editor ref undefined");
-        }
-        if (editor.current == undefined) {
-          throw new Error("curent instance undefined");
-        }
-        //@ts-ignore
-        const markdown = editor.current.getInstance().getMarkdown();
-        const questionArg: CreateQuestionParam = {
-          title,
-          markdown,
-          level,
-          subject,
-        };
-        const res: CreateQuestionResponse = await createQuestion(questionArg);
-        if (res.status == HttpStatusCode.CREATED) {
-          notification.success({
-            message: res.message,
-            duration: 2,
-          });
-          router.push(`${routesObject.question}/${res.question._id}`);
-        } else {
-          notification.error({
-            message: res.message,
-            duration: 2,
-          });
-        }
-      });
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
+
+    setLoading(true);
+    form.validateFields().then(async (_) => {
+      const { title } = values;
+      //@ts-ignore
+      const markdown = editor.current.getInstance().getMarkdown();
+      const questionArg: CreateQuestionParam = {
+        title,
+        markdown,
+        level,
+        subject,
+      };
+      try {
+        const res: Question = await createQuestion(questionArg);
+        notification.success({
+          message: "Question Created Succesfully",
+          duration: 2,
+        });
+        router.push(`${routesObject.question}/${res._id}`);
+      } catch (err) {
+        notification.error({
+          message: err.message,
+          duration: 2,
+        });
+      }
+    });
+    setLoading(false);
   };
 
   const handleLevel = (value: string) => setLevel(value);

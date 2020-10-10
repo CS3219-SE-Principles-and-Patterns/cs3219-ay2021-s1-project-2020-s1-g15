@@ -1,6 +1,6 @@
 import {
+  ApiError,
   CreateQuestionParam,
-  CreateQuestionResponse,
   GetAllQuestionsParam,
   Question,
 } from "../../util";
@@ -30,7 +30,7 @@ export const getSingleQuestion = async ({ id }): Promise<Question> => {
 
 export const createQuestion = async (
   question: CreateQuestionParam
-): Promise<CreateQuestionResponse> => {
+): Promise<Question> => {
   const res = await fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify({ ...question }),
@@ -38,15 +38,12 @@ export const createQuestion = async (
       "Content-Type": "application/json",
     },
   });
-  console.log(res);
+
   if (res.ok) {
     const question = (await res.json()) as Question;
-    return {
-      status: HttpStatusCode.CREATED,
-      question,
-      message: "Successfully Created",
-    };
+    return question;
   } else {
-    return await res.json();
+    const { message } = (await res.json()) as ApiError;
+    throw new Error(message);
   }
 };
