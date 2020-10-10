@@ -7,20 +7,20 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { menuKeys, routesObject } from '../../util'
 import Link from 'next/link'
 import { pageTitles } from '../../util'
+import { useAuth } from '../../components/authentication'
 
 const Login = (): JSX.Element => {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values)
+  const { login } = useAuth()
+  const onFinish = async ({ username, password }) => {
+    await login(username, password)
   }
 
-  const layout = {}
   return (
     <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
-      {
+      <div className={styles.center}>
         <Card className={styles.card}>
-          <h1>Log in to AnswerLeh</h1>
+          <h1>Login to AnswerLeh</h1>
           <Form
-            {...layout}
             name="normal_login"
             className={styles.loginForm}
             initialValues={{ remember: true }}
@@ -65,7 +65,7 @@ const Login = (): JSX.Element => {
                 htmlType="submit"
                 className={styles.loginFormButton}
               >
-                Log in
+                Login
               </Button>
               Or <Link href={routesObject.register}>register now!</Link>
             </Form.Item>
@@ -75,7 +75,7 @@ const Login = (): JSX.Element => {
             Other Log in 1
           </Button>
         </Card>
-      }
+      </div>
     </FluidPage>
   )
 }

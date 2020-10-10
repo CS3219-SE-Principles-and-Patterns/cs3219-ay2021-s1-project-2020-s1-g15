@@ -4,6 +4,7 @@ import cors from "cors";
 
 import customErrorHandler from "../middlewares/customErrorHandler";
 import questionsRouter from "../routes/questions";
+import usersRouter from "../routes/users";
 
 const app: Express = express();
 const router: Router = express.Router();
@@ -18,6 +19,7 @@ app.use("/api", router);
 
 // routes
 router.use("/questions", questionsRouter);
+router.use("/users", usersRouter);
 // custom error handler: must be last middleware
 app.use(customErrorHandler);
 

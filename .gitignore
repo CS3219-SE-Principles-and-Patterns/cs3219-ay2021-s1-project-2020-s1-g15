@@ -21,6 +21,8 @@ dist
 *.pem
 .env
 globalConfig.json
+# firebase admin service account
+*firebase-adminsdk*.json
 
 # debug
 npm-debug.log*

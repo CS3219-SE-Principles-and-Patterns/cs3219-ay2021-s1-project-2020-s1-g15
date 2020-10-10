@@ -1,6 +1,8 @@
 import { ObjectId } from "mongodb";
 
-export interface User {
+import { Util } from "./Util";
+
+export interface User extends Util {
   email: string;
   username: string;
   answerIds: ObjectId[];

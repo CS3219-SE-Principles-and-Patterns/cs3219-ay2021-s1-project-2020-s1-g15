@@ -2,7 +2,7 @@
 import FluidPage from '../../components/layout'
 import { Card, Form, Input, Button } from 'antd'
 
-import styles from './login.module.css'
+import styles from '../login/login.module.css'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { routesObject } from '../../util'
 import Link from 'next/link'
@@ -16,7 +16,7 @@ const Register = (): JSX.Element => {
   const layout = {}
   return (
     <FluidPage title={pageTitles.register}>
-      {
+      <div className={styles.center}>
         <Card className={styles.card}>
           <h1>Register with AnswerLeh</h1>
           <Form
@@ -57,11 +57,11 @@ const Register = (): JSX.Element => {
               >
                 Sign Up
               </Button>
-              Or <Link href={routesObject.login}>Log in!</Link>
+              Or <Link href={routesObject.login}>login!</Link>
             </Form.Item>
           </Form>
         </Card>
-      }
+      </div>
     </FluidPage>
   )
 }
