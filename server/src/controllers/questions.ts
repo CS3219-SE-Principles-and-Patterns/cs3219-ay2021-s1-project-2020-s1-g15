@@ -4,6 +4,7 @@ import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import { Level, Subject } from "../utils/constants";
 import titleToSlug from "../utils/titleToSlug";
+import { addQuestionToUser, removeQuestionFromUser } from "./users";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
@@ -23,9 +24,9 @@ async function getQuestionById(id: string): Promise<Question | null> {
 }
 
 async function createQuestion(
+  userId: ObjectId,
   title: string,
   markdown: string,
-  userId: ObjectId,
   level: Level,
   subject: Subject
 ): Promise<Question> {
@@ -44,22 +45,29 @@ async function createQuestion(
     downvotes: 0,
   };
 
-  await getQuestionsCollection().insertOne(doc);
+  await Promise.all([
+    getQuestionsCollection().insertOne(doc),
+    addQuestionToUser(doc._id, userId),
+  ]);
 
   return doc;
 }
 
 async function updateQuestion(
-  id: string,
+  userId: ObjectId,
+  questionId: string,
   title: string,
   markdown: string,
   level: Level,
   subject: Subject
 ): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectID(id);
+  const objectId: ObjectId = new ObjectID(questionId);
 
   const result = await getQuestionsCollection().findOneAndUpdate(
-    { _id: objectId },
+    {
+      _id: objectId,
+      userId: userId, // make sure user can only update his own question
+    },
     {
       $set: {
         title: title,
@@ -76,12 +84,19 @@ async function updateQuestion(
   return result.value;
 }
 
-async function deleteQuestion(id: string): Promise<boolean> {
-  const objectId: ObjectId = new ObjectID(id);
+async function deleteQuestion(
+  questionId: string,
+  userId: ObjectId
+): Promise<boolean> {
+  const questionObjectId = new ObjectID(questionId);
 
-  const result = await getQuestionsCollection().findOneAndDelete({
-    _id: objectId,
-  });
+  const [result] = await Promise.all([
+    getQuestionsCollection().findOneAndDelete({
+      _id: questionObjectId,
+      userId: userId, // make sure user can only delete his own question
+    }),
+    removeQuestionFromUser(questionObjectId, userId),
+  ]);
 
   return result.value != null;
 }

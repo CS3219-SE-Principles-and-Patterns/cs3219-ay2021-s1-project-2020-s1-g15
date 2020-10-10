@@ -36,4 +36,38 @@ async function createUser(email: string, password: string): Promise<User> {
   return doc;
 }
 
-export { createUser };
+async function addQuestionToUser(
+  questionId: ObjectId,
+  uid: ObjectId
+): Promise<User | undefined> {
+  const result = await getUsersCollection().findOneAndUpdate(
+    { _id: uid },
+    {
+      $addToSet: {
+        questionIds: questionId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
+async function removeQuestionFromUser(
+  questionId: ObjectId,
+  uid: ObjectId
+): Promise<User | undefined> {
+  const result = await getUsersCollection().findOneAndUpdate(
+    { _id: uid },
+    {
+      $pull: {
+        questionIds: questionId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
+export { createUser, addQuestionToUser, removeQuestionFromUser };
