@@ -7,13 +7,13 @@ import ApiError from "../utils/errors/ApiError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 
 async function createUser(email: string, password: string): Promise<User> {
-  //* used as firebase user UID and mongodb document id
-  const objectId: ObjectId = new ObjectID();
+  //* used as firebase user UID and `Users` collection _id
+  const uid: ObjectId = new ObjectID();
 
   // try to create the firebase user:
   try {
     await getAuth().createUser({
-      uid: objectId.toHexString(),
+      uid: uid.toHexString(),
       email: email,
       password: password,
     });
@@ -23,7 +23,7 @@ async function createUser(email: string, password: string): Promise<User> {
 
   // create the mongodb document:
   const doc: User = {
-    _id: objectId,
+    _id: uid,
     createdAt: new Date(),
     updatedAt: new Date(),
     email: email,
@@ -31,7 +31,7 @@ async function createUser(email: string, password: string): Promise<User> {
     questionIds: [],
     answerIds: [],
   };
-  getUsersCollection().insertOne(doc);
+  await getUsersCollection().insertOne(doc);
 
   return doc;
 }
