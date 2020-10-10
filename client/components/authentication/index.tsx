@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-//@ts-nocheck
 import React, {
   createContext,
   useState,
@@ -15,12 +13,15 @@ type props = {
 }
 
 type AuthContextType = {
-  user: {}
-  isAuthenticated: boolean
-  loading: boolean
-  login: Function<Promise<firebase.auth.UserCredential>>
-  logout?: Promise<void>
-  getIdToken: Function<Promise<string>>
+  user?: {}
+  isAuthenticated?: boolean
+  loading?: boolean
+  login?: (
+    email: string,
+    password: string
+  ) => Promise<firebase.auth.UserCredential>
+  logout?: () => void
+  getIdToken?: () => Promise<string>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -45,11 +46,8 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
     return credential
   }
 
-  const logout = (email: string, password: string) => {
-    /*
-    Cookies.remove('token')
-    setUser(null)
-    window.location.pathname = '/login'*/
+  const logout = () => {
+    console.log('logout called')
   }
 
   const getIdToken = async () => {
@@ -62,8 +60,8 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       value={{
         isAuthenticated: false,
         user,
-        login,
         loading,
+        login,
         logout,
         getIdToken,
       }}
