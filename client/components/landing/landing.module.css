@@ -1,0 +1,113 @@
+.hero {
+  margin-top: -21px; /*offset content in layout component*/
+  margin-left: -24px;
+  margin-right: -24px;
+}
+.particle {
+  z-index: -1;
+}
+.title {
+  position: absolute;
+  top: 15rem;
+  left: 30%;
+  right: 30%;
+  /* left: auto; */
+  /*width: 100%;*/
+  /* right: auto; */
+  background: transparent;
+  color: white;
+  text-align: center;
+}
+.titleColor {
+  color: white;
+}
+
+.grid {
+  z-index: 9999;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  row-gap: 1.5rem;
+}
+
+.headerText {
+  color: #111;
+  text-align: center;
+}
+
+.loginStyle {
+  margin-left: auto;
+  background: linear-gradient(45deg, #9194e7, #aca8eb) !important;
+  border-radius: 15px;
+  border: 0px;
+}
+
+.content {
+  min-height: 90vh;
+}
+
+.firstSection {
+  margin: 0.5rem auto 0.5rem auto;
+  justify-content: center;
+}
+
+.pitchBox {
+  margin: auto;
+}
+
+.infoColumn {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 30vh;
+  margin-bottom: 1.5rem;
+}
+
+.infoColumnDev {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 15vh;
+  margin-bottom: 1.5rem;
+}
+
+.introColumn {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.box {
+  flex: 1 1 150px;
+  margin: 8px;
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2);
+  overflow-wrap: break-word;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.icon {
+  height: 5vh;
+  width: 10vw;
+}
+.title {
+  font-size: 4vh;
+  margin: 0.5rem auto 0.5rem auto;
+}
+
+@media only screen and (min-width: 600px) {
+  .pitchBox {
+    margin: auto;
+    max-width: 80vw;
+  }
+  .introColumn,
+  .infoColumnDev,
+  .infoColumn {
+    margin: auto;
+    max-width: 80vw;
+  }
+}

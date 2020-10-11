@@ -208,6 +208,8 @@ OR
 - URL: `/api/questions`
 - Auth required: NO
 
+- Pagination note: Should accept three parmeters: `page` , `pageSize` , `total` (simple offset based pagination)
+
 **Success response**:
 
 - Condition: if everything is OK
