@@ -9,6 +9,7 @@ export const routesObject = {
 
 export const menuKeys = {
   login: "login",
+  logout: "logout",
   home: "home",
   forum: "forum",
   register: "register",

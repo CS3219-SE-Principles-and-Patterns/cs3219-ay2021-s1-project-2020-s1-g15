@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Avatar, Layout, Menu } from "antd";
+import { Avatar, Dropdown, Layout, Menu } from "antd";
 import styles from "./Layout.module.css";
 import Link from "next/link";
 import { routesObject, menuKeys } from "../../util";
@@ -16,6 +16,20 @@ type props = {
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
   const { isAuthenticated } = useAuth();
+
+  const userMenu = (
+    <Menu mode="vertical" className={styles.dropdownMenu}>
+      <Menu.Item key={menuKeys.user}>
+        <Link href={routesObject.home}>
+          <h2>My Page</h2>
+        </Link>
+      </Menu.Item>
+      <Menu.Item key={menuKeys.logout}>
+        <Link href={routesObject.home}>Logout</Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <Head>
@@ -39,7 +53,14 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
             </Menu.Item>
             <Menu.Item key={menuKeys.login} className={styles.userProfile}>
               {isAuthenticated ? (
-                <Avatar icon={<UserOutlined />} />
+                <Dropdown overlay={userMenu} placement="bottomCenter">
+                  <a
+                    className="ant-dropdown-link"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Avatar icon={<UserOutlined />} />
+                  </a>
+                </Dropdown>
               ) : (
                 <Link href={routesObject.login}>Login</Link>
               )}
