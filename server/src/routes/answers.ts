@@ -2,11 +2,15 @@ import { Router, Request, Response } from "express";
 import { ObjectID, ObjectId } from "mongodb";
 import { deleteAnswerFromQuestion } from "../controllers/questions";
 
+<<<<<<< Updated upstream
 import {
   createAnswer,
   getAnswersByQuestionId,
   deleteAnswer,
 } from "../controllers/answers";
+=======
+import { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer } from "../controllers/answers";
+>>>>>>> Stashed changes
 import { Answer } from "../models";
 import ApiError from "../utils/errors/ApiError";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
@@ -72,6 +76,47 @@ router.post("/", async (req: Request, res: Response) => {
   );
 
   return res.status(HttpStatusCode.CREATED).json(createdAnswer);
+});
+
+//PUT request - update an answer
+router.put("/", async (req: Request, res: Response) => {
+  const id: string = req.body.id; //might ned to change to answerId
+  if (!ObjectID.isValid(id)) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.INVALID_ID
+    );
+  }
+
+  const markdown: string | undefined = req.body.markdown;
+
+  if (!markdown) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedMarkdown === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.INVALID_FIELDS
+    );
+  }
+
+  const updatedAnswer: Answer | undefined = await updateAnswer(
+    trimmedMarkdown,
+    id
+  );
+  if (updatedAnswer == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Answer.NOT_FOUND
+    );
+  }
+
+  return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
 
 //DELETE request - delete an answer
