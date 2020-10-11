@@ -319,7 +319,7 @@ OR
 - Body data (example):
   ```js
   {
-    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "questionId": "5f570273a83adf5417b48026", // ObjectId of question; required!
     "markdown": "hello" // string; required!
   }
   ```
@@ -335,7 +335,10 @@ OR
     "markdown": "hello",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T04:02:59.081Z"
+    "updatedAt": "2020-09-08T04:02:59.081Z",
+    "userId": "5f82feda42ace23941434007",
+    "upvotes": 0,
+    "downvotes": 0
   }
   ```
 
@@ -359,7 +362,6 @@ OR
   ```js
   {
     "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
-    "markdown": "hello" // string; required!
   }
   ```
 
@@ -376,7 +378,10 @@ OR
       "markdown": "hello",
       "questionId": "5f570273a83adf5417b48026",
       "createdAt": "2020-09-08T04:02:59.081Z",
-      "updatedAt": "2020-09-08T04:02:59.081Z"
+      "updatedAt": "2020-09-08T04:02:59.081Z",
+      "userId": "5f82feda42ace23941434007",
+      "upvotes": 0,
+      "downvotes": 0
     },
     // ...
   ]
