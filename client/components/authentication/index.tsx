@@ -32,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {
   const [user, setUser] = useState<{} | undefined>(undefined);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
+    setIsAuthenticated(true);
     return credential;
   };
 
@@ -63,7 +65,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: false,
+        isAuthenticated,
         user,
         loading,
         login,

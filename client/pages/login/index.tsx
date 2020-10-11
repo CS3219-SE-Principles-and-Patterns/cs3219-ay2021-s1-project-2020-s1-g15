@@ -7,12 +7,14 @@ import { menuKeys, routesObject } from "../../util";
 import Link from "next/link";
 import { pageTitles } from "../../util";
 import { useAuth } from "../../components/authentication";
+import router from "next/router";
 
 const Login = (): JSX.Element => {
   const { login } = useAuth();
   const onFinish = async ({ username, password }) => {
     if (login) {
       await login(username, password);
+      router.push(`${routesObject.home}`);
     } // undefined fails silently for now
   };
 
