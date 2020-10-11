@@ -2,15 +2,12 @@ import { Router, Request, Response } from "express";
 import { ObjectID, ObjectId } from "mongodb";
 import { deleteAnswerFromQuestion } from "../controllers/questions";
 
-<<<<<<< Updated upstream
 import {
   createAnswer,
   getAnswersByQuestionId,
   deleteAnswer,
+  updateAnswer
 } from "../controllers/answers";
-=======
-import { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer } from "../controllers/answers";
->>>>>>> Stashed changes
 import { Answer } from "../models";
 import ApiError from "../utils/errors/ApiError";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
