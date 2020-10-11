@@ -10,12 +10,14 @@
   - [Development environment](#development-environment)
 - [Server](#server)
   - [Prerequisites](#prerequisites-1)
-  - [Installing](#installing-1)
+    - [Installing](#installing-1)
+    - [Set up Firebase Admin SDK](#set-up-firebase-admin-sdk)
   - [Development environment](#development-environment-1)
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
     - [Lint and run tests](#lint-and-run-tests)
 - [API reference](#api-reference)
+  - [Authenticated routes](#authenticated-routes)
   - [Questions](#questions)
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
@@ -61,13 +63,13 @@ The project should be hosted on [localhost:3000](localhost:3000).
 
 ### Prerequisites
 
+#### Installing
+
 The following are required to be installed:
 
 - [MongoDB](https://www.mongodb.com/)
 - [Node](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
-
-### Installing
 
 ```sh
 # change to server/ directory first
@@ -75,6 +77,17 @@ cd server/
 # install all dependencies
 yarn
 ```
+
+#### Set up Firebase Admin SDK
+
+This project requires the use of GCP and Firebase resources. In order to develop locally with Firebase Authentication:
+
+1. Head to the [Firebase console to generate a private key for a service account](https://console.firebase.google.com/project/answerleh/settings/serviceaccounts/adminsdk)
+2. Rename that file to exactly `firebase-adminsdk.json`
+3. Place it in the `/server` directory (same level where the `Dockerfile` is present)
+4. Git should already ignore `firebase-adminsdk.json` by default
+
+This private key allows **full access** to this project's Firebase resources. **Treat it as you would a password and do not commit this file or otherwise leak it**.
 
 ### Development environment
 
@@ -126,12 +139,25 @@ The following base URLs are assumed:
 - **Deployed endpoint**: TODO
 - **Local endpoint**: http://localhost:8000
 
+### Authenticated routes
+
+All authenticated routes require the use of a Firebase token to be present in the `Authorization` headers in the request. An example header:
+
+```http
+Authorization: Bearer <FIREBASE_TOKEN>
+```
+
+- Replace `<FIREBASE_TOKEN>` with the actual token after authenticating with Firebase Auth
+- Make sure that the keyword `Bearer` and a single whitespace is prepended to the token before sending it to the server
+
 ### Questions
 
 #### Create a question
 
 - Method: `POST`
 - URL: `/api/questions`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 - Body data (example):
   ```js
   {
@@ -144,7 +170,7 @@ The following base URLs are assumed:
 
 **Success response**:
 
-- Condition: if everything is OK, and the `markdown` field is valid
+- Condition: if user is authenticated, and all fields are valid
 - Code: `201 CREATED`
 - Content (example):
   ```js
@@ -166,6 +192,12 @@ The following base URLs are assumed:
 
 **Error response**:
 
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
+
 - Condition: if any required fields are missing or the empty string
 - Status: `400 BAD REQUEST`
 - Content: description of error
@@ -174,6 +206,7 @@ The following base URLs are assumed:
 
 - Method: `GET`
 - URL: `/api/questions`
+- Auth required: NO
 
 - Pagination note: Should accept three parmeters: `page` , `pageSize` , `total` (simple offset based pagination)
 
@@ -209,6 +242,7 @@ The following base URLs are assumed:
 - URL: `/api/questions/:id`
 - URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
+- Auth required: NO
 
 **Success response**:
 
@@ -250,6 +284,8 @@ OR
 - URL: `/api/questions/:id`
 - URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 - Body data (example):
   ```js
   {
@@ -262,7 +298,7 @@ OR
 
 **Success response**:
 
-- Condition: if question exists, and all required fields are present
+- Condition: if user is authenticated, question exists, and all required fields are present
 - Code: `200 OK`
 - Content (example):
   ```js
@@ -284,13 +320,19 @@ OR
 
 **Error response**:
 
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
+
 - Condition: if `id` is not a valid `ObjectId`, or if any required fields are missing or the empty string
 - Status: `400 BAD REQUEST`
 - Content: description of error
 
 OR
 
-- Condition: if question does not exist
+- Condition: if question does not exist, or if question does not belong to the user
 - Status: `404 NOT FOUND`
 - Content: description of error
 
@@ -300,15 +342,23 @@ OR
 - URL: `/api/questions/:id`
 - URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 
 **Success response**:
 
-- Condition: if the question exists and is deleted successfully
+- Condition: if user is authenticated, the question exists and is deleted successfully
 - Code: `204 NO CONTENT`
 
 **Error response**:
 
-- Condition: if question does not exist
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
+
+- Condition: if question does not exist, or if question does not belong to the user
 - Code: `404 NOT FOUND`
 - Content: description of error
 
