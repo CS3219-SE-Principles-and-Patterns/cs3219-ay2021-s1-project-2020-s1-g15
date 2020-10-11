@@ -95,6 +95,24 @@ async function addAnswerToQuestion(
   return result.value;
 }
 
+async function deleteAnswerFromQuestion(
+  answerId: string
+): Promise<Question | undefined> {
+  const objectId: ObjectId = new ObjectID(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { answerIds: objectId },
+    {
+      $pull: {
+        answerIds: objectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
 async function deleteQuestion(id: string): Promise<boolean> {
   const objectId: ObjectId = new ObjectID(id);
 
@@ -111,5 +129,6 @@ export {
   createQuestion,
   updateQuestion,
   addAnswerToQuestion,
+  deleteAnswerFromQuestion,
   deleteQuestion,
 };

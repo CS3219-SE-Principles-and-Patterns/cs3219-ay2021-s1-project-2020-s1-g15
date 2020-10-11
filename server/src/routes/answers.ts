@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { ObjectID, ObjectId } from "mongodb";
+import { deleteAnswerFromQuestion } from "../controllers/questions";
 
 import {
   createAnswer,
@@ -75,21 +76,23 @@ router.post("/", async (req: Request, res: Response) => {
 
 //DELETE request - delete an answer
 router.delete("/", async (req: Request, res: Response) => {
-  const id: string = req.body.id;
-  if (!ObjectID.isValid(id)) {
+  const answerId: string = req.body.answerId;
+  if (!ObjectID.isValid(answerId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Answer.INVALID_ID
     );
   }
 
-  const isSuccessful: boolean = await deleteAnswer(id);
+  const isSuccessful: boolean = await deleteAnswer(answerId);
   if (!isSuccessful) {
     throw new ApiError(
       HttpStatusCode.NOT_FOUND,
       ApiErrorMessage.Answer.NOT_FOUND
     );
   }
+
+  await deleteAnswerFromQuestion(answerId);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });
