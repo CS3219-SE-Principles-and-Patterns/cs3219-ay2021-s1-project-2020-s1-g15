@@ -4,9 +4,9 @@ import NProgress from "nprogress";
 import Router from "next/router";
 import firebase from "firebase/app";
 import "firebase/auth";
-
-import "./app.css";
 import "./antd.less";
+import "./app.css";
+
 import { AuthProvider } from "../components/authentication";
 
 // firebase must only be initialised in client, not server:

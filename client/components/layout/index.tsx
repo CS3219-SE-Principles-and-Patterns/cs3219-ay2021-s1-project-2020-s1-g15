@@ -1,11 +1,13 @@
 import React, { FC } from "react";
-import { Avatar, Dropdown, Layout, Menu } from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
 import styles from "./Layout.module.css";
 import Link from "next/link";
 import { routesObject, menuKeys } from "../../util";
 import Head from "next/head";
 import { useAuth } from "../authentication";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
+import router from "next/router";
+
 const { Header, Footer, Content } = Layout;
 
 type props = {
@@ -15,7 +17,16 @@ type props = {
 };
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const logoutApplication = async (
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (logout) {
+      await logout();
+      router.push(`${routesObject.home}`);
+    }
+  };
 
   const userMenu = (
     <Menu mode="vertical" className={styles.dropdownMenu}>
@@ -25,7 +36,9 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
         </Link>
       </Menu.Item>
       <Menu.Item key={menuKeys.logout}>
-        <Link href={routesObject.home}>Logout</Link>
+        <Button icon={<CloseCircleFilled />} onClick={logoutApplication}>
+          Log Out
+        </Button>
       </Menu.Item>
     </Menu>
   );

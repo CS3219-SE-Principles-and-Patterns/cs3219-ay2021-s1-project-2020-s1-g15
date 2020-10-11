@@ -20,7 +20,7 @@ type AuthContextType = {
     email: string,
     password: string
   ) => Promise<firebase.auth.UserCredential>;
-  logout?: () => void;
+  logout?: () => Promise<void>;
   getIdToken?: () => Promise<string>;
 };
 
@@ -36,9 +36,9 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadUserFromCookies() {
+    const loadUserFromCookies = async () => {
       setLoading(false);
-    }
+    };
     loadUserFromCookies();
   }, []);
 
@@ -48,8 +48,10 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
     return credential;
   };
 
-  const logout = () => {
-    console.log("logout called");
+  const logout = async () => {
+    await auth.signOut();
+    setUser({});
+    setIsAuthenticated(false);
   };
 
   const getIdToken = async () => {
