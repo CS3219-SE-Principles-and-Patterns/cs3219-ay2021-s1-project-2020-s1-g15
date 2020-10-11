@@ -1,13 +1,10 @@
-const withSass = require("@zeit/next-sass");
-const withLess = require("@zeit/next-less");
-const withCSS = require("@zeit/next-css");
+const withAntdLess = require("next-plugin-antd-less");
 
-module.exports = withCSS({
-  cssModules: true,
-  cssLoaderOptions: {
-    importLoaders: 1,
-    localIdentName: "[local]___[hash:base64:5]",
-  },
+// see: https://github.com/vercel/next-plugins/issues/598
+// see: https://github.com/vercel/next.js/issues/8156#issuecomment-516009764
+// fix issue with next-plugin-antd-less
+module.exports = withAntdLess({
+  lessVarsFilePath: "./pages/antd.less",
   env: {
     baseUrlDev: "http://localhost:8000/api/",
   },
@@ -26,13 +23,12 @@ module.exports = withCSS({
     scrollRestoration: false,
     i18n: false,
   },
-  ...withLess(
-    withSass({
-      lessLoaderOptions: {
-        javascriptEnabled: true,
-      },
-    })
-  ),
+  cssModules: true,
+  cssLoaderOptions: {
+    javascriptEnabled: true,
+    importLoaders: 1,
+    localIdentName: "[local]___[hash:base64:5]",
+  },
 });
 
 /*

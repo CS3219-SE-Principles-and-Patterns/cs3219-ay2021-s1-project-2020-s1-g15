@@ -64,6 +64,9 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
             <Menu.Item key={menuKeys.forum}>
               <Link href={routesObject.forum}>Forum</Link>
             </Menu.Item>
+            <Menu.Item key={menuKeys.user}>
+              <Link href={routesObject.user}>User</Link>
+            </Menu.Item>
             <Menu.Item key={menuKeys.login} className={styles.userProfile}>
               {isAuthenticated ? (
                 <Dropdown overlay={userMenu} placement="bottomCenter">

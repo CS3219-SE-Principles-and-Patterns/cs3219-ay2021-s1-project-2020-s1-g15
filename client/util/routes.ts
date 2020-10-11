@@ -4,7 +4,7 @@ export const routesObject = {
   forum: "/forum",
   register: "/register",
   question: "/question",
-  user: "/user",
+  user: "/user/1",
 };
 
 export const menuKeys = {
