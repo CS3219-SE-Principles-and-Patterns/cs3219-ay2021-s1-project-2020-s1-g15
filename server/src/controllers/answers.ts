@@ -1,4 +1,4 @@
-import { ObjectId, ObjectID } from "mongodb";
+import { Db, ObjectId, ObjectID } from "mongodb";
 
 import {
   getAnswersCollection,
@@ -65,6 +65,27 @@ async function createAnswer(
   return doc;
 }
 
+async function updateAnswer(
+  markdown: string,
+  answerId: string,
+  //userId: ObjectId
+): Promise<Answer | undefined> {
+  const objectId: ObjectId = new ObjectID(answerId);
+
+  const result = await getAnswersCollection().findOneAndUpdate(
+    { _id: objectId },
+    {
+      $set: {
+        markdown: markdown,
+        updatedAt: new Date(),
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
 async function deleteAnswer(id: string): Promise<boolean> {
   const objectId: ObjectId = new ObjectID(id);
 
@@ -72,7 +93,11 @@ async function deleteAnswer(id: string): Promise<boolean> {
     _id: objectId,
   });
 
+
   return result.value != null;
 }
 
-export { createAnswer, getAnswersByQuestionId, deleteAnswer };
+
+
+
+export { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer };
