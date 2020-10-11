@@ -8,6 +8,7 @@ import "./antd.less";
 import "./app.css";
 
 import { AuthProvider } from "../components/authentication";
+import { FC } from "react";
 
 // firebase must only be initialised in client, not server:
 let auth: firebase.auth.Auth;
@@ -22,19 +23,23 @@ if (typeof window !== "undefined" && !firebase.apps.length) {
     appId: "1:896806835090:web:dd3713e71eb0343326674b",
   });
   auth = firebase.auth();
+  //console.log(auth);
 }
 
 //TODO: loading page
 //Binding events.
+/*
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
-
+*/
 // This default export is required in a new `pages/_app.js` file.
-export default function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }) => {
   return (
     <AuthProvider auth={auth}>
       <Component {...pageProps} />
     </AuthProvider>
   );
-}
+};
+
+export default MyApp;
