@@ -1,19 +1,22 @@
-/* eslint-disable no-console */
-import FluidPage from '../../components/layout'
-import { Card, Form, Input, Checkbox, Button, Divider } from 'antd'
+import FluidPage from "../../components/layout";
+import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
-import styles from './login.module.css'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { menuKeys, routesObject } from '../../util'
-import Link from 'next/link'
-import { pageTitles } from '../../util'
-import { useAuth } from '../../components/authentication'
+import styles from "./login.module.css";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { menuKeys, routesObject } from "../../util";
+import Link from "next/link";
+import { pageTitles } from "../../util";
+import { useAuth } from "../../components/authentication";
+import router from "next/router";
 
 const Login = (): JSX.Element => {
-  const { login } = useAuth()
+  const { login } = useAuth();
   const onFinish = async ({ username, password }) => {
-    await login(username, password)
-  }
+    if (login) {
+      await login(username, password);
+      router.push(`${routesObject.home}`);
+    } // undefined fails silently for now
+  };
 
   return (
     <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
@@ -29,7 +32,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="username"
               rules={[
-                { required: true, message: 'Please input your Username!' },
+                { required: true, message: "Please input your Username!" },
               ]}
             >
               <Input
@@ -40,7 +43,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: 'Please input your Password!' },
+                { required: true, message: "Please input your Password!" },
               ]}
             >
               <Input
@@ -77,7 +80,7 @@ const Login = (): JSX.Element => {
         </Card>
       </div>
     </FluidPage>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -1,9 +1,9 @@
-import { Editor, Viewer } from '@toast-ui/react-editor'
-import { Card } from 'antd'
+import { Editor, Viewer } from "@toast-ui/react-editor";
+import { Card } from "antd";
 
 type ViewRenderProp = {
-  markdown: string
-}
+  markdown: string;
+};
 
 export const RenderMarkdownViewer: React.FC<ViewRenderProp> = ({
   markdown,
@@ -12,5 +12,5 @@ export const RenderMarkdownViewer: React.FC<ViewRenderProp> = ({
     <Card>
       <Viewer initialValue={markdown} />
     </Card>
-  )
-}
+  );
+};

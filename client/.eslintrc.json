@@ -5,10 +5,9 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    // Uncomment the following lines to enable eslint-config-prettier
-    // Is not enabled right now to avoid issues with the Next.js repo
     "prettier",
-    "prettier/@typescript-eslint"
+    "prettier/@typescript-eslint",
+    "plugin:react-hooks/recommended"
   ],
   "env": {
     "es6": true,
@@ -28,15 +27,9 @@
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/no-unused-vars": [
-      0,
+      1,
       {
         "argsIgnorePattern": "^_"
-      }
-    ],
-    "no-console": [
-      0,
-      {
-        "allow": ["warn", "error"]
       }
     ]
   }

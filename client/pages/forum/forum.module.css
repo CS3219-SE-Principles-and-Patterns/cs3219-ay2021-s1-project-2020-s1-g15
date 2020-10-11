@@ -1,0 +1,17 @@
+.searchBar {
+  margin-bottom: 16px;
+}
+
+.pageHeader {
+  padding: 16px 0px 24px 0px !important;
+}
+.flex {
+  display: flex;
+  flex-direction: row-reverse;
+}
+.pagination {
+  margin: 8px 0px 8px 0px !important;
+}
+
+.mainContent {
+}

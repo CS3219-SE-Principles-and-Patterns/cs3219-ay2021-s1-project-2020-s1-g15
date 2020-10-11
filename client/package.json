@@ -33,6 +33,7 @@
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-tsparticles": "^1.18.2",
     "suneditor-react": "^2.14.2"
   },
   "devDependencies": {
@@ -47,6 +48,7 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^4.1.2",
     "husky": "^4.2.3",
     "jest": "^25.2.3",
     "jest-watch-typeahead": "^0.5.0",

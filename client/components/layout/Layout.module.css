@@ -6,7 +6,7 @@
 }
 
 .logo {
-  background: rgba(255, 255, 255, 0.2);
+  background: #001529;
   padding: 0px 32px 0px 32px;
   margin: 0px;
   float: left;
@@ -20,10 +20,10 @@
 }
 
 .content {
-  min-height: 100vh;
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
-  margin-top: 96px; /* 64 + 48*/
+  margin-top: 85px;
   padding-left: 24px;
   padding-right: 24px;
 }
