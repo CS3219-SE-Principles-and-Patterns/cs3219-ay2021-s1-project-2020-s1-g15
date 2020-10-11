@@ -1,8 +1,8 @@
 import { Editor } from "@toast-ui/react-editor";
 import { Card, Form, Button } from "antd";
-import React, { useRef } from "react";
+import React, { useRef, FC } from "react";
 
-export const RenderMarkdownEditor: React.FC = (): JSX.Element => {
+export const RenderMarkdownEditor: FC = (): JSX.Element => {
   const editor = useRef<Editor | null>(null);
   const onFinish = (values) => {
     console.log("Received values of form: ", values);

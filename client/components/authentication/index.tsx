@@ -86,7 +86,7 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 /*
-export const ProtectRoute: React.FC = ({ Component: Component, ...rest }) => {
+export const ProtectRoute:  = ({ Component: Component, ...rest }) => {
   return () => {
     const { user, isAuthenticated, loading } = useAuth();
     const router = useRouter();

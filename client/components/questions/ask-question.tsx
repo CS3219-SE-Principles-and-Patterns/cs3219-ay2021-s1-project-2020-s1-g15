@@ -14,7 +14,7 @@ import {
   Spin,
   Typography,
 } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, FC } from "react";
 import FluidPage from "../layout";
 
 import { pageTitles, routesObject } from "../../util";
@@ -58,9 +58,7 @@ type AskQuestionProp = {
   question?: Question | undefined;
 };
 
-const AskQuestionsForm: React.FC<AskQuestionProp> = ({
-  question,
-}): JSX.Element => {
+const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
   const editor = useRef<Editor | null>(null);
   const [form] = useForm();
   const [questionLocal, setQuestion] = useState<Question | undefined>(question);

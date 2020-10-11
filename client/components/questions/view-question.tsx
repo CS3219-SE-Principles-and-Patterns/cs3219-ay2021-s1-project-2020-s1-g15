@@ -29,6 +29,7 @@ import { Answer, Question } from "../../util/types";
 import dynamic from "next/dynamic";
 
 import router from "next/router";
+import { FC } from "react";
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
@@ -37,7 +38,7 @@ type ViewQuestionProp = {
   answers: Answer[];
 };
 
-const ViewQuestion: React.FC<ViewQuestionProp> = ({
+const ViewQuestion: FC<ViewQuestionProp> = ({
   question,
   answers,
 }): JSX.Element => {
@@ -143,7 +144,7 @@ type PageHeaderComponent = {
   downvotes: number;
 };
 
-const PageHeaderComponent: React.FC<PageHeaderComponent> = ({
+const PageHeaderComponent: FC<PageHeaderComponent> = ({
   upvotes,
   downvotes,
 }) => {
@@ -204,7 +205,7 @@ const PageHeaderComponent: React.FC<PageHeaderComponent> = ({
   );
 };
 
-const AnswerComponent: React.FC = () => {
+const AnswerComponent: FC = () => {
   const [commentVisible, setCommentVisible] = useState<boolean>(false);
   const renderAnswerEditorWithMarkdown = () => {
     if (typeof window !== "undefined") {
