@@ -436,9 +436,13 @@ OR
 #### Delete an answer
 
 - Method: `DELETE`
-- URL: `/api/answers/:id`
-- URL parameters
-  - `id`: the `ObjectId` of the MongoDB document
+- URL: `/api/answers/`
+- Body data (example):
+```js
+  {
+    answerId: "5f82feda42ace23941434008"
+  }
+```
 
 **Success response**:
 
