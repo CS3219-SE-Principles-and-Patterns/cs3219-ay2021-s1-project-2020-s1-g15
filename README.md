@@ -396,12 +396,11 @@ OR
 #### Update an answer
 
 - Method: `PUT`
-- URL: `/api/answers/:id`
-- URL parameters
-  - `id`: the `ObjectId` of the MongoDB document
+- URL: `/api/answers/`
 - Body data (example):
   ```js
   {
+    "id" : "5f82ef78bef85211fd9fb314"
     "markdown": "updated" // string; required!
   }
   ```
@@ -413,7 +412,7 @@ OR
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
+    "_id": "5f82ef78bef85211fd9fb314",
     "markdown": "updated",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
