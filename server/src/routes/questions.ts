@@ -47,9 +47,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 // POST request - create a question
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
+  const userId: ObjectId = new ObjectID(res.locals.uid);
   const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
-  const userId: ObjectId | undefined = new ObjectID(res.locals.uid);
   const level: Level | undefined = req.body.level;
   const subject: Subject | undefined = req.body.subject;
 
@@ -70,9 +70,9 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   }
 
   const createdQuestion: Question = await createQuestion(
+    userId,
     trimmedTitle,
     trimmedMarkdown,
-    userId,
     level,
     subject
   );
@@ -82,8 +82,9 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 
 // PUT request - update a question
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  if (!ObjectID.isValid(id)) {
+  const userId: ObjectId = new ObjectID(res.locals.uid);
+  const questionId: string = req.params.id;
+  if (!ObjectID.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
@@ -112,7 +113,8 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   }
 
   const updatedQuestion: Question | undefined = await updateQuestion(
-    id,
+    userId,
+    questionId,
     trimmedTitle,
     trimmedMarkdown,
     level,
@@ -130,15 +132,16 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
 // DELETE request
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  if (!ObjectID.isValid(id)) {
+  const userId: ObjectId = new ObjectID(res.locals.uid);
+  const questionId: string = req.params.id;
+  if (!ObjectID.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
     );
   }
 
-  const isSuccessful: boolean = await deleteQuestion(id);
+  const isSuccessful: boolean = await deleteQuestion(questionId, userId);
   if (!isSuccessful) {
     throw new ApiError(
       HttpStatusCode.NOT_FOUND,

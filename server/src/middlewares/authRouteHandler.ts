@@ -8,7 +8,8 @@ import HttpStatusCode from "../utils/HttpStatusCode";
  * Middleware for authenticated routes. This middleware will extract the `uid`
  * from the provided token in the request headers, and store it in `res.locals`.
  * If no token is provided, or if the token is invalid, an `ApiError` will be
- * thrown with a HTTP 401 UNAUTHORIZED error.
+ * thrown with a HTTP 401 UNAUTHORIZED error. If this function succeeds without
+ * throwing errors, `res.locals` is guaranteed to have the valid `uid` key.
  */
 async function verifyUserAuth(
   req: Request,
