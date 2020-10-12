@@ -14,6 +14,8 @@ import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import { Level, Subject } from "../utils/constants";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import { QuestionRequestBody } from "../utils/requestBodyTypes";
+import { addQuestionToUser } from "../controllers/users";
 
 const router: Router = Router();
 
@@ -35,35 +37,18 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 // POST request - create a question
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: ObjectId = new ObjectId(res.locals.uid);
-  const title: string | undefined = req.body.title;
-  const markdown: string | undefined = req.body.markdown;
-  const level: Level | undefined = req.body.level;
-  const subject: Subject | undefined = req.body.subject;
+  const userId: string = res.locals.uid;
+  const data: QuestionRequestBody = {
+    title: req.body.title,
+    markdown: req.body.markdown,
+    level: req.body.level,
+    subject: req.body.subject,
+  };
 
-  if (!title || !markdown || !level || !subject) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
-    );
-  }
-
-  const trimmedTitle: string = title.trim();
-  const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "" || trimmedTitle === "") {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_FIELDS
-    );
-  }
-
-  const createdQuestion: Question = await createQuestion(
-    userId,
-    trimmedTitle,
-    trimmedMarkdown,
-    level,
-    subject
-  );
+  // create the question:
+  const createdQuestion: Question = await createQuestion(userId, data);
+  // add the question ID to the user:
+  await addQuestionToUser(userId, createdQuestion._id);
 
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });

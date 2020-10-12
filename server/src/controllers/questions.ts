@@ -8,7 +8,8 @@ import { Question } from "../models";
 import { Level, Subject } from "../utils/constants";
 import titleToSlug from "../utils/titleToSlug";
 import toValidObjectId from "../utils/toValidObjectId";
-import { addQuestionToUser, removeQuestionFromUser } from "./users";
+import { removeQuestionFromUser } from "./users";
+import { QuestionRequestBody } from "../utils/requestBodyTypes";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
@@ -35,20 +36,36 @@ async function getQuestionById(id: string | ObjectId): Promise<Question> {
 }
 
 async function createQuestion(
-  userId: ObjectId,
-  title: string,
-  markdown: string,
-  level: Level,
-  subject: Subject
+  userId: string | ObjectId,
+  data: QuestionRequestBody
 ): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const { title, markdown, level, subject }: QuestionRequestBody = data;
+
+  if (!title || !markdown || !level || !subject) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedTitle: string = title.trim();
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedMarkdown === "" || trimmedTitle === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_FIELDS
+    );
+  }
+
   const doc: Question = {
     _id: new ObjectId(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    title: title,
-    slug: titleToSlug(title),
-    markdown: markdown,
-    userId: userId,
+    title: trimmedTitle,
+    slug: titleToSlug(trimmedTitle),
+    markdown: trimmedMarkdown,
+    userId: userObjectId,
     answerIds: [],
     level: level,
     subject: subject,
@@ -56,10 +73,7 @@ async function createQuestion(
     downvotes: 0,
   };
 
-  await Promise.all([
-    getQuestionsCollection().insertOne(doc),
-    addQuestionToUser(doc._id, userId),
-  ]);
+  await getQuestionsCollection().insertOne(doc);
 
   return doc;
 }
