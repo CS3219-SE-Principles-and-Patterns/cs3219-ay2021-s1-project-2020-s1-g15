@@ -12,9 +12,15 @@ enum Answer {
   INVALID_FIELDS = "Required fields are invalid",
 }
 
+enum User {
+  MISSING_REQUIRED_FIELDS = "Email or password is missing",
+  INVALID_FIELDS = "Email or password is invalid",
+}
+
 class ApiErrorMessage {
   public static readonly Question = Question;
   public static readonly Answer = Answer;
+  public static readonly User = User;
 }
 
 export default ApiErrorMessage;

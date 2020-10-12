@@ -12,7 +12,10 @@ export default async function customErrorHandler(
   next: NextFunction
 ): Promise<unknown> {
   if (err instanceof ApiError) {
-    return res.status(err.status).send(err.message);
+    return res.status(err.status).json({
+      status: err.status,
+      message: err.message,
+    });
   }
 
   // let default express error handler handle other errors

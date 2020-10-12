@@ -1,26 +1,29 @@
-/* eslint-disable no-console */
-import FluidPage from '../../components/layout'
-import { Card, Form, Input, Checkbox, Button, Divider } from 'antd'
+import FluidPage from "../../components/layout";
+import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
-import styles from './login.module.css'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { menuKeys, routesObject } from '../../util'
-import Link from 'next/link'
-import { pageTitles } from '../../util'
+import styles from "./login.module.css";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { menuKeys, routesObject } from "../../util";
+import Link from "next/link";
+import { pageTitles } from "../../util";
+import { useAuth } from "../../components/authentication";
+import router from "next/router";
 
 const Login = (): JSX.Element => {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values)
-  }
+  const { login } = useAuth();
+  const onFinish = async ({ username, password }) => {
+    if (login) {
+      await login(username, password);
+      router.push(`${routesObject.home}`);
+    } // undefined fails silently for now
+  };
 
-  const layout = {}
   return (
     <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
-      {
+      <div className={styles.center}>
         <Card className={styles.card}>
-          <h1>Log in to AnswerLeh</h1>
+          <h1>Login to AnswerLeh</h1>
           <Form
-            {...layout}
             name="normal_login"
             className={styles.loginForm}
             initialValues={{ remember: true }}
@@ -29,7 +32,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="username"
               rules={[
-                { required: true, message: 'Please input your Username!' },
+                { required: true, message: "Please input your Username!" },
               ]}
             >
               <Input
@@ -40,7 +43,7 @@ const Login = (): JSX.Element => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: 'Please input your Password!' },
+                { required: true, message: "Please input your Password!" },
               ]}
             >
               <Input
@@ -65,7 +68,7 @@ const Login = (): JSX.Element => {
                 htmlType="submit"
                 className={styles.loginFormButton}
               >
-                Log in
+                Login
               </Button>
               Or <Link href={routesObject.register}>register now!</Link>
             </Form.Item>
@@ -75,9 +78,9 @@ const Login = (): JSX.Element => {
             Other Log in 1
           </Button>
         </Card>
-      }
+      </div>
     </FluidPage>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
