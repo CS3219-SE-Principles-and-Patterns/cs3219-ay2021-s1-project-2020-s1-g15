@@ -371,7 +371,7 @@ OR
 - Body data (example):
   ```js
   {
-    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "questionId": "5f570273a83adf5417b48026", // ObjectId of question; required!
     "markdown": "hello" // string; required!
   }
   ```
@@ -387,7 +387,10 @@ OR
     "markdown": "hello",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T04:02:59.081Z"
+    "updatedAt": "2020-09-08T04:02:59.081Z",
+    "userId": "5f82feda42ace23941434007",
+    "upvotes": 0,
+    "downvotes": 0
   }
   ```
 
@@ -411,7 +414,6 @@ OR
   ```js
   {
     "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
-    "markdown": "hello" // string; required!
   }
   ```
 
@@ -428,7 +430,10 @@ OR
       "markdown": "hello",
       "questionId": "5f570273a83adf5417b48026",
       "createdAt": "2020-09-08T04:02:59.081Z",
-      "updatedAt": "2020-09-08T04:02:59.081Z"
+      "updatedAt": "2020-09-08T04:02:59.081Z",
+      "userId": "5f82feda42ace23941434007",
+      "upvotes": 0,
+      "downvotes": 0
     },
     // ...
   ]
@@ -444,7 +449,7 @@ OR
 
 - Method: `PUT`
 - URL: `/api/answers/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
   ```js
@@ -460,7 +465,7 @@ OR
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
+    "_id": "5f82ef78bef85211fd9fb314",
     "markdown": "updated",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
@@ -484,7 +489,7 @@ OR
 
 - Method: `DELETE`
 - URL: `/api/answers/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 
 **Success response**:

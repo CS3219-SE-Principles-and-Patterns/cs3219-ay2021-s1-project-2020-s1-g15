@@ -84,6 +84,43 @@ async function updateQuestion(
   return result.value;
 }
 
+async function addAnswerToQuestion(
+  answerId: ObjectId,
+  questionId: string
+): Promise<Question | undefined> {
+  const objectId: ObjectId = new ObjectID(questionId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: objectId },
+    {
+      $addToSet: {
+        answerIds: answerId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
+async function deleteAnswerFromQuestion(
+  answerId: string
+): Promise<Question | undefined> {
+  const objectId: ObjectId = new ObjectID(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { answerIds: objectId },
+    {
+      $pull: {
+        answerIds: objectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  return result.value;
+}
+
 async function deleteQuestion(
   questionId: string,
   userId: ObjectId
@@ -106,5 +143,7 @@ export {
   getQuestionById,
   createQuestion,
   updateQuestion,
+  addAnswerToQuestion,
+  deleteAnswerFromQuestion,
   deleteQuestion,
 };

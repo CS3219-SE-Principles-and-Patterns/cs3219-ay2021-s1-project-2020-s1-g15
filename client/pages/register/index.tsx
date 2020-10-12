@@ -1,11 +1,11 @@
 import FluidPage from "../../components/layout";
 import { Card, Form, Input, Button } from "antd";
 
-import styles from '../login/login.module.css'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { routesObject } from '../../util'
-import Link from 'next/link'
-import { pageTitles } from '../../util'
+import styles from "../login/login.module.css";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { routesObject } from "../../util";
+import Link from "next/link";
+import { pageTitles } from "../../util";
 
 const Register = (): JSX.Element => {
   const onFinish = (values) => {
