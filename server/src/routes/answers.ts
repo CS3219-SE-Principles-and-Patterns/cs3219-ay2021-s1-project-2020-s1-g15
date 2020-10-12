@@ -6,7 +6,7 @@ import {
   createAnswer,
   getAnswersByQuestionId,
   deleteAnswer,
-  updateAnswer
+  updateAnswer,
 } from "../controllers/answers";
 import { Answer } from "../models";
 import ApiError from "../utils/errors/ApiError";

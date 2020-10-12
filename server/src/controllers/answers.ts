@@ -1,4 +1,4 @@
-import { Db, ObjectId, ObjectID } from "mongodb";
+import { ObjectId, ObjectID } from "mongodb";
 
 import {
   getAnswersCollection,
@@ -67,7 +67,7 @@ async function createAnswer(
 
 async function updateAnswer(
   markdown: string,
-  answerId: string,
+  answerId: string
   //userId: ObjectId
 ): Promise<Answer | undefined> {
   const objectId: ObjectId = new ObjectID(answerId);
@@ -93,11 +93,7 @@ async function deleteAnswer(id: string): Promise<boolean> {
     _id: objectId,
   });
 
-
   return result.value != null;
 }
-
-
-
 
 export { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer };
