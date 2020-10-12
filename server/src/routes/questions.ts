@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 
-import HttpStatusCode from "../utils/HttpStatusCode";
 import {
   getQuestions,
   getQuestionById,
@@ -8,13 +7,13 @@ import {
   updateQuestion,
   deleteQuestion,
 } from "../controllers/questions";
-import { Question } from "../models";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { QuestionRequestBody } from "../utils/types";
 import {
   addQuestionToUser,
   removeQuestionFromUser,
 } from "../controllers/users";
+import { Question } from "../models";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import { QuestionRequestBody, HttpStatusCode } from "../utils";
 
 const router: Router = Router();
 
@@ -78,8 +77,8 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const questionId: string = req.params.id;
 
   await Promise.all([
-    deleteQuestion(questionId, userId),
-    removeQuestionFromUser(questionId, userId),
+    deleteQuestion(userId, questionId),
+    removeQuestionFromUser(userId, questionId),
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();

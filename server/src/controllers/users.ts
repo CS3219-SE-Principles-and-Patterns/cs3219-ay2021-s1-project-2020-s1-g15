@@ -3,9 +3,7 @@ import { ObjectId } from "mongodb";
 import { getUsersCollection } from "../services/database";
 import { User } from "../models";
 import { getAuth } from "../services/authentication";
-import ApiError from "../utils/errors/ApiError";
-import HttpStatusCode from "../utils/HttpStatusCode";
-import toValidObjectId from "../utils/toValidObjectId";
+import { HttpStatusCode, ApiError, toValidObjectId } from "../utils";
 
 async function createUser(email: string, password: string): Promise<User> {
   //* used as firebase user UID and `Users` collection _id
@@ -38,8 +36,8 @@ async function createUser(email: string, password: string): Promise<User> {
 }
 
 async function addQuestionToUser(
-  questionId: string | ObjectId,
-  userId: string | ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<User | undefined> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const userObjectId: ObjectId = toValidObjectId(userId);
@@ -58,8 +56,8 @@ async function addQuestionToUser(
 }
 
 async function removeQuestionFromUser(
-  questionId: string | ObjectId,
-  userId: string | ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<User | undefined> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const userObjectId: ObjectId = toValidObjectId(userId);

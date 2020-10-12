@@ -1,13 +1,15 @@
 import { ObjectId } from "mongodb";
 
-import ApiError from "../utils/errors/ApiError";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
-import HttpStatusCode from "../utils/HttpStatusCode";
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
-import titleToSlug from "../utils/titleToSlug";
-import toValidObjectId from "../utils/toValidObjectId";
-import { QuestionRequestBody } from "../utils/types";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  QuestionRequestBody,
+  titleToSlug,
+  toValidObjectId,
+} from "../utils";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {

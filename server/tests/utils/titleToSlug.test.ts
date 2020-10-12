@@ -1,4 +1,4 @@
-import titleToSlug from "../../src/utils/titleToSlug";
+import { titleToSlug } from "../../src/utils";
 
 const TITLE_1 = "This is a NEW question!";
 const TITLE_2 = "Why is 2+2=4?";

@@ -9,9 +9,7 @@ import {
 } from "../controllers/answers";
 import { removeAnswerFromQuestion } from "../controllers/questions";
 import { Answer } from "../models";
-import ApiError from "../utils/errors/ApiError";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
 
 const router: Router = Router();
 

@@ -1,6 +1,6 @@
 import slugify from "slugify";
 
-function titleToSlug(title: string): string {
+export function titleToSlug(title: string): string {
   const strippedTitle = title.replace(/[<>]/g, " ");
 
   return slugify(strippedTitle, {
@@ -9,5 +9,3 @@ function titleToSlug(title: string): string {
     strict: true,
   });
 }
-
-export default titleToSlug;

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
-import ApiError from "./errors/ApiError";
-import HttpStatusCode from "./HttpStatusCode";
+import { ApiError } from "../errors";
+import { HttpStatusCode } from "../constants";
 
 /**
  * Checks if the provided `id` argument is a valid `ObjectId`, and returns
@@ -11,7 +11,7 @@ import HttpStatusCode from "./HttpStatusCode";
  * @param id the id to verify
  * @returns the valid `ObjectId` instance
  */
-function toValidObjectId(id: string | ObjectId): ObjectId {
+export function toValidObjectId(id: string | ObjectId): ObjectId {
   if (!ObjectId.isValid(id)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
@@ -21,5 +21,3 @@ function toValidObjectId(id: string | ObjectId): ObjectId {
 
   return new ObjectId(id);
 }
-
-export default toValidObjectId;

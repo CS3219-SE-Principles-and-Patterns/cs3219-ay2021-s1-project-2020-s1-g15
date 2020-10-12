@@ -1,6 +1,6 @@
-import HttpStatusCode from "../HttpStatusCode";
+import { HttpStatusCode } from "../constants";
 
-class ApiError extends Error {
+export class ApiError extends Error {
   public status: Readonly<HttpStatusCode>;
 
   /**
@@ -12,5 +12,3 @@ class ApiError extends Error {
     this.status = status;
   }
 }
-
-export default ApiError;

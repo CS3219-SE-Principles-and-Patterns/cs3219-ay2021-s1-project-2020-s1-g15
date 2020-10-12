@@ -1,11 +1,10 @@
 import request from "supertest";
-import { ObjectId, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import server from "../../src/services/server";
-import HttpStatusCode from "../../src/utils/HttpStatusCode";
 import { initDb, closeDb } from "../../src/services/database";
 import { createQuestion } from "../../src/controllers/questions";
-import { Level, Subject } from "../../src/utils/constants";
+import { HttpStatusCode, Level, Subject } from "../../src/utils";
 
 const API_ENDPOINT = "/api/questions";
 

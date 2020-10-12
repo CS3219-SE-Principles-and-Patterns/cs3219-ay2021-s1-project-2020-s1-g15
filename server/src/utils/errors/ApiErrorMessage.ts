@@ -13,14 +13,13 @@ enum Answer {
 }
 
 enum User {
+  NOT_AUTHENTICATED = "User authentication failed",
   MISSING_REQUIRED_FIELDS = "Email or password is missing",
   INVALID_FIELDS = "Email or password is invalid",
 }
 
-class ApiErrorMessage {
+export class ApiErrorMessage {
   public static readonly Question = Question;
   public static readonly Answer = Answer;
   public static readonly User = User;
 }
-
-export default ApiErrorMessage;
