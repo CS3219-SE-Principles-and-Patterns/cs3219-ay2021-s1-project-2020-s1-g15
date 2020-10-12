@@ -29,18 +29,20 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: true,
   loading: false,
 });
-
+// auth is empty on each fast refresh
 export const AuthProvider: FC<props> = ({ auth, children }) => {
+  console.log(auth);
   const [user, setUser] = useState<{} | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUserFromCookies = async () => {
+    const loadFirebaseFromLocalStorage = async () => {
+      setLoading(true);
       setLoading(false);
     };
-    loadUserFromCookies();
-  }, []);
+    loadFirebaseFromLocalStorage();
+  }, [auth]);
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);

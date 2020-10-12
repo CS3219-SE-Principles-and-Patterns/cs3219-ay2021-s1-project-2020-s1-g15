@@ -2,30 +2,13 @@ import "codemirror/lib/codemirror.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import NProgress from "nprogress";
 import Router from "next/router";
-import firebase from "firebase/app";
-import "firebase/auth";
+
 import "./antd.less";
 import "./app.css";
 
 import { AuthProvider } from "../components/authentication";
-import { FC } from "react";
-
-// firebase must only be initialised in client, not server:
-let auth: firebase.auth.Auth;
-if (typeof window !== "undefined" && !firebase.apps.length) {
-  firebase.initializeApp({
-    apiKey: "AIzaSyBmao_BVprF9zU2_FFIZZDxIEvuqZ2HWus",
-    authDomain: "answerleh.firebaseapp.com",
-    databaseURL: "https://answerleh.firebaseio.com",
-    projectId: "answerleh",
-    storageBucket: "answerleh.appspot.com",
-    messagingSenderId: "896806835090",
-    appId: "1:896806835090:web:dd3713e71eb0343326674b",
-  });
-  auth = firebase.auth();
-  //console.log(auth);
-}
-
+import auth from "./firebase.config";
+import { useEffect, useState } from "react";
 //TODO: loading page
 //Binding events.
 /*
@@ -35,11 +18,43 @@ Router.events.on("routeChangeError", () => NProgress.done());
 */
 // This default export is required in a new `pages/_app.js` file.
 const MyApp = ({ Component, pageProps }) => {
+  /*
+  const [auth, setAuth] = useState();
+  useEffect(() => {
+    const getAuth = async () => {
+      const res = await fetch("/api/auth", {
+        method: "GET",
+        headers: new Headers({}),
+        credentials: "same-origin",
+      });
+      console.log(res);
+      const { auth } = await res.json();
+      // this auth is returning json
+      setAuth(auth);
+    };
+    getAuth();
+  }, []);
+       */
   return (
     <AuthProvider auth={auth}>
       <Component {...pageProps} />
     </AuthProvider>
   );
 };
+/*
+// This gets called on every request
+export async function getServerSideProps() {
+  // Fetch data from external API
+  //const res = await fetch(`${process.env.localhost}questions/`)
+  //const data = await res.json()
+  const data = fetch("/api/auth", {
+    method: "GET",
+    headers: new Headers({ "Content-Type": "application/json" }),
+    credentials: "same-origin",
+  }).then((res) => res.json());
+
+  // Pass data to the page via props
+  return { props: { auth: data } };
+}*/
 
 export default MyApp;
