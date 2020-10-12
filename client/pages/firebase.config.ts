@@ -13,6 +13,7 @@ const config = {
   appId: "1:896806835090:web:dd3713e71eb0343326674b",
 };
 let auth: firebase.auth.Auth;
+console.log(firebase.apps.length);
 // each page refresh gives me a new instance
 if (!firebase.apps.length) {
   firebase.initializeApp(config);

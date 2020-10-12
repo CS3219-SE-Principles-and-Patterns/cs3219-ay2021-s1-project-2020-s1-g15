@@ -29,7 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: true,
   loading: false,
 });
-// auth is empty on each fast refresh
+
 export const AuthProvider: FC<props> = ({ auth, children }) => {
   console.log(auth);
   const [user, setUser] = useState<{} | undefined>(undefined);
@@ -47,6 +47,12 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
     setIsAuthenticated(true);
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: new Headers({ "content-type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify(credential.credential?.toJSON()),
+    });
     return credential;
   };
 
