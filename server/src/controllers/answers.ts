@@ -5,7 +5,6 @@ import {
   getQuestionsCollection,
 } from "../services/database";
 import { Answer, Question } from "../models";
-import { getQuestionById } from "./questions";
 import {
   HttpStatusCode,
   ApiError,
@@ -49,15 +48,6 @@ async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
   }
 
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  const question = await getQuestionById(questionObjectId);
-
-  if (question === null) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Question.NOT_FOUND
-    );
-  }
-
   const trimmedMarkdown: string = markdown.trim();
   if (trimmedMarkdown === "") {
     throw new ApiError(

@@ -9,6 +9,7 @@ import {
 } from "../controllers/answers";
 import {
   addAnswerToQuestion,
+  getQuestionById,
   removeAnswerFromQuestion,
 } from "../controllers/questions";
 import { Answer } from "../models";
@@ -36,6 +37,9 @@ router.post("/", async (req: Request, res: Response) => {
     questionId: req.body.questionId,
     markdown: req.body.markdown,
   };
+
+  // try to get question by question ID to check if question exists:
+  await getQuestionById(data.questionId as string);
 
   // create the answer:
   const createdAnswer: Answer = await createAnswer(data);
