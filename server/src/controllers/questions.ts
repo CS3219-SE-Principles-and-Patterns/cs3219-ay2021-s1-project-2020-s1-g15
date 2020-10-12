@@ -5,7 +5,6 @@ import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
-import { Level, Subject } from "../utils/constants";
 import titleToSlug from "../utils/titleToSlug";
 import toValidObjectId from "../utils/toValidObjectId";
 import { removeQuestionFromUser } from "./users";
@@ -79,25 +78,40 @@ async function createQuestion(
 }
 
 async function updateQuestion(
-  userId: ObjectId,
-  questionId: string,
-  title: string,
-  markdown: string,
-  level: Level,
-  subject: Subject
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(questionId);
+  userId: string | ObjectId,
+  questionId: string | ObjectId,
+  data: QuestionRequestBody
+): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const { title, markdown, level, subject }: QuestionRequestBody = data;
+
+  if (!title || !markdown || !level || !subject) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedTitle: string = title.trim();
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedTitle === "" || trimmedMarkdown === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_FIELDS
+    );
+  }
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
-      _id: objectId,
-      userId: userId, // make sure user can only update his own question
+      _id: questionObjectId,
+      userId: userObjectId, // make sure user can only update his own question
     },
     {
       $set: {
-        title: title,
-        slug: titleToSlug(title),
-        markdown: markdown,
+        title: trimmedTitle,
+        slug: titleToSlug(trimmedTitle),
+        markdown: trimmedMarkdown,
         level: level,
         subject: subject,
         updatedAt: new Date(),
@@ -106,7 +120,15 @@ async function updateQuestion(
     { returnOriginal: false }
   );
 
-  return result.value;
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return updatedQuestion;
 }
 
 async function addAnswerToQuestion(
