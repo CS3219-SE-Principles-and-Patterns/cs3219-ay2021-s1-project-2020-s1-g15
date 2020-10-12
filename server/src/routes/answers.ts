@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { deleteAnswerFromQuestion } from "../controllers/questions";
 
 import {
   createAnswer,
@@ -8,10 +7,9 @@ import {
   deleteAnswer,
   updateAnswer,
 } from "../controllers/answers";
+import { removeAnswerFromQuestion } from "../controllers/questions";
 import { Answer } from "../models";
-import ApiError from "../utils/errors/ApiError";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
 
 const router: Router = Router();
 
@@ -134,7 +132,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     );
   }
 
-  await deleteAnswerFromQuestion(answerId);
+  await removeAnswerFromQuestion(answerId);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });

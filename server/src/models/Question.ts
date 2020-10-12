@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 import { Util } from "./Util";
-import { Subject, Level } from "../utils/constants";
+import { Subject, Level } from "../utils";
 
 export interface Question extends Util {
   title: string; // title of the question, created by user

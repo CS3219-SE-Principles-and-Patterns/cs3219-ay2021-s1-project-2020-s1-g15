@@ -2,9 +2,14 @@ import { ObjectId } from "mongodb";
 
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
-import { Level, Subject } from "../utils/constants";
-import titleToSlug from "../utils/titleToSlug";
-import { addQuestionToUser, removeQuestionFromUser } from "./users";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  QuestionRequestBody,
+  titleToSlug,
+  toValidObjectId,
+} from "../utils";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
@@ -13,31 +18,54 @@ async function getQuestions(): Promise<Question[]> {
   return questions;
 }
 
-async function getQuestionById(id: string): Promise<Question | null> {
-  const objectId: ObjectId = new ObjectId(id);
+async function getQuestionById(id: string | ObjectId): Promise<Question> {
+  const questionObjectId: ObjectId = toValidObjectId(id);
 
   const question: Question | null = await getQuestionsCollection().findOne({
-    _id: objectId,
+    _id: questionObjectId,
   });
+
+  if (question == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
 
   return question;
 }
 
 async function createQuestion(
-  userId: ObjectId,
-  title: string,
-  markdown: string,
-  level: Level,
-  subject: Subject
+  userId: string | ObjectId,
+  data: QuestionRequestBody
 ): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const { title, markdown, level, subject }: QuestionRequestBody = data;
+
+  if (!title || !markdown || !level || !subject) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedTitle: string = title.trim();
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedMarkdown === "" || trimmedTitle === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_FIELDS
+    );
+  }
+
   const doc: Question = {
     _id: new ObjectId(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    title: title,
-    slug: titleToSlug(title),
-    markdown: markdown,
-    userId: userId,
+    title: trimmedTitle,
+    slug: titleToSlug(trimmedTitle),
+    markdown: trimmedMarkdown,
+    userId: userObjectId,
     answerIds: [],
     level: level,
     subject: subject,
@@ -45,34 +73,46 @@ async function createQuestion(
     downvotes: 0,
   };
 
-  await Promise.all([
-    getQuestionsCollection().insertOne(doc),
-    addQuestionToUser(doc._id, userId),
-  ]);
+  await getQuestionsCollection().insertOne(doc);
 
   return doc;
 }
 
 async function updateQuestion(
-  userId: ObjectId,
-  questionId: string,
-  title: string,
-  markdown: string,
-  level: Level,
-  subject: Subject
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(questionId);
+  userId: string | ObjectId,
+  questionId: string | ObjectId,
+  data: QuestionRequestBody
+): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const { title, markdown, level, subject }: QuestionRequestBody = data;
+
+  if (!title || !markdown || !level || !subject) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedTitle: string = title.trim();
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedTitle === "" || trimmedMarkdown === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_FIELDS
+    );
+  }
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
-      _id: objectId,
-      userId: userId, // make sure user can only update his own question
+      _id: questionObjectId,
+      userId: userObjectId, // make sure user can only update his own question
     },
     {
       $set: {
-        title: title,
-        slug: titleToSlug(title),
-        markdown: markdown,
+        title: trimmedTitle,
+        slug: titleToSlug(trimmedTitle),
+        markdown: trimmedMarkdown,
         level: level,
         subject: subject,
         updatedAt: new Date(),
@@ -81,61 +121,93 @@ async function updateQuestion(
     { returnOriginal: false }
   );
 
-  return result.value;
-}
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
 
-async function addAnswerToQuestion(
-  answerId: ObjectId,
-  questionId: string
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(questionId);
-
-  const result = await getQuestionsCollection().findOneAndUpdate(
-    { _id: objectId },
-    {
-      $addToSet: {
-        answerIds: answerId,
-      },
-    },
-    { returnOriginal: false }
-  );
-
-  return result.value;
-}
-
-async function deleteAnswerFromQuestion(
-  answerId: string
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(answerId);
-
-  const result = await getQuestionsCollection().findOneAndUpdate(
-    { answerIds: objectId },
-    {
-      $pull: {
-        answerIds: objectId,
-      },
-    },
-    { returnOriginal: false }
-  );
-
-  return result.value;
+  return updatedQuestion;
 }
 
 async function deleteQuestion(
-  questionId: string,
-  userId: ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<boolean> {
-  const questionObjectId = new ObjectId(questionId);
+  const userObjectId = toValidObjectId(userId);
+  const questionObjectId = toValidObjectId(questionId);
 
-  const [result] = await Promise.all([
-    getQuestionsCollection().findOneAndDelete({
-      _id: questionObjectId,
-      userId: userId, // make sure user can only delete his own question
-    }),
-    removeQuestionFromUser(questionObjectId, userId),
-  ]);
+  const result = await getQuestionsCollection().findOneAndDelete({
+    _id: questionObjectId,
+    userId: userObjectId, // make sure user can only delete his own question
+  });
 
-  return result.value != null;
+  const originalQuestion: Question | undefined = result.value;
+  const isSuccessful: boolean = originalQuestion != null;
+  if (!isSuccessful) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return isSuccessful;
+}
+
+async function addAnswerToQuestion(
+  questionId: string | ObjectId,
+  answerId: string | ObjectId
+): Promise<Question> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: questionObjectId },
+    {
+      $addToSet: {
+        answerIds: answerObjectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return updatedQuestion;
+}
+
+async function removeAnswerFromQuestion(
+  answerId: string | ObjectId
+): Promise<Question> {
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { answerIds: answerObjectId },
+    {
+      $pull: {
+        answerIds: answerObjectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return updatedQuestion;
 }
 
 export {
@@ -143,7 +215,7 @@ export {
   getQuestionById,
   createQuestion,
   updateQuestion,
-  addAnswerToQuestion,
-  deleteAnswerFromQuestion,
   deleteQuestion,
+  addAnswerToQuestion,
+  removeAnswerFromQuestion,
 };

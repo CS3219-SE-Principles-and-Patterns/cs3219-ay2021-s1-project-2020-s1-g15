@@ -3,8 +3,7 @@ import { ObjectId } from "mongodb";
 import { getUsersCollection } from "../services/database";
 import { User } from "../models";
 import { getAuth } from "../services/authentication";
-import ApiError from "../utils/errors/ApiError";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import { HttpStatusCode, ApiError, toValidObjectId } from "../utils";
 
 async function createUser(email: string, password: string): Promise<User> {
   //* used as firebase user UID and `Users` collection _id
@@ -37,14 +36,17 @@ async function createUser(email: string, password: string): Promise<User> {
 }
 
 async function addQuestionToUser(
-  questionId: ObjectId,
-  uid: ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<User | undefined> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
   const result = await getUsersCollection().findOneAndUpdate(
-    { _id: uid },
+    { _id: userObjectId },
     {
       $addToSet: {
-        questionIds: questionId,
+        questionIds: questionObjectId,
       },
     },
     { returnOriginal: false }
@@ -54,14 +56,17 @@ async function addQuestionToUser(
 }
 
 async function removeQuestionFromUser(
-  questionId: ObjectId,
-  uid: ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<User | undefined> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
   const result = await getUsersCollection().findOneAndUpdate(
-    { _id: uid },
+    { _id: userObjectId },
     {
       $pull: {
-        questionIds: questionId,
+        questionIds: questionObjectId,
       },
     },
     { returnOriginal: false }

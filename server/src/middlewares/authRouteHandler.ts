@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import { getAuth } from "../services/authentication";
-import ApiError from "../utils/errors/ApiError";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
 
 /**
  * Middleware for authenticated routes. This middleware will extract the `uid`
@@ -18,7 +17,10 @@ async function verifyUserAuth(
 ): Promise<void> {
   const authHeader: string | undefined = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    throw new ApiError(HttpStatusCode.UNAUTHORIZED, "User not authorised");
+    throw new ApiError(
+      HttpStatusCode.UNAUTHORIZED,
+      ApiErrorMessage.User.NOT_AUTHENTICATED
+    );
   }
 
   const idToken: string = authHeader.split(" ")[1];
@@ -31,7 +33,10 @@ async function verifyUserAuth(
     next();
   } catch (error) {
     // assume token is invalid for any errors
-    throw new ApiError(HttpStatusCode.UNAUTHORIZED, "User not authorised");
+    throw new ApiError(
+      HttpStatusCode.UNAUTHORIZED,
+      ApiErrorMessage.User.NOT_AUTHENTICATED
+    );
   }
 }
 

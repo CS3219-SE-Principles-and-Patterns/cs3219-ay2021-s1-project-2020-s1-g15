@@ -1,9 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import { User } from "../models";
-import ApiError from "../utils/errors/ApiError";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
 import { createUser } from "../controllers/users";
 
 const router: Router = Router();

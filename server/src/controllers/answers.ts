@@ -6,9 +6,7 @@ import {
 } from "../services/database";
 import { Answer, Question } from "../models";
 import { addAnswerToQuestion, getQuestionById } from "./questions";
-import ApiError from "../utils/errors/ApiError";
-import HttpStatusCode from "../utils/HttpStatusCode";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
+import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
 
 async function getAnswersByQuestionId(questionId: string): Promise<Answer[]> {
   const questionObjectId: ObjectId = new ObjectId(questionId);
@@ -58,7 +56,7 @@ async function createAnswer(
 
   // Note: await both promises concurrently
   await Promise.all([
-    addAnswerToQuestion(doc._id, questionId),
+    addAnswerToQuestion(questionId, doc._id),
     getAnswersCollection().insertOne(doc),
   ]);
 
