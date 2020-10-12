@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ObjectId, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import {
   getQuestions,

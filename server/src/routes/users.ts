@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-// import { ObjectId, ObjectId } from "mongodb";
 
 import { User } from "../models";
 import ApiError from "../utils/errors/ApiError";
