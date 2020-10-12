@@ -7,7 +7,6 @@ import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import titleToSlug from "../utils/titleToSlug";
 import toValidObjectId from "../utils/toValidObjectId";
-import { removeQuestionFromUser } from "./users";
 import { QuestionRequestBody } from "../utils/requestBodyTypes";
 
 // TODO: add pagination/search/filter in the future
@@ -169,20 +168,27 @@ async function deleteAnswerFromQuestion(
 }
 
 async function deleteQuestion(
-  questionId: string,
-  userId: ObjectId
+  userId: string | ObjectId,
+  questionId: string | ObjectId
 ): Promise<boolean> {
-  const questionObjectId = new ObjectId(questionId);
+  const userObjectId = toValidObjectId(userId);
+  const questionObjectId = toValidObjectId(questionId);
 
-  const [result] = await Promise.all([
-    getQuestionsCollection().findOneAndDelete({
-      _id: questionObjectId,
-      userId: userId, // make sure user can only delete his own question
-    }),
-    removeQuestionFromUser(questionObjectId, userId),
-  ]);
+  const result = await getQuestionsCollection().findOneAndDelete({
+    _id: questionObjectId,
+    userId: userObjectId, // make sure user can only delete his own question
+  });
 
-  return result.value != null;
+  const originalQuestion: Question | undefined = result.value;
+  const isSuccessful: boolean = originalQuestion != null;
+  if (!isSuccessful) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return isSuccessful;
 }
 
 export {

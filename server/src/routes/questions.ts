@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
+import HttpStatusCode from "../utils/HttpStatusCode";
 import {
   getQuestions,
   getQuestionById,
@@ -9,12 +9,12 @@ import {
   deleteQuestion,
 } from "../controllers/questions";
 import { Question } from "../models";
-import ApiError from "../utils/errors/ApiError";
-import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
-import HttpStatusCode from "../utils/HttpStatusCode";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { QuestionRequestBody } from "../utils/requestBodyTypes";
-import { addQuestionToUser } from "../controllers/users";
+import {
+  addQuestionToUser,
+  removeQuestionFromUser,
+} from "../controllers/users";
 
 const router: Router = Router();
 
@@ -74,22 +74,13 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
 // DELETE request
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: ObjectId = new ObjectId(res.locals.uid);
+  const userId: string = res.locals.uid;
   const questionId: string = req.params.id;
-  if (!ObjectId.isValid(questionId)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_ID
-    );
-  }
 
-  const isSuccessful: boolean = await deleteQuestion(questionId, userId);
-  if (!isSuccessful) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Question.NOT_FOUND
-    );
-  }
+  await Promise.all([
+    deleteQuestion(questionId, userId),
+    removeQuestionFromUser(questionId, userId),
+  ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });
