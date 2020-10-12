@@ -13,6 +13,7 @@ enum Answer {
 }
 
 enum User {
+  NOT_FOUND = "User not found",
   NOT_AUTHENTICATED = "User authentication failed",
   MISSING_REQUIRED_FIELDS = "Email or password is missing",
   INVALID_FIELDS = "Email or password is invalid",
