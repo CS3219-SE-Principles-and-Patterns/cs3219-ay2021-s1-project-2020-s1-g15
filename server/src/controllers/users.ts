@@ -1,4 +1,4 @@
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import { getUsersCollection } from "../services/database";
 import { User } from "../models";
@@ -8,7 +8,7 @@ import HttpStatusCode from "../utils/HttpStatusCode";
 
 async function createUser(email: string, password: string): Promise<User> {
   //* used as firebase user UID and `Users` collection _id
-  const uid: ObjectId = new ObjectID();
+  const uid: ObjectId = new ObjectId();
 
   // try to create the firebase user:
   try {

@@ -1,4 +1,4 @@
-import { ObjectId, ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
@@ -14,7 +14,7 @@ async function getQuestions(): Promise<Question[]> {
 }
 
 async function getQuestionById(id: string): Promise<Question | null> {
-  const objectId: ObjectId = new ObjectID(id);
+  const objectId: ObjectId = new ObjectId(id);
 
   const question: Question | null = await getQuestionsCollection().findOne({
     _id: objectId,
@@ -61,7 +61,7 @@ async function updateQuestion(
   level: Level,
   subject: Subject
 ): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectID(questionId);
+  const objectId: ObjectId = new ObjectId(questionId);
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
@@ -88,7 +88,7 @@ async function addAnswerToQuestion(
   answerId: ObjectId,
   questionId: string
 ): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectID(questionId);
+  const objectId: ObjectId = new ObjectId(questionId);
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     { _id: objectId },
@@ -106,7 +106,7 @@ async function addAnswerToQuestion(
 async function deleteAnswerFromQuestion(
   answerId: string
 ): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectID(answerId);
+  const objectId: ObjectId = new ObjectId(answerId);
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     { answerIds: objectId },
@@ -125,7 +125,7 @@ async function deleteQuestion(
   questionId: string,
   userId: ObjectId
 ): Promise<boolean> {
-  const questionObjectId = new ObjectID(questionId);
+  const questionObjectId = new ObjectId(questionId);
 
   const [result] = await Promise.all([
     getQuestionsCollection().findOneAndDelete({

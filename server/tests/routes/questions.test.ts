@@ -1,5 +1,5 @@
 import request from "supertest";
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId, ObjectId } from "mongodb";
 
 import server from "../../src/services/server";
 import HttpStatusCode from "../../src/utils/HttpStatusCode";
@@ -10,7 +10,7 @@ import { Level, Subject } from "../../src/utils/constants";
 const API_ENDPOINT = "/api/questions";
 
 const INVALID_ID = "123";
-const VALID_ID_UNUSED = new ObjectID();
+const VALID_ID_UNUSED = new ObjectId();
 const INVALID_DATA = { markdown: "" };
 const VALID_DATA_1 = {
   title: "my title",
