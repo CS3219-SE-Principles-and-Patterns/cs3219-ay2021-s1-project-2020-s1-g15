@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { deleteAnswerFromQuestion } from "../controllers/questions";
 
 import {
@@ -26,7 +26,7 @@ router.get("/", async (req: Request, res: Response) => {
     );
   }
 
-  if (!ObjectID.isValid(questionId)) {
+  if (!ObjectId.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
@@ -42,7 +42,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   const markdown: string | undefined = req.body.markdown;
   const questionId: string | undefined = req.body.questionId;
-  const userId: ObjectId | undefined = new ObjectID(); // TODO
+  const userId: ObjectId | undefined = new ObjectId(); // TODO
 
   if (!markdown || !questionId) {
     throw new ApiError(
@@ -51,7 +51,7 @@ router.post("/", async (req: Request, res: Response) => {
     );
   }
 
-  if (!ObjectID.isValid(questionId)) {
+  if (!ObjectId.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
@@ -78,7 +78,7 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT request - update an answer
 router.put("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id; //might ned to change to answerId
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Answer.INVALID_ID
@@ -119,7 +119,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 // DELETE request - delete an answer
 router.delete("/:id", async (req: Request, res: Response) => {
   const answerId: string = req.params.id;
-  if (!ObjectID.isValid(answerId)) {
+  if (!ObjectId.isValid(answerId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Answer.INVALID_ID

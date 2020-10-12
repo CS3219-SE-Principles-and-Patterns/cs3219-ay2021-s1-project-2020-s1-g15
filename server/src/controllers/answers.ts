@@ -1,4 +1,4 @@
-import { ObjectId, ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import {
   getAnswersCollection,
@@ -11,7 +11,7 @@ import HttpStatusCode from "../utils/HttpStatusCode";
 import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
 
 async function getAnswersByQuestionId(questionId: string): Promise<Answer[]> {
-  const questionObjectId: ObjectId = new ObjectID(questionId);
+  const questionObjectId: ObjectId = new ObjectId(questionId);
 
   const question: Question | null = await getQuestionsCollection().findOne({
     _id: questionObjectId,
@@ -70,7 +70,7 @@ async function updateAnswer(
   answerId: string
   //userId: ObjectId
 ): Promise<Answer | undefined> {
-  const objectId: ObjectId = new ObjectID(answerId);
+  const objectId: ObjectId = new ObjectId(answerId);
 
   const result = await getAnswersCollection().findOneAndUpdate(
     { _id: objectId },
@@ -87,7 +87,7 @@ async function updateAnswer(
 }
 
 async function deleteAnswer(id: string): Promise<boolean> {
-  const objectId: ObjectId = new ObjectID(id);
+  const objectId: ObjectId = new ObjectId(id);
 
   const result = await getAnswersCollection().findOneAndDelete({
     _id: objectId,

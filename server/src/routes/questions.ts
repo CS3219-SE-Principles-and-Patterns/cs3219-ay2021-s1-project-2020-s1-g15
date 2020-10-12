@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId, ObjectId } from "mongodb";
 
 import {
   getQuestions,
@@ -27,7 +27,7 @@ router.get("/", async (_, res: Response) => {
 // GET request - get a single question by its ID
 router.get("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
-  if (!ObjectID.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
@@ -47,7 +47,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 // POST request - create a question
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: ObjectId = new ObjectID(res.locals.uid);
+  const userId: ObjectId = new ObjectId(res.locals.uid);
   const title: string | undefined = req.body.title;
   const markdown: string | undefined = req.body.markdown;
   const level: Level | undefined = req.body.level;
@@ -82,9 +82,9 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 
 // PUT request - update a question
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: ObjectId = new ObjectID(res.locals.uid);
+  const userId: ObjectId = new ObjectId(res.locals.uid);
   const questionId: string = req.params.id;
-  if (!ObjectID.isValid(questionId)) {
+  if (!ObjectId.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
@@ -132,9 +132,9 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
 // DELETE request
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: ObjectId = new ObjectID(res.locals.uid);
+  const userId: ObjectId = new ObjectId(res.locals.uid);
   const questionId: string = req.params.id;
-  if (!ObjectID.isValid(questionId)) {
+  if (!ObjectId.isValid(questionId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_ID
