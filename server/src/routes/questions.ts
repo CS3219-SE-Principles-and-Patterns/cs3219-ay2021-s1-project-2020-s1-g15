@@ -27,20 +27,8 @@ router.get("/", async (_, res: Response) => {
 // GET request - get a single question by its ID
 router.get("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
-  if (!ObjectId.isValid(id)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_ID
-    );
-  }
 
-  const question: Question | null = await getQuestionById(id);
-  if (question == null) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Question.NOT_FOUND
-    );
-  }
+  const question: Question = await getQuestionById(id);
 
   return res.status(HttpStatusCode.OK).json(question);
 });

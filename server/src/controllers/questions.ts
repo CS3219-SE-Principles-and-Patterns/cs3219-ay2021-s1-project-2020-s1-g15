@@ -1,9 +1,13 @@
 import { ObjectId } from "mongodb";
 
+import ApiError from "../utils/errors/ApiError";
+import ApiErrorMessage from "../utils/errors/ApiErrorMessage";
+import HttpStatusCode from "../utils/HttpStatusCode";
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import { Level, Subject } from "../utils/constants";
 import titleToSlug from "../utils/titleToSlug";
+import toValidObjectId from "../utils/toValidObjectId";
 import { addQuestionToUser, removeQuestionFromUser } from "./users";
 
 // TODO: add pagination/search/filter in the future
@@ -13,12 +17,19 @@ async function getQuestions(): Promise<Question[]> {
   return questions;
 }
 
-async function getQuestionById(id: string): Promise<Question | null> {
-  const objectId: ObjectId = new ObjectId(id);
+async function getQuestionById(id: string | ObjectId): Promise<Question> {
+  const questionObjectId: ObjectId = toValidObjectId(id);
 
   const question: Question | null = await getQuestionsCollection().findOne({
-    _id: objectId,
+    _id: questionObjectId,
   });
+
+  if (question == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
 
   return question;
 }
