@@ -448,11 +448,12 @@ OR
 #### Update an answer
 
 - Method: `PUT`
-- URL: `/api/answers/`
+- URL: `/api/answers/:id`
+- URL parameters:
+  - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
   ```js
   {
-    "id" : "5f82ef78bef85211fd9fb314"
     "markdown": "updated" // string; required!
   }
   ```
@@ -487,13 +488,9 @@ OR
 #### Delete an answer
 
 - Method: `DELETE`
-- URL: `/api/answers/`
-- Body data (example):
-```js
-  {
-    answerId: "5f82feda42ace23941434008"
-  }
-```
+- URL: `/api/answers/:id`
+- URL parameters:
+  - `id`: the `ObjectId` of the MongoDB document
 
 **Success response**:
 

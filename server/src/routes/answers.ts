@@ -75,9 +75,9 @@ router.post("/", async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdAnswer);
 });
 
-//PUT request - update an answer
-router.put("/", async (req: Request, res: Response) => {
-  const id: string = req.body.id; //might ned to change to answerId
+// PUT request - update an answer
+router.put("/:id", async (req: Request, res: Response) => {
+  const id: string = req.params.id; //might ned to change to answerId
   if (!ObjectID.isValid(id)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
@@ -116,9 +116,9 @@ router.put("/", async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
 
-//DELETE request - delete an answer
-router.delete("/", async (req: Request, res: Response) => {
-  const answerId: string = req.body.answerId;
+// DELETE request - delete an answer
+router.delete("/:id", async (req: Request, res: Response) => {
+  const answerId: string = req.params.answerId;
   if (!ObjectID.isValid(answerId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
