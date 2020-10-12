@@ -6,10 +6,17 @@ import {
 } from "../services/database";
 import { Answer, Question } from "../models";
 import { addAnswerToQuestion, getQuestionById } from "./questions";
-import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  toValidObjectId,
+} from "../utils";
 
-async function getAnswersByQuestionId(questionId: string): Promise<Answer[]> {
-  const questionObjectId: ObjectId = new ObjectId(questionId);
+async function getAnswersByQuestionId(
+  questionId: string | ObjectId
+): Promise<Answer[]> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
 
   const question: Question | null = await getQuestionsCollection().findOne({
     _id: questionObjectId,

@@ -15,21 +15,7 @@ const router: Router = Router();
 
 // GET request - get all answers by question ID
 router.get("/", async (req: Request, res: Response) => {
-  const questionId: string | undefined = req.body.questionId;
-
-  if (!questionId) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.MISSING_REQUIRED_FIELDS
-    );
-  }
-
-  if (!ObjectId.isValid(questionId)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_ID
-    );
-  }
+  const questionId: string = req.body.questionId;
 
   const answers: Answer[] = await getAnswersByQuestionId(questionId);
 
