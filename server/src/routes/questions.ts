@@ -10,7 +10,7 @@ import {
 } from "../controllers/questions";
 import { Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { QuestionRequestBody } from "../utils/requestBodyTypes";
+import { QuestionRequestBody } from "../utils/types";
 import {
   addQuestionToUser,
   removeQuestionFromUser,

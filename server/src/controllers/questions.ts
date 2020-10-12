@@ -7,7 +7,7 @@ import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import titleToSlug from "../utils/titleToSlug";
 import toValidObjectId from "../utils/toValidObjectId";
-import { QuestionRequestBody } from "../utils/requestBodyTypes";
+import { QuestionRequestBody } from "../utils/types";
 
 // TODO: add pagination/search/filter in the future
 async function getQuestions(): Promise<Question[]> {
