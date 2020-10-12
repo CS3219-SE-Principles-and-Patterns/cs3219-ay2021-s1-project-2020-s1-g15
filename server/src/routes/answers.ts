@@ -7,9 +7,17 @@ import {
   deleteAnswer,
   updateAnswer,
 } from "../controllers/answers";
-import { removeAnswerFromQuestion } from "../controllers/questions";
+import {
+  addAnswerToQuestion,
+  removeAnswerFromQuestion,
+} from "../controllers/questions";
 import { Answer } from "../models";
-import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  AnswerRequestBody,
+} from "../utils";
 
 const router: Router = Router();
 
@@ -24,37 +32,16 @@ router.get("/", async (req: Request, res: Response) => {
 
 // POST request - create an answer
 router.post("/", async (req: Request, res: Response) => {
-  const markdown: string | undefined = req.body.markdown;
-  const questionId: string | undefined = req.body.questionId;
-  const userId: ObjectId | undefined = new ObjectId(); // TODO
+  const data: AnswerRequestBody = {
+    questionId: req.body.questionId,
+    markdown: req.body.markdown,
+  };
 
-  if (!markdown || !questionId) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.MISSING_REQUIRED_FIELDS
-    );
-  }
+  // create the answer:
+  const createdAnswer: Answer = await createAnswer(data);
 
-  if (!ObjectId.isValid(questionId)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_ID
-    );
-  }
-
-  const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "") {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.INVALID_FIELDS
-    );
-  }
-
-  const createdAnswer: Answer = await createAnswer(
-    trimmedMarkdown,
-    questionId,
-    userId
-  );
+  // add answer ID to the question:
+  await addAnswerToQuestion(createdAnswer.questionId, createdAnswer._id);
 
   return res.status(HttpStatusCode.CREATED).json(createdAnswer);
 });

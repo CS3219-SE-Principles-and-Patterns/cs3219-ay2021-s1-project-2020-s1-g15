@@ -5,12 +5,13 @@ import {
   getQuestionsCollection,
 } from "../services/database";
 import { Answer, Question } from "../models";
-import { addAnswerToQuestion, getQuestionById } from "./questions";
+import { getQuestionById } from "./questions";
 import {
   HttpStatusCode,
   ApiError,
   ApiErrorMessage,
   toValidObjectId,
+  AnswerRequestBody,
 } from "../utils";
 
 async function getAnswersByQuestionId(
@@ -37,12 +38,18 @@ async function getAnswersByQuestionId(
   return answers;
 }
 
-async function createAnswer(
-  markdown: string,
-  questionId: string,
-  userId: ObjectId
-): Promise<Answer> {
-  const question = await getQuestionById(questionId);
+async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
+  const { questionId, markdown }: AnswerRequestBody = data;
+
+  if (!markdown || !questionId) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const question = await getQuestionById(questionObjectId);
 
   if (question === null) {
     throw new ApiError(
@@ -50,22 +57,26 @@ async function createAnswer(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
+
+  const trimmedMarkdown: string = markdown.trim();
+  if (trimmedMarkdown === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.INVALID_FIELDS
+    );
+  }
+
   const doc: Answer = {
     _id: new ObjectId(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    markdown: markdown,
-    userId: userId,
-    questionId: new ObjectId(questionId),
+    markdown: trimmedMarkdown,
+    questionId: questionObjectId,
     upvotes: 0,
     downvotes: 0,
   };
 
-  // Note: await both promises concurrently
-  await Promise.all([
-    addAnswerToQuestion(questionId, doc._id),
-    getAnswersCollection().insertOne(doc),
-  ]);
+  await getAnswersCollection().insertOne(doc);
 
   return doc;
 }
