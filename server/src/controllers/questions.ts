@@ -130,43 +130,6 @@ async function updateQuestion(
   return updatedQuestion;
 }
 
-async function addAnswerToQuestion(
-  answerId: ObjectId,
-  questionId: string
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(questionId);
-
-  const result = await getQuestionsCollection().findOneAndUpdate(
-    { _id: objectId },
-    {
-      $addToSet: {
-        answerIds: answerId,
-      },
-    },
-    { returnOriginal: false }
-  );
-
-  return result.value;
-}
-
-async function deleteAnswerFromQuestion(
-  answerId: string
-): Promise<Question | undefined> {
-  const objectId: ObjectId = new ObjectId(answerId);
-
-  const result = await getQuestionsCollection().findOneAndUpdate(
-    { answerIds: objectId },
-    {
-      $pull: {
-        answerIds: objectId,
-      },
-    },
-    { returnOriginal: false }
-  );
-
-  return result.value;
-}
-
 async function deleteQuestion(
   userId: string | ObjectId,
   questionId: string | ObjectId
@@ -191,12 +154,66 @@ async function deleteQuestion(
   return isSuccessful;
 }
 
+async function addAnswerToQuestion(
+  questionId: string | ObjectId,
+  answerId: string | ObjectId
+): Promise<Question> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { _id: questionObjectId },
+    {
+      $addToSet: {
+        answerIds: answerObjectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return updatedQuestion;
+}
+
+async function removeAnswerFromQuestion(
+  answerId: string | ObjectId
+): Promise<Question> {
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    { answerIds: answerObjectId },
+    {
+      $pull: {
+        answerIds: answerObjectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return updatedQuestion;
+}
+
 export {
   getQuestions,
   getQuestionById,
   createQuestion,
   updateQuestion,
-  addAnswerToQuestion,
-  deleteAnswerFromQuestion,
   deleteQuestion,
+  addAnswerToQuestion,
+  removeAnswerFromQuestion,
 };

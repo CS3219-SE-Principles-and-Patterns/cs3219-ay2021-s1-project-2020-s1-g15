@@ -58,7 +58,7 @@ async function createAnswer(
 
   // Note: await both promises concurrently
   await Promise.all([
-    addAnswerToQuestion(doc._id, questionId),
+    addAnswerToQuestion(questionId, doc._id),
     getAnswersCollection().insertOne(doc),
   ]);
 
