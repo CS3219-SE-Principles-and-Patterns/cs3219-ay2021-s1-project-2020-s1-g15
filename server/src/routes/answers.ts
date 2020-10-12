@@ -118,7 +118,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 
 // DELETE request - delete an answer
 router.delete("/:id", async (req: Request, res: Response) => {
-  const answerId: string = req.params.answerId;
+  const answerId: string = req.params.id;
   if (!ObjectID.isValid(answerId)) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
