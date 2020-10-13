@@ -6,7 +6,7 @@ import { createUser } from "../controllers/users";
 
 const router: Router = Router();
 
-router.post("/register", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   const data: UserRequestBody = {
     email: req.body.email,
     password: req.body.password,
@@ -14,7 +14,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
   const createdUser: User = await createUser(data);
 
-  return res.status(HttpStatusCode.OK).json(createdUser);
+  return res.status(HttpStatusCode.CREATED).json(createdUser);
 });
 
 export default router;
