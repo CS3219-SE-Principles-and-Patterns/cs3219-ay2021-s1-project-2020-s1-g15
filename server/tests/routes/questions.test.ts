@@ -64,9 +64,9 @@ beforeAll(async (done) => {
 
 afterAll(async (done) => {
   // clear all docs from all collections
-  await getAnswersCollection().remove({});
-  await getQuestionsCollection().remove({});
-  await getUsersCollection().remove({});
+  await getAnswersCollection().deleteMany({});
+  await getQuestionsCollection().deleteMany({});
+  await getUsersCollection().deleteMany({});
   // close the DB connection before ending
   await closeDb();
   done();
@@ -74,8 +74,8 @@ afterAll(async (done) => {
 
 beforeEach(async (done) => {
   // clear Q&A docs to prevent test suite runs from interfering with one another
-  await getAnswersCollection().remove({});
-  await getQuestionsCollection().remove({});
+  await getAnswersCollection().deleteMany({});
+  await getQuestionsCollection().deleteMany({});
   done();
 });
 
