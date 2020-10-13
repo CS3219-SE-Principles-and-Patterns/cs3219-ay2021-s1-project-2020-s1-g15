@@ -129,10 +129,10 @@ cd server/
 yarn dev:bypass-auth
 ```
 
-When developing with this command, the [authentication verifier](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/server/src/middlewares/authRouteHandler.ts) will:
+When developing with this command, the [middleware responsible for authentication](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/server/src/middlewares/authRouteHandler.ts) will:
 
 - Ignore and skip the verification of the token in the `Authorization` request headers (if any)
-- Always store in `res.locals.uid` the `uid` of `devtestuser@answerleh.com` (exact uid: `5f84521e8facd089df29b7a9`), for use by the route being called
+- Always store in `res.locals.uid` the `uid` of `devtestuser@answerleh.com` (`5f84521e8facd089df29b7a9`), for use by the next route
 
 #### Lint and run tests
 
