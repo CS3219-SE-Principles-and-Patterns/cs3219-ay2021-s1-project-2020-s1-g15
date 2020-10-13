@@ -37,33 +37,31 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadTokenFromCookie = async () => {
-      setLoading(true);
-      if (typeof window !== "undefined") {
-        const token = Cookies.get("token");
-        //console.log(token);
-        if (token) {
-          setIsAuthenticated(true);
+    const onAuthStateChange = (
+      callback: React.Dispatch<React.SetStateAction<boolean>>
+    ) => {
+      return auth.onAuthStateChanged((user) => {
+        if (user) {
+          callback(true);
+        } else {
+          callback(false);
         }
-      }
-      setLoading(false);
+      });
     };
-    loadTokenFromCookie();
+    const unsubscribe = onAuthStateChange(setIsAuthenticated);
+    return () => {
+      unsubscribe();
+    };
   }, [auth]);
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
-    const idToken = await credential.user?.getIdToken();
-
     setIsAuthenticated(true);
-    Cookies.set("token", idToken ?? {});
-
     return credential;
   };
 
   const logout = async () => {
     await auth.signOut();
-    Cookies.remove("firebase");
     setUser({});
     setIsAuthenticated(false);
   };

@@ -18,6 +18,7 @@ console.log(firebase.apps.length);
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
   auth = firebase.auth();
+  console.log(auth);
 } else {
   auth = firebase.auth();
 }

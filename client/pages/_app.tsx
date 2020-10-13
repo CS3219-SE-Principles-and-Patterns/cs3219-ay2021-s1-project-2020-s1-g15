@@ -8,7 +8,8 @@ import "./app.css";
 
 import { AuthProvider } from "../components/authentication";
 import auth from "./firebase.config";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Spin } from "antd";
 //TODO: loading page
 //Binding events.
 /*
@@ -18,23 +19,8 @@ Router.events.on("routeChangeError", () => NProgress.done());
 */
 // This default export is required in a new `pages/_app.js` file.
 const MyApp = ({ Component, pageProps }) => {
-  /*
-  const [auth, setAuth] = useState();
-  useEffect(() => {
-    const getAuth = async () => {
-      const res = await fetch("/api/auth", {
-        method: "GET",
-        headers: new Headers({}),
-        credentials: "same-origin",
-      });
-      console.log(res);
-      const { auth } = await res.json();
-      // this auth is returning json
-      setAuth(auth);
-    };
-    getAuth();
-  }, []);
-       */
+  const [loading, setLoading] = useState<boolean>(true);
+
   return (
     <AuthProvider auth={auth}>
       <Component {...pageProps} />
