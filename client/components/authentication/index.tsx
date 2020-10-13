@@ -5,6 +5,7 @@ import React, {
   useEffect,
   FC,
 } from "react";
+import Cookies from "js-cookie";
 import Router, { useRouter } from "next/router";
 
 type props = {
@@ -31,33 +32,38 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {
-  console.log(auth);
   const [user, setUser] = useState<{} | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadFirebaseFromLocalStorage = async () => {
+    const loadTokenFromCookie = async () => {
       setLoading(true);
+      if (typeof window !== "undefined") {
+        const token = Cookies.get("token");
+        //console.log(token);
+        if (token) {
+          setIsAuthenticated(true);
+        }
+      }
       setLoading(false);
     };
-    loadFirebaseFromLocalStorage();
+    loadTokenFromCookie();
   }, [auth]);
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
+    const idToken = await credential.user?.getIdToken();
+
     setIsAuthenticated(true);
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: new Headers({ "content-type": "application/json" }),
-      credentials: "same-origin",
-      body: JSON.stringify(credential.credential?.toJSON()),
-    });
+    Cookies.set("token", idToken ?? {});
+
     return credential;
   };
 
   const logout = async () => {
     await auth.signOut();
+    Cookies.remove("firebase");
     setUser({});
     setIsAuthenticated(false);
   };
@@ -68,7 +74,12 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       const idToken = userInstance.getIdToken(/* forceRefresh */ true);
       return idToken;
     } else {
-      return "NULL";
+      const token = Cookies.get("token");
+      if (token) {
+        return token;
+      } else {
+        return "NULL";
+      }
     }
   };
 
