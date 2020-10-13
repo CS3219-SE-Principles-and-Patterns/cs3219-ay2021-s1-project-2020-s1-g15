@@ -1,6 +1,3 @@
-import { type } from "os";
-import HttpStatusCode from "./HttpStatusCode";
-
 export type Question = {
   _id: string;
   createdAt: Date;

@@ -30,7 +30,6 @@ import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "../api";
 import router from "next/router";
 import { ApiError } from "next/dist/next-server/server/api-utils";
-import HttpStatusCode from "../../util/HttpStatusCode";
 
 const { Title } = Typography;
 

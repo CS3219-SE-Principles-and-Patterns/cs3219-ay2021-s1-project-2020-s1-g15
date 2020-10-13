@@ -4,7 +4,6 @@ import {
   GetAllQuestionsParam,
   Question,
 } from "../../util";
-import HttpStatusCode from "../../util/HttpStatusCode";
 
 const baseUrl =
   process.env.NODE_ENV == "development"

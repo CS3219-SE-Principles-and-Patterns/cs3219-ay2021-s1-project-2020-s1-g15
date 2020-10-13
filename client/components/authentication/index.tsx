@@ -5,8 +5,8 @@ import React, {
   useEffect,
   FC,
 } from "react";
-import Cookies from "js-cookie";
-import Router, { useRouter } from "next/router";
+
+import { Spin } from "antd";
 
 type props = {
   auth: firebase.auth.Auth;
@@ -40,11 +40,14 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
     const onAuthStateChange = (
       callback: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
+      setLoading(true);
       return auth.onAuthStateChanged((user) => {
         if (user) {
           callback(true);
+          setLoading(false);
         } else {
           callback(false);
+          setLoading(false);
         }
       });
     };
@@ -72,12 +75,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       const idToken = userInstance.getIdToken(/* forceRefresh */ true);
       return idToken;
     } else {
-      const token = Cookies.get("token");
-      if (token) {
-        return token;
-      } else {
-        return "NULL";
-      }
+      return "NULL";
     }
   };
 
@@ -92,7 +90,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
         getIdToken,
       }}
     >
-      {children}
+      <Spin spinning={loading}>{children}</Spin>
     </AuthContext.Provider>
   );
 };

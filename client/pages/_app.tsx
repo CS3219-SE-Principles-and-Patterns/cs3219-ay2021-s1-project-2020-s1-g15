@@ -1,15 +1,14 @@
 import "codemirror/lib/codemirror.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import NProgress from "nprogress";
-import Router from "next/router";
 
 import "./antd.less";
 import "./app.css";
 
 import { AuthProvider } from "../components/authentication";
 import auth from "./firebase.config";
-import React, { useEffect, useState } from "react";
-import { Spin } from "antd";
+import React from "react";
+
 //TODO: loading page
 //Binding events.
 /*
@@ -19,8 +18,6 @@ Router.events.on("routeChangeError", () => NProgress.done());
 */
 // This default export is required in a new `pages/_app.js` file.
 const MyApp = ({ Component, pageProps }) => {
-  const [loading, setLoading] = useState<boolean>(true);
-
   return (
     <AuthProvider auth={auth}>
       <Component {...pageProps} />
