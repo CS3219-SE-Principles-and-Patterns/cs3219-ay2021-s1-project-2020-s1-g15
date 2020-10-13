@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 
 import { getAuth } from "../services/authentication";
-import { HttpStatusCode, ApiError, ApiErrorMessage } from "../utils";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  TestConfig,
+} from "../utils";
 
-const DEVTESTUSER_UID = "5f84521e8facd089df29b7a9"; // uid of devtestuser@answerleh.com
-const isDevOrTestEnv =
+// wrap these as functions so we can toggle the states during runtime for dev/test purposes
+const isDevOrTestEnv = () =>
   process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test";
-const shouldBypassAuth = process.env.BYPASS_AUTH === "true";
+const shouldBypassAuth = () => process.env.BYPASS_AUTH === "true";
 
 /**
  * Middleware for authenticated routes. This middleware will extract the `uid`
@@ -24,11 +29,11 @@ async function verifyUserAuth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  if (isDevOrTestEnv && shouldBypassAuth) {
+  if (isDevOrTestEnv() && shouldBypassAuth()) {
     console.log(
-      "WARNING: bypassing Firebase Auth and using devtestuser@answerleh.com as user"
+      `WARNING: bypassing Firebase Auth and using ${TestConfig.DEVTESTUSER_EMAIL} as user`
     );
-    res.locals.uid = DEVTESTUSER_UID;
+    res.locals.uid = TestConfig.DEVTESTUSER_UID;
     next();
     return;
   }
