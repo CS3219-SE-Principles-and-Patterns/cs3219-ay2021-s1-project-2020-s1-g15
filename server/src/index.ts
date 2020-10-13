@@ -7,9 +7,14 @@ import { initAuth } from "./services/authentication";
 
 const port: string = process.env.PORT || "8000";
 
-initAuth();
-initDb().then(() => {
+// IIFE to use async await syntax
+(async () => {
+  // init Firebase Auth:
+  await initAuth();
+  // init MongoDB:
+  await initDb();
+  // init Express:
   app.listen(port, () => {
     console.log(`Express: started listening at port ${port}`);
   });
-});
+})();
