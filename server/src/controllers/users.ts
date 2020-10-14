@@ -11,7 +11,12 @@ import {
   toValidObjectId,
 } from "../utils";
 
-async function createUser(data: UserRequestBody): Promise<User> {
+/**
+ * Registers the user in Firebase and creates the user document.
+ *
+ * @param data the UserRequestBody with email and password keys
+ */
+async function registerAndCreateUser(data: UserRequestBody): Promise<User> {
   const { email, password }: UserRequestBody = data;
 
   if (!email || !password) {
@@ -115,4 +120,4 @@ async function removeQuestionFromUser(
   return updatedUser;
 }
 
-export { createUser, addQuestionToUser, removeQuestionFromUser };
+export { registerAndCreateUser, addQuestionToUser, removeQuestionFromUser };
