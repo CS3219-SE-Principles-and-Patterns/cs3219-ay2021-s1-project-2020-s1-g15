@@ -12,10 +12,10 @@ const questionMock: Question = {
   subject: "level",
   upvotes: 0, // number of upvotes, updated when adding upvotes
   downvotes: 0,
-  slug: "slug-test",
+  slug: "slug-test-slug",
 };
 
-const answersMock: Answer[] = [
+const listOfAnswersMock: Answer[] = [
   {
     _id: "01",
     markdown: "test_markdown \n asdas\n## addada adada",
@@ -48,4 +48,4 @@ const answersMock: Answer[] = [
   },
 ];
 
-export { questionMock, answersMock };
+export { questionMock, listOfAnswersMock };

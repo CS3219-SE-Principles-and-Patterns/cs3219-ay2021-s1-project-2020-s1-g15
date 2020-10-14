@@ -1,6 +1,11 @@
 import FluidPage from "../../components/layout";
 import { useRouter } from "next/router";
-import { answersMock, pageTitles, Question, questionMock } from "../../util";
+import {
+  listOfAnswersMock,
+  pageTitles,
+  Question,
+  questionMock,
+} from "../../util";
 import React, { FC, useEffect, useState } from "react";
 import ViewQuestion from "../../components/questions/view-question";
 import { getAllQuestion, getSingleQuestion } from "../../components/api";
@@ -31,7 +36,7 @@ const Questions: FC<QuestionsProps> = ({ query }): JSX.Element => {
     <FluidPage title={pageTitles.question}>
       <Spin spinning={loading}>
         {question ? (
-          <ViewQuestion question={question} answers={answersMock} />
+          <ViewQuestion question={question} answers={listOfAnswersMock} />
         ) : (
           <></>
         )}

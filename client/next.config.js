@@ -10,6 +10,7 @@ module.exports = withAntdLess({
   },
   basePath: "",
   experimental: {
+    granularChunks: true,
     modern: false,
     plugins: false,
     profiling: true,
@@ -17,7 +18,7 @@ module.exports = withAntdLess({
     reactMode: "legacy",
     workerThreads: false,
     pageEnv: false,
-    productionBrowserSourceMaps: false,
+    productionBrowserSourceMaps: true,
     optimizeFonts: true,
     optimizeImages: false,
     scrollRestoration: false,

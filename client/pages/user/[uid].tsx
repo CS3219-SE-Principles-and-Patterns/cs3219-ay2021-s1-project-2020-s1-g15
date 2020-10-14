@@ -2,8 +2,9 @@ import FluidPage from "../../components/layout";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import ViewUser from "../../components/user";
+import { listOfAnswersMock, questionMock, User } from "../../util";
 
-const User: FC = (): JSX.Element => {
+const UserPage: FC = (): JSX.Element => {
   const router = useRouter();
   const { uid } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,9 +17,18 @@ const User: FC = (): JSX.Element => {
     };
     fetchData();
   }, []);
+
+  const user: User = {
+    email: "Test@gmail.com",
+    username: "doombringer45",
+    answerIds: ["1231", "1231"],
+    questionIds: ["qid", "qid2"],
+    answers: listOfAnswersMock,
+    questions: [questionMock, questionMock],
+  };
   return (
-    <FluidPage title="AnswerLeh - User">
-      <ViewUser />
+    <FluidPage title={`AnswerLeh - ${user.username}`}>
+      <ViewUser user={user} />
     </FluidPage>
   );
 };
@@ -33,4 +43,4 @@ export async function getServerSideProps() {
   return { props: { data } };
 }*/
 
-export default User;
+export default UserPage;

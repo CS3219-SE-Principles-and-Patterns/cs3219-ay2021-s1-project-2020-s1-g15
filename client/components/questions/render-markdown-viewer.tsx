@@ -4,13 +4,15 @@ import { FC } from "react";
 
 type ViewRenderProp = {
   markdown: string;
+  className?: string;
 };
 
 export const RenderMarkdownViewer: FC<ViewRenderProp> = ({
   markdown,
+  className,
 }): JSX.Element => {
   return (
-    <Card>
+    <Card className={className}>
       <Viewer initialValue={markdown} />
     </Card>
   );
