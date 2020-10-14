@@ -17,7 +17,6 @@ import styles from "./forum.module.css";
 
 const { Search } = Input;
 const Forum = ({ data }): JSX.Element => {
-  console.log(data);
   const [questions, setQuestions] = useState<Question[]>(data);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -33,7 +32,6 @@ const Forum = ({ data }): JSX.Element => {
     router.push(`${routesObject.question}/${_id}`);
 
   const onPageChange = (page: number) => {
-    console.log(page);
     setPage(page);
   };
 
@@ -104,7 +102,6 @@ const Forum = ({ data }): JSX.Element => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("triggered fetch");
       setLoading(true);
       const data = await getAllQuestion({ page, pageSize });
       setQuestions(data);
