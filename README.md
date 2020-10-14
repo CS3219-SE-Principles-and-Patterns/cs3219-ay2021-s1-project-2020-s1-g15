@@ -15,9 +15,12 @@
   - [Development environment](#development-environment-1)
     - [Start developing](#start-developing)
     - [Access local endpoints](#access-local-endpoints)
+    - [Bypass Firebase Auth for dev and test environment](#bypass-firebase-auth-for-dev-and-test-environment)
     - [Lint and run tests](#lint-and-run-tests)
 - [API reference](#api-reference)
   - [Authenticated routes](#authenticated-routes)
+  - [Users](#users)
+    - [Register and create a user](#register-and-create-a-user)
   - [Questions](#questions)
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
@@ -115,6 +118,22 @@ If there are any errors while connecting to your local MongoDB server, ensure th
 2. Using Postman (or `curl`), make a `GET` call to `http://localhost:8000/api/questions` to verify that the endpoint is working
 3. Refer to the [API reference](#api-reference) for the other endpoints
 
+#### Bypass Firebase Auth for dev and test environment
+
+When running tests and developing locally, you may want to bypass Firebase Auth for your convenience:
+
+```sh
+# change to server/ directory first
+cd server/
+# start a local server with hot reload at port 8000 and bypass firebase auth
+yarn dev:bypass-auth
+```
+
+When developing with this command, the [middleware responsible for authentication](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/server/src/middlewares/authRouteHandler.ts) will:
+
+- Ignore and skip the verification of the token in the `Authorization` request headers (if any)
+- Always store in `res.locals.uid` the `uid` of `devtestuser@answerleh.com` (`5f84521e8facd089df29b7a9`), for use by the next route
+
 #### Lint and run tests
 
 [ESLint](https://eslint.org/) with the [Prettier plugin](https://prettier.io/) is used to lint the source code, while [Jest](https://jestjs.io/) is used as the testing framework. To lint and run all tests:
@@ -149,6 +168,44 @@ Authorization: Bearer <FIREBASE_TOKEN>
 
 - Replace `<FIREBASE_TOKEN>` with the actual token after authenticating with Firebase Auth
 - Make sure that the keyword `Bearer` and a single whitespace is prepended to the token before sending it to the server
+
+### Users
+
+#### Register and create a user
+
+- Method: `POST`
+- URL: `/api/users`
+- Auth required: NO
+- Body data (example):
+  ```js
+  {
+    "email": "yo@answerleh.com", // string; required!
+    "password": "123456", // string; required!
+  }
+  ```
+
+**Success response**:
+
+- Condition: if all required fields are present and valid
+- Code: `201 CREATED`
+- Content (example):
+  ```js
+  {
+    "_id": "5f84521e8facd089df29b7a9",
+    "createdAt": "2020-10-12T12:54:55.874Z",
+    "updatedAt": "2020-10-12T12:54:55.874Z",
+    "email": "devtestuser@answerleh.com",
+    "username": "devtestuser@answerleh.com",
+    "questionIds": [],
+    "answerIds": []
+  }
+  ```
+
+**Error response**:
+
+- Condition: if any required fields are missing or invalid
+- Status: `400 BAD REQUEST`
+- Content: description of error
 
 ### Questions
 
@@ -371,7 +428,7 @@ OR
 - Body data (example):
   ```js
   {
-    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
+    "questionId": "5f570273a83adf5417b48026", // ObjectId of question; required!
     "markdown": "hello" // string; required!
   }
   ```
@@ -387,7 +444,10 @@ OR
     "markdown": "hello",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T04:02:59.081Z"
+    "updatedAt": "2020-09-08T04:02:59.081Z",
+    "userId": "5f82feda42ace23941434007",
+    "upvotes": 0,
+    "downvotes": 0
   }
   ```
 
@@ -411,7 +471,6 @@ OR
   ```js
   {
     "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
-    "markdown": "hello" // string; required!
   }
   ```
 
@@ -428,7 +487,10 @@ OR
       "markdown": "hello",
       "questionId": "5f570273a83adf5417b48026",
       "createdAt": "2020-09-08T04:02:59.081Z",
-      "updatedAt": "2020-09-08T04:02:59.081Z"
+      "updatedAt": "2020-09-08T04:02:59.081Z",
+      "userId": "5f82feda42ace23941434007",
+      "upvotes": 0,
+      "downvotes": 0
     },
     // ...
   ]
@@ -444,7 +506,7 @@ OR
 
 - Method: `PUT`
 - URL: `/api/answers/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 - Body data (example):
   ```js
@@ -460,7 +522,7 @@ OR
 - Content (example):
   ```js
   {
-    "_id": "5f570273a83adf5417b48026",
+    "_id": "5f82ef78bef85211fd9fb314",
     "markdown": "updated",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
@@ -484,7 +546,7 @@ OR
 
 - Method: `DELETE`
 - URL: `/api/answers/:id`
-- URL parameters
+- URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
 
 **Success response**:

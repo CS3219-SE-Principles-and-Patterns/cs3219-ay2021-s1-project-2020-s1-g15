@@ -1,19 +1,47 @@
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import { getUsersCollection } from "../services/database";
 import { User } from "../models";
 import { getAuth } from "../services/authentication";
-import ApiError from "../utils/errors/ApiError";
-import HttpStatusCode from "../utils/HttpStatusCode";
+import {
+  HttpStatusCode,
+  ApiError,
+  ApiErrorMessage,
+  UserRequestBody,
+  toValidObjectId,
+} from "../utils";
 
-async function createUser(email: string, password: string): Promise<User> {
+/**
+ * Registers the user in Firebase and creates the user document.
+ *
+ * @param data the UserRequestBody with email and password keys
+ */
+async function registerAndCreateUser(data: UserRequestBody): Promise<User> {
+  const { email, password }: UserRequestBody = data;
+
+  if (!email || !password) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.User.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const trimmedEmail: string = email.trim();
+  const trimmedPassword: string = password.trim();
+  if (trimmedPassword === "" || trimmedEmail === "") {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.User.INVALID_FIELDS
+    );
+  }
+
   //* used as firebase user UID and `Users` collection _id
-  const uid: ObjectId = new ObjectID();
+  const userObjectId: ObjectId = new ObjectId();
 
   // try to create the firebase user:
   try {
     await getAuth().createUser({
-      uid: uid.toHexString(),
+      uid: userObjectId.toHexString(),
       email: email,
       password: password,
     });
@@ -23,7 +51,7 @@ async function createUser(email: string, password: string): Promise<User> {
 
   // create the mongodb document:
   const doc: User = {
-    _id: uid,
+    _id: userObjectId,
     createdAt: new Date(),
     updatedAt: new Date(),
     email: email,
@@ -37,37 +65,59 @@ async function createUser(email: string, password: string): Promise<User> {
 }
 
 async function addQuestionToUser(
-  questionId: ObjectId,
-  uid: ObjectId
-): Promise<User | undefined> {
+  userId: string | ObjectId,
+  questionId: string | ObjectId
+): Promise<User> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
   const result = await getUsersCollection().findOneAndUpdate(
-    { _id: uid },
+    { _id: userObjectId },
     {
       $addToSet: {
-        questionIds: questionId,
+        questionIds: questionObjectId,
       },
     },
     { returnOriginal: false }
   );
 
-  return result.value;
+  const updatedUser: User | undefined = result.value;
+  if (updatedUser == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.NOT_FOUND
+    );
+  }
+
+  return updatedUser;
 }
 
 async function removeQuestionFromUser(
-  questionId: ObjectId,
-  uid: ObjectId
-): Promise<User | undefined> {
+  userId: string | ObjectId,
+  questionId: string | ObjectId
+): Promise<User> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
   const result = await getUsersCollection().findOneAndUpdate(
-    { _id: uid },
+    { _id: userObjectId },
     {
       $pull: {
-        questionIds: questionId,
+        questionIds: questionObjectId,
       },
     },
     { returnOriginal: false }
   );
 
-  return result.value;
+  const updatedUser: User | undefined = result.value;
+  if (updatedUser == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.NOT_FOUND
+    );
+  }
+
+  return updatedUser;
 }
 
-export { createUser, addQuestionToUser, removeQuestionFromUser };
+export { registerAndCreateUser, addQuestionToUser, removeQuestionFromUser };

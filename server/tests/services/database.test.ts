@@ -7,6 +7,8 @@ import {
   closeDb,
   getDb,
   getQuestionsCollection,
+  getAnswersCollection,
+  getUsersCollection,
 } from "../../src/services/database";
 
 describe("Database constants", () => {
@@ -98,5 +100,51 @@ describe("Get questions collection", () => {
     await closeDb();
 
     expect(getQuestionsCollection).toThrowError();
+  });
+});
+
+describe("Get answers collection", () => {
+  beforeAll(async (done) => {
+    await initDb();
+    done();
+  });
+
+  afterAll(async (done) => {
+    await closeDb();
+    done();
+  });
+
+  it("should return answers collection", async () => {
+    const answersCollection = getAnswersCollection();
+    expect(answersCollection.collectionName).toBe("answers");
+  });
+
+  it("should throw error if database is not yet initialised", async () => {
+    await closeDb();
+
+    expect(getAnswersCollection).toThrowError();
+  });
+});
+
+describe("Get users collection", () => {
+  beforeAll(async (done) => {
+    await initDb();
+    done();
+  });
+
+  afterAll(async (done) => {
+    await closeDb();
+    done();
+  });
+
+  it("should return users collection", async () => {
+    const usersCollection = getUsersCollection();
+    expect(usersCollection.collectionName).toBe("users");
+  });
+
+  it("should throw error if database is not yet initialised", async () => {
+    await closeDb();
+
+    expect(getUsersCollection).toThrowError();
   });
 });
