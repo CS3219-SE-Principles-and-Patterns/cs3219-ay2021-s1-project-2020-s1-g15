@@ -1,0 +1,12 @@
+coverage:
+  range: "50...100" # value range where you want the value to be green
+
+  status:
+    project: # for the overall project
+      default:
+        target: 50% # minimum coverage ratio
+        threshold: 20% # maximum coverage allowed to drop
+    patch: # for the current PR
+      default:
+        target: 50% # minimum coverage ratio
+        threshold: 20% # maximum coverage allowed to drop
