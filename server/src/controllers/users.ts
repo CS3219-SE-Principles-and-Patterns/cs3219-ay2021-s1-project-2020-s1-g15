@@ -95,7 +95,7 @@ async function addQuestionToUser(
 async function removeQuestionFromUser(
   userId: string | ObjectId,
   questionId: string | ObjectId
-): Promise<User | undefined> {
+): Promise<User> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const userObjectId: ObjectId = toValidObjectId(userId);
 
