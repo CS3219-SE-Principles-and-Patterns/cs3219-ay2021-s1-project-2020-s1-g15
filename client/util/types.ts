@@ -80,3 +80,14 @@ export type ApiError = {
   status: string;
   message: string;
 };
+
+export type RegisterUserParam = {
+  email: string;
+  password: string;
+};
+export type UserApi = {
+  email: string;
+  username: string;
+  answerIds: string[];
+  questionIds: string[];
+};

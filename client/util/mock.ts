@@ -48,4 +48,6 @@ const listOfAnswersMock: Answer[] = [
   },
 ];
 
+// await new Promise((resolve) => setTimeout(resolve, 4000)); use this to set timeout in async function to test
+
 export { questionMock, listOfAnswersMock };

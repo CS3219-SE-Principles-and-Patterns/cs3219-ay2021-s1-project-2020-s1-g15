@@ -29,7 +29,6 @@ import {
 import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "../api";
 import router from "next/router";
-import { ApiError } from "next/dist/next-server/server/api-utils";
 
 const { Title } = Typography;
 
@@ -66,8 +65,6 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish = (values: { title: any }) => {
-    console.log(values);
-
     setLoading(true);
     form.validateFields().then(async (_) => {
       const { title } = values;
@@ -91,9 +88,9 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
           message: err.message,
           duration: 2,
         });
+        setLoading(false);
       }
     });
-    setLoading(false);
   };
 
   const handleLevel = (value: string) => setLevel(value);
