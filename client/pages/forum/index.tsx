@@ -18,7 +18,7 @@ import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
 const Forum = ({ data }): JSX.Element => {
-  const { user } = useAuth();
+  const { firebaseUser } = useAuth();
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [questions, setQuestions] = useState<Question[]>(data);
   const [page, setPage] = useState<number>(1);
@@ -28,7 +28,12 @@ const Forum = ({ data }): JSX.Element => {
   const router = useRouter();
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    router.push(`${routesObject.question}/ask`);
+    router.push({
+      pathname: `${routesObject.editQuestion}`,
+      query: {
+        qid: null,
+      },
+    });
   };
 
   const ViewQuestion = (_id: string) =>
@@ -103,9 +108,9 @@ const Forum = ({ data }): JSX.Element => {
       } as QuestionTableData)
   );
   const dummyUser = async () => {
-    if (user) {
-      const uid = user.uid;
-      router.push({ pathname: `${routesObject.user}${uid}` });
+    if (firebaseUser) {
+      const uid = firebaseUser.uid;
+      router.push({ pathname: `${routesObject.user}/${uid}` });
     }
   };
 
@@ -117,6 +122,7 @@ const Forum = ({ data }): JSX.Element => {
       setLoading(false);
     };
     if (isInitial) {
+      // prevent re-fetching on first load
       fetchData();
     } else {
       setIsInitial(false);

@@ -11,27 +11,18 @@ import {
   PageHeader,
   Select,
   Spin,
-  Typography,
 } from "antd";
 import React, { useRef, useState, FC } from "react";
-import FluidPage from "../layout";
 
-import { pageTitles, routesObject } from "../../util";
+import { routesObject } from "../../util";
 import styles from "./question.module.css";
 import { Editor } from "@toast-ui/react-editor";
-import {
-  CreateQuestionParam,
-  Level,
-  Question,
-  Subject,
-} from "../../util/types";
+import { Level, Question, QuestionParam, Subject } from "../../util/types";
 import { useForm } from "antd/lib/form/Form";
-import { createQuestion } from "../api";
+import { createQuestion, deleteSingleQuestion, editQuestion } from "../api";
 import router from "next/router";
 import { useAuth } from "../authentication";
 import Link from "next/link";
-
-const { Title } = Typography;
 
 const { Option } = Select;
 
@@ -61,7 +52,8 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
   const { isAuthenticated, getIdToken } = useAuth();
   const editor = useRef<Editor | null>(null);
   const [form] = useForm();
-  const [questionLocal, setQuestion] = useState<Question | undefined>(question);
+  const [questionLocal] = useState<Question | undefined>(question);
+  const isEdit: boolean = questionLocal ? true : false;
   const [subject, setSubject] = useState<string>(question?.level ?? "");
   const [level, setLevel] = useState<string>(question?.subject ?? "");
   const [loading, setLoading] = useState<boolean>(false);
@@ -73,19 +65,36 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
       const idToken = await getIdToken();
       // @ts-ignore
       const markdown = editor.current.getInstance().getMarkdown();
-      const questionArg: CreateQuestionParam = {
+      const questionArg: QuestionParam = {
         title,
         markdown,
         level,
         subject,
       };
       try {
-        const res: Question = await createQuestion(questionArg, idToken);
-        notification.success({
-          message: "Question Created Succesfully",
-          duration: 2,
-        });
-        router.push(`${routesObject.question}/${res._id}`);
+        if (isEdit) {
+          if (!questionLocal) {
+            throw new Error("question is undefiend");
+          }
+
+          const res: Question = await editQuestion(
+            questionArg,
+            idToken,
+            questionLocal._id
+          );
+          notification.success({
+            message: "Question Edited Succesfully",
+            duration: 2,
+          });
+          router.push(`${routesObject.question}/${res._id}`);
+        } else {
+          const res: Question = await createQuestion(questionArg, idToken);
+          notification.success({
+            message: "Question Created Succesfully",
+            duration: 2,
+          });
+          router.push(`${routesObject.question}/${res._id}`);
+        }
       } catch (err) {
         notification.error({
           message: err.message,
@@ -98,10 +107,27 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
 
   const handleLevel = (value: string) => setLevel(value);
   const handleSubject = (value: string) => setSubject(value);
-
+  const deleteQuestion = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      if (!questionLocal) {
+        throw new Error("question is undefiend");
+      }
+      const idToken = await getIdToken();
+      await deleteSingleQuestion(idToken, questionLocal?._id);
+      router.push(`${routesObject.forum}`);
+    } catch (err) {
+      notification.error({
+        message: err.message,
+        duration: 2,
+      });
+      setLoading(false);
+    }
+  };
   const layout = {};
   return (
-    <FluidPage title={pageTitles.askQuestion}>
+    <>
       <PageHeader
         title={
           questionLocal ? (
@@ -129,39 +155,31 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
                   Be specific and imagine you are asking a question to another
                   person
                 </h4>
-                {questionLocal ? (
-                  <Typography>
-                    <Title>{}</Title>
-                  </Typography>
-                ) : (
-                  <Form.Item name="title" rules={[]}>
-                    <Input
-                      prefix={<QuestionCircleOutlined />}
-                      placeholder="e.g is there an R function?"
-                    />
-                  </Form.Item>
-                )}
 
+                <Form.Item
+                  name="title"
+                  initialValue={question?.title}
+                  rules={[{ required: true }]}
+                >
+                  <Input
+                    prefix={<QuestionCircleOutlined />}
+                    placeholder="e.g is there an R function?"
+                  />
+                </Form.Item>
                 <h2>Body</h2>
                 <h4>
                   Include all the information someone would need to answer your
                   question
                 </h4>
-
                 {
                   <Editor
                     previewStyle="vertical"
                     height="35vh"
                     initialEditType="markdown"
-                    initialValue={
-                      questionLocal
-                        ? questionLocal.markdown
-                        : "Your question here..."
-                    }
+                    initialValue={questionLocal?.markdown ?? ""}
                     ref={editor}
                   />
                 }
-
                 <Divider />
                 <h2>Level:</h2>
                 <h4>
@@ -196,6 +214,11 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
               </div>
             </Card>
             <br />
+            {isEdit && isAuthenticated ? (
+              <Button type="primary" color="red" onClick={deleteQuestion}>
+                Delete Question
+              </Button>
+            ) : null}
             {isAuthenticated ? (
               <Button htmlType="submit" type="primary">
                 {questionLocal ? "Edit Question" : "Submit Question"}
@@ -208,7 +231,7 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
           </Form>
         </div>
       </Spin>
-    </FluidPage>
+    </>
   );
 };
 

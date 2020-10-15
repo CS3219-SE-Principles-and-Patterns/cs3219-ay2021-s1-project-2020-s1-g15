@@ -7,13 +7,16 @@ import React, {
 } from "react";
 
 import { Spin } from "antd";
+import { User } from "../../util";
+import { getSingleUser } from "../api";
 type props = {
   auth: firebase.auth.Auth;
   children: React.ReactNode;
 };
 
 type AuthContextType = {
-  user?: firebase.User;
+  firebaseUser?: firebase.User;
+  user?: User;
   isAuthenticated?: boolean;
   loading?: boolean;
   login?: (
@@ -25,6 +28,7 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType>({
+  firebaseUser: undefined,
   user: undefined,
   isAuthenticated: true,
   loading: false,
@@ -32,7 +36,10 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {
-  const [user, setUser] = useState<firebase.User | undefined>(undefined);
+  const [firebaseUser, setFirebaseUser] = useState<firebase.User | undefined>(
+    undefined
+  );
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -41,9 +48,11 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       callback: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
       setLoading(true);
-      return auth.onAuthStateChanged((user) => {
-        if (user) {
+      return auth.onAuthStateChanged(async (firebaseUser) => {
+        if (firebaseUser) {
+          const user: User = await getSingleUser(firebaseUser.uid);
           setUser(user);
+          setFirebaseUser(firebaseUser);
           callback(true);
         } else {
           callback(false);
@@ -59,7 +68,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
-    // TODO: get user from BE-server
+
     setIsAuthenticated(true);
     return credential;
   };
@@ -84,6 +93,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        firebaseUser,
         user,
         loading,
         login,
@@ -102,9 +112,10 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 /*
+https://medium.com/@tafka_labs/auth-redirect-in-nextjs-3a3a524c0a06
 export const ProtectRoute:  = ({ Component: Component, ...rest }) => {
   return () => {
-    const { user, isAuthenticated, loading } = useAuth();
+    const { firebaseUser, isAuthenticated, loading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
