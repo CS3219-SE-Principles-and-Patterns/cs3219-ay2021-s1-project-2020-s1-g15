@@ -31,7 +31,9 @@ describe("Bypass auth for dev/test environment", () => {
     const { req, res, next } = getMockReqResNext();
 
     verifyUserAuth(req, res, next);
-    expect(res.locals.uid).toBe(toValidObjectId(TestConfig.DEVTESTUSER_UID));
+    expect(res.locals.uid).toStrictEqual(
+      toValidObjectId(TestConfig.DEVTESTUSER_UID)
+    );
   });
 
   it("should call next exactly once", async () => {
