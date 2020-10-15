@@ -6,12 +6,9 @@ import {
   ApiError,
   ApiErrorMessage,
   TestConfig,
+  shouldBypassAuth,
+  isProdEnv,
 } from "../utils";
-
-// wrap these as functions so we can toggle the states during runtime for dev/test purposes
-const isDevOrTestEnv = () =>
-  process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test";
-const shouldBypassAuth = () => process.env.BYPASS_AUTH === "true";
 
 /**
  * Middleware for authenticated routes. This middleware will extract the `uid`
@@ -29,13 +26,12 @@ async function verifyUserAuth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  if (isDevOrTestEnv() && shouldBypassAuth()) {
+  if (!isProdEnv() && shouldBypassAuth()) {
     console.log(
       `WARNING: bypassing Firebase Auth and using ${TestConfig.DEVTESTUSER_EMAIL} as user`
     );
     res.locals.uid = TestConfig.DEVTESTUSER_UID;
-    next();
-    return;
+    return next();
   }
 
   const authHeader: string | undefined = req.headers.authorization;
@@ -53,7 +49,7 @@ async function verifyUserAuth(
     // store the recovered UID in res.locals for other the next routes to use
     res.locals.uid = decodedToken.uid;
     // call the next route
-    next();
+    return next();
   } catch (error) {
     // assume token is invalid for any errors
     throw new ApiError(
