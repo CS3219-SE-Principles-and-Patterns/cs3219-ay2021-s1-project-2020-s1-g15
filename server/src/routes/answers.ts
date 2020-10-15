@@ -52,41 +52,11 @@ router.post("/", async (req: Request, res: Response) => {
 
 // PUT request - update an answer
 router.put("/:id", async (req: Request, res: Response) => {
-  const id: string = req.params.id; //might ned to change to answerId
-  if (!ObjectId.isValid(id)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.INVALID_ID
-    );
-  }
-
-  const markdown: string | undefined = req.body.markdown;
-
-  if (!markdown) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.MISSING_REQUIRED_FIELDS
-    );
-  }
-
-  const trimmedMarkdown: string = markdown.trim();
-  if (trimmedMarkdown === "") {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.INVALID_FIELDS
-    );
-  }
-
-  const updatedAnswer: Answer | undefined = await updateAnswer(
-    trimmedMarkdown,
-    id
-  );
-  if (updatedAnswer == null) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Answer.NOT_FOUND
-    );
-  }
+  const answerId: string = req.params.id;
+  const data: AnswerRequestBody = {
+    markdown: req.body.markdown,
+  };
+  const updatedAnswer: Answer = await updateAnswer(answerId, data);
 
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
