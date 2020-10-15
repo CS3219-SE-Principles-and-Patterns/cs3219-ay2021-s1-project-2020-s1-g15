@@ -7,6 +7,7 @@ import React, {
 } from "react";
 
 import { Spin } from "antd";
+import { User } from "../../util";
 
 type props = {
   auth: firebase.auth.Auth;
@@ -32,7 +33,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {
-  const [user, setUser] = useState<{} | undefined>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -44,11 +45,10 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       return auth.onAuthStateChanged((user) => {
         if (user) {
           callback(true);
-          setLoading(false);
         } else {
           callback(false);
-          setLoading(false);
         }
+        setLoading(false);
       });
     };
     const unsubscribe = onAuthStateChange(setIsAuthenticated);
@@ -59,13 +59,14 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
+    // TODO: get user from BE-server
     setIsAuthenticated(true);
     return credential;
   };
 
   const logout = async () => {
     await auth.signOut();
-    setUser({});
+    //setUser();
     setIsAuthenticated(false);
   };
 
