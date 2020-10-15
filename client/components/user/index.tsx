@@ -66,7 +66,7 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
       />
       <Content className={styles.mainContent}>
         <Row>
-          <h1>{user.username}</h1>
+          <h1>{user.email}</h1>
         </Row>
         <Row>
           <Statistic

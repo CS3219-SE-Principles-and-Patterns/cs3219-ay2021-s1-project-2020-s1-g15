@@ -7,15 +7,13 @@ import React, {
 } from "react";
 
 import { Spin } from "antd";
-import { User } from "../../util";
-
 type props = {
   auth: firebase.auth.Auth;
   children: React.ReactNode;
 };
 
 type AuthContextType = {
-  user?: {};
+  user?: firebase.User;
   isAuthenticated?: boolean;
   loading?: boolean;
   login?: (
@@ -27,14 +25,14 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType>({
-  user: {},
+  user: undefined,
   isAuthenticated: true,
   loading: false,
   getIdToken: () => new Promise(() => console.log("test")),
 });
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const [user, setUser] = useState<firebase.User | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -45,6 +43,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
       setLoading(true);
       return auth.onAuthStateChanged((user) => {
         if (user) {
+          setUser(user);
           callback(true);
         } else {
           callback(false);

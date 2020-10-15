@@ -14,9 +14,11 @@ import {
 } from "../../util";
 import React from "react";
 import styles from "./forum.module.css";
+import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
 const Forum = ({ data }): JSX.Element => {
+  const { user } = useAuth();
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [questions, setQuestions] = useState<Question[]>(data);
   const [page, setPage] = useState<number>(1);
@@ -100,6 +102,12 @@ const Forum = ({ data }): JSX.Element => {
         ...x,
       } as QuestionTableData)
   );
+  const dummyUser = async () => {
+    if (user) {
+      const uid = user.uid;
+      router.push({ pathname: `${routesObject.user}${uid}` });
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,6 +132,9 @@ const Forum = ({ data }): JSX.Element => {
             title={<h1>Forum</h1>}
             subTitle="This is the forum"
             extra={[
+              <Button type="primary" key="2" onClick={dummyUser}>
+                View User Page
+              </Button>,
               <Button type="primary" key="3" onClick={dummyAsk}>
                 Ask a Question
               </Button>,

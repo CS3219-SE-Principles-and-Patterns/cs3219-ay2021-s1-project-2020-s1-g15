@@ -53,7 +53,6 @@ export enum Subject {
 
 export type User = {
   email: string;
-  username: string;
   answerIds: string[];
   questionIds: string[];
   answers: Answer[];
@@ -85,7 +84,7 @@ export type RegisterUserParam = {
   email: string;
   password: string;
 };
-export type UserApi = {
+export type UserApi = Util & {
   email: string;
   username: string;
   answerIds: string[];

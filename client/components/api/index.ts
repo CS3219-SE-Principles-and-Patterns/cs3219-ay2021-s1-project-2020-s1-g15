@@ -1,2 +1,2 @@
 export * from "./questions";
-export * from "./registration";
+export * from "./user";

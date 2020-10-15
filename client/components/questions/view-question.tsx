@@ -20,6 +20,7 @@ import {
   Row,
   Col,
   Layout,
+  Spin,
 } from "antd";
 import React, { useRef, useState } from "react";
 import FluidPage from "../layout";
@@ -30,6 +31,7 @@ import dynamic from "next/dynamic";
 
 import router from "next/router";
 import { FC } from "react";
+import { useAuth } from "../authentication";
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
@@ -42,7 +44,8 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
   question,
   answers,
 }): JSX.Element => {
-  const [commentVisible, setCommentVisible] = useState<boolean>(false);
+  const { user } = useAuth();
+
   const action = [
     <Button icon={<LikeFilled />} key="1">
       Upvote
@@ -115,7 +118,8 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
         {<AnswerComponent />}
 
         <h1>Answer</h1>
-        {answers.map((x: Answer, index: number) => (
+
+        {/*answers.map((x: Answer, index: number) => (
           <div key={index}>
             <Comment
               actions={action}
@@ -131,7 +135,7 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
             ></Comment>
             <Divider />
           </div>
-        ))}
+            ))*/}
       </div>
     </div>
   );
@@ -207,6 +211,7 @@ const PageHeaderComponent: FC<PageHeaderComponent> = ({
 
 const AnswerComponent: FC = () => {
   const [commentVisible, setCommentVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const renderAnswerEditorWithMarkdown = () => {
     if (typeof window !== "undefined") {
       //@ts-ignore
@@ -220,15 +225,22 @@ const AnswerComponent: FC = () => {
       return null;
     }
   };
+  const toggleEditor = async () => {
+    setLoading(true);
+    setCommentVisible(false);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setLoading(false);
+  };
+
   return (
-    <>
+    <Spin spinning={loading}>
       {commentVisible ? (
         <>
           <Button
             className={styles.minusButtonMargin}
             danger={true}
             icon={<MinusCircleFilled />}
-            onClick={() => setCommentVisible(false)}
+            onClick={toggleEditor}
           >
             Stop Answering
           </Button>
@@ -243,6 +255,6 @@ const AnswerComponent: FC = () => {
           Add a Answer
         </Button>
       )}
-    </>
+    </Spin>
   );
 };

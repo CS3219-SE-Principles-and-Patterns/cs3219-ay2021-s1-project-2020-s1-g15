@@ -17,7 +17,7 @@ type props = {
 };
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const logoutApplication = async (
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
@@ -30,9 +30,9 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
 
   const userMenu = (
     <Menu mode="vertical" className={styles.dropdownMenu}>
-      <Menu.Item key={menuKeys.user}>
+      <Menu.Item key={menuKeys.user + `${user?.uid}`}>
         <Link href={routesObject.home}>
-          <h2>My Page</h2>
+          <Button type="primary">My Page</Button>
         </Link>
       </Menu.Item>
       <Menu.Item key={menuKeys.logout}>

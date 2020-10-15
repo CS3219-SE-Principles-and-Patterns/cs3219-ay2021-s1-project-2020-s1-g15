@@ -2,33 +2,31 @@ import FluidPage from "../../components/layout";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import ViewUser from "../../components/user";
-import { listOfAnswersMock, questionMock, User } from "../../util";
+import { listOfAnswersMock, questionMock, User, UserApi } from "../../util";
+import { getSingleUser } from "../../components/api";
 
 const UserPage: FC = (): JSX.Element => {
   const router = useRouter();
   const { uid } = router.query;
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-
+      if (uid != undefined && uid) {
+        const user: User = await getSingleUser(uid);
+        console.log(user);
+        setUser(user);
+      }
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [uid]);
 
-  const user: User = {
-    email: "Test@gmail.com",
-    username: "doombringer45",
-    answerIds: ["1231", "1231"],
-    questionIds: ["qid", "qid2"],
-    answers: listOfAnswersMock,
-    questions: [questionMock, questionMock],
-  };
   return (
-    <FluidPage title={`AnswerLeh - ${user.username}`}>
-      <ViewUser user={user} />
+    <FluidPage title={`AnswerLeh - ${user?.email ?? "user not found"}`}>
+      {user ? <ViewUser user={user} /> : <>User not found!</>}
     </FluidPage>
   );
 };
