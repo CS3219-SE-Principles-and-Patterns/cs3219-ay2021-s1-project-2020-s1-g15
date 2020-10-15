@@ -10,9 +10,11 @@ import { useForm } from "antd/lib/form/Form";
 import { useState } from "react";
 import { registerUser } from "../../components/api";
 import router from "next/router";
+import { useAuth } from "../../components/authentication";
 
 const Register = (): JSX.Element => {
   const [form] = useForm();
+  const { login } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish = (_) => {
@@ -29,6 +31,9 @@ const Register = (): JSX.Element => {
           message: "You have been registered!",
           duration: 2,
         });
+        if (login) {
+          await login(email, password);
+        }
         //router.push(`${routesObject.login}`);
       } catch (err) {
         notification.error({
