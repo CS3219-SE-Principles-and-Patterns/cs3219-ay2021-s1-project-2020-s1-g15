@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import { ObjectId } from "mongodb";
 
 import {
   getQuestions,
@@ -35,7 +36,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 // POST request - create a question
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: string = res.locals.uid;
+  const userId: ObjectId = res.locals.uid;
   const data: QuestionRequestBody = {
     title: req.body.title,
     markdown: req.body.markdown,
@@ -53,7 +54,7 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 
 // PUT request - update a question
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: string = res.locals.uid;
+  const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
   const data: QuestionRequestBody = {
     title: req.body.title,
@@ -73,7 +74,7 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
 // DELETE request
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const userId: string = res.locals.uid;
+  const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
 
   await Promise.all([
