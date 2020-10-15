@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyUserAuth } from "src/middlewares/authRouteHandler";
-import { TestConfig, ApiErrorMessage } from "src/utils";
+import { TestConfig, ApiErrorMessage, toValidObjectId } from "src/utils";
 import { initAuth } from "src/services/authentication";
 
 const mockRequest = (): Request => {
@@ -31,7 +31,7 @@ describe("Bypass auth for dev/test environment", () => {
     const { req, res, next } = getMockReqResNext();
 
     verifyUserAuth(req, res, next);
-    expect(res.locals.uid).toBe(TestConfig.DEVTESTUSER_UID);
+    expect(res.locals.uid).toBe(toValidObjectId(TestConfig.DEVTESTUSER_UID));
   });
 
   it("should call next exactly once", async () => {
