@@ -11,4 +11,10 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
   // ignore dist/ dir
   testPathIgnorePatterns: ["/dist/"],
+  moduleDirectories: [
+    // look into node_modules dir first:
+    "node_modules",
+    // then look into this dir, which makes this dir the start of the absolute path (example import: `import { titleToSlug } from "src/utils"`)
+    ".",
+  ],
 };
