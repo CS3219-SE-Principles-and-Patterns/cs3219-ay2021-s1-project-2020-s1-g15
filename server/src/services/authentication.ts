@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as admin from "firebase-admin";
 import assert from "assert";
+import { isDevEnv } from "../utils";
 
 /**
  * Returns the Firebase Admin credentials for local development.
@@ -13,7 +14,7 @@ async function getServiceAccountCredential(): Promise<
   admin.credential.Credential
 > {
   assert(
-    process.env.NODE_ENV === "dev",
+    isDevEnv(),
     "This function should only be called in the dev environment"
   );
 
@@ -29,10 +30,9 @@ async function getServiceAccountCredential(): Promise<
 }
 
 async function initAuth(): Promise<void> {
-  const credential =
-    process.env.NODE_ENV === "dev"
-      ? await getServiceAccountCredential()
-      : admin.credential.applicationDefault();
+  const credential = isDevEnv()
+    ? await getServiceAccountCredential()
+    : admin.credential.applicationDefault();
 
   admin.initializeApp({
     credential,
