@@ -7,20 +7,25 @@ import "./app.css";
 
 import { AuthProvider } from "../components/authentication";
 import auth from "./firebase.config";
-import React from "react";
+import React, { useState } from "react";
+import { Router } from "next/router";
+import { Spin } from "antd";
 
 //TODO: loading page
 //Binding events.
-/*
-Router.events.on("routeChangeStart", () => NProgress.start());
-Router.events.on("routeChangeComplete", () => NProgress.done());
-Router.events.on("routeChangeError", () => NProgress.done());
-*/
+
 // This default export is required in a new `pages/_app.js` file.
 const MyApp = ({ Component, pageProps }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  Router.events.on("routeChangeStart", () => setLoading(true));
+  Router.events.on("routeChangeComplete", () => setLoading(false));
+  Router.events.on("routeChangeError", () => setLoading(true));
+
   return (
     <AuthProvider auth={auth}>
-      <Component {...pageProps} />
+      <Spin spinning={loading} tip={"Loading..."}>
+        <Component {...pageProps} />
+      </Spin>
     </AuthProvider>
   );
 };

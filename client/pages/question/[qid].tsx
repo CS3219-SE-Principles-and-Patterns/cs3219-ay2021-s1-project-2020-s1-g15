@@ -8,7 +8,7 @@ import {
 } from "../../util";
 import React, { FC, useEffect, useState } from "react";
 import ViewQuestion from "../../components/questions/view-question";
-import { getAllQuestion, getSingleQuestion } from "../../components/api";
+import { getSingleQuestion } from "../../components/api";
 import { Spin } from "antd";
 
 type QuestionsProps = {
