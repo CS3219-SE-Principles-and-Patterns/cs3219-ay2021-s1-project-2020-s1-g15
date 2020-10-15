@@ -16,7 +16,7 @@ import {
  *
  * @param id the user id of the user
  */
-async function getUserById(id: string): Promise<User> {
+async function getUserById(id: string | ObjectId): Promise<User> {
   const userObjectId: ObjectId = toValidObjectId(id);
   const user: User | null = await getUsersCollection().findOne({
     _id: userObjectId,
