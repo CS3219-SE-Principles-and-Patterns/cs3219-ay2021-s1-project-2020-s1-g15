@@ -15,7 +15,6 @@ import {
   Tabs,
   List,
   Typography,
-  Avatar,
   Tag,
 } from "antd";
 

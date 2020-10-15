@@ -23,13 +23,14 @@ type AuthContextType = {
     password: string
   ) => Promise<firebase.auth.UserCredential>;
   logout?: () => Promise<void>;
-  getIdToken?: () => Promise<string>;
+  getIdToken: () => Promise<string>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: {},
   isAuthenticated: true,
   loading: false,
+  getIdToken: () => new Promise(() => console.log("test")),
 });
 
 export const AuthProvider: FC<props> = ({ auth, children }) => {

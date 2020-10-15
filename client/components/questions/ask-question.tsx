@@ -7,7 +7,6 @@ import {
   Divider,
   Form,
   Input,
-  message,
   notification,
   PageHeader,
   Select,
@@ -29,6 +28,8 @@ import {
 import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "../api";
 import router from "next/router";
+import { useAuth } from "../authentication";
+import Link from "next/link";
 
 const { Title } = Typography;
 
@@ -57,6 +58,7 @@ type AskQuestionProp = {
 };
 
 const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
+  const { isAuthenticated, getIdToken } = useAuth();
   const editor = useRef<Editor | null>(null);
   const [form] = useForm();
   const [questionLocal, setQuestion] = useState<Question | undefined>(question);
@@ -68,7 +70,8 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
     setLoading(true);
     form.validateFields().then(async (_) => {
       const { title } = values;
-      //@ts-ignore
+      const idToken = await getIdToken();
+      // @ts-ignore
       const markdown = editor.current.getInstance().getMarkdown();
       const questionArg: CreateQuestionParam = {
         title,
@@ -77,7 +80,7 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
         subject,
       };
       try {
-        const res: Question = await createQuestion(questionArg);
+        const res: Question = await createQuestion(questionArg, idToken);
         notification.success({
           message: "Question Created Succesfully",
           duration: 2,
@@ -97,7 +100,6 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
   const handleSubject = (value: string) => setSubject(value);
 
   const layout = {};
-
   return (
     <FluidPage title={pageTitles.askQuestion}>
       <PageHeader
@@ -111,9 +113,8 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
         backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
         onBack={() => window.history.back()}
       />
-      {loading ? (
-        <Spin spinning={loading} />
-      ) : (
+
+      <Spin spinning={loading}>
         <div className={styles.mainContent}>
           <Form
             form={form}
@@ -195,12 +196,18 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
               </div>
             </Card>
             <br />
-            <Button htmlType="submit" type="primary">
-              {questionLocal ? "Edit Question" : "Submit Question"}
-            </Button>
+            {isAuthenticated ? (
+              <Button htmlType="submit" type="primary">
+                {questionLocal ? "Edit Question" : "Submit Question"}
+              </Button>
+            ) : (
+              <Link href={routesObject.login}>
+                You are not logged in. Log in to ask a question!
+              </Link>
+            )}
           </Form>
         </div>
-      )}
+      </Spin>
     </FluidPage>
   );
 };

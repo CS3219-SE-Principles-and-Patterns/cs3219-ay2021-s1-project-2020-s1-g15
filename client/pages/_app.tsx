@@ -19,7 +19,7 @@ const MyApp = ({ Component, pageProps }) => {
   const [loading, setLoading] = useState<boolean>(false);
   Router.events.on("routeChangeStart", () => setLoading(true));
   Router.events.on("routeChangeComplete", () => setLoading(false));
-  Router.events.on("routeChangeError", () => setLoading(true));
+  Router.events.on("routeChangeError", () => setLoading(false));
 
   return (
     <AuthProvider auth={auth}>
@@ -29,6 +29,7 @@ const MyApp = ({ Component, pageProps }) => {
     </AuthProvider>
   );
 };
+
 /*
 // This gets called on every request
 export async function getServerSideProps() {
