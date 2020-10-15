@@ -8,6 +8,7 @@ import {
   TestConfig,
   shouldBypassAuth,
   isProdEnv,
+  toValidObjectId,
 } from "../utils";
 
 /**
@@ -15,11 +16,12 @@ import {
  * from the provided token in the request headers, and store it in `res.locals`.
  * If no token is provided, or if the token is invalid, an `ApiError` will be
  * thrown with a HTTP 401 UNAUTHORIZED error. If this function succeeds without
- * throwing errors, `res.locals` is guaranteed to have the valid `uid` key.
+ * throwing errors, `res.locals` is guaranteed to have the valid `uid` key,
+ * containing the valid and parsed `ObjectId` of the user.
  *
  * If `process.env.BYPASS_AUTH` is set to the string `true`, and if we are in the
- * `dev` or `test` environemnt, this function will store in `res.locals` the `uid`
- * of the testing account `devtestuser@answerleh.com`.
+ * `dev` or `test` environemnt, this function will store in `res.locals` the valid
+ * `ObjectId` of the `uid` of the testing account `devtestuser@answerleh.com`.
  */
 async function verifyUserAuth(
   req: Request,
@@ -30,7 +32,7 @@ async function verifyUserAuth(
     console.log(
       `WARNING: bypassing Firebase Auth and using ${TestConfig.DEVTESTUSER_EMAIL} as user`
     );
-    res.locals.uid = TestConfig.DEVTESTUSER_UID;
+    res.locals.uid = toValidObjectId(TestConfig.DEVTESTUSER_UID);
     return next();
   }
 
@@ -46,8 +48,8 @@ async function verifyUserAuth(
   try {
     // try to decode the idToken
     const decodedToken = await getAuth().verifyIdToken(idToken);
-    // store the recovered UID in res.locals for other the next routes to use
-    res.locals.uid = decodedToken.uid;
+    // store the recovered UID as object ID in res.locals for other the next routes to use
+    res.locals.uid = toValidObjectId(decodedToken.uid);
     // call the next route
     return next();
   } catch (error) {
