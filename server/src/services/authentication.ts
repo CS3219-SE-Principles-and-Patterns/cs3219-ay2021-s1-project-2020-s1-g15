@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as admin from "firebase-admin";
+import assert from "assert";
 
 /**
  * Returns the Firebase Admin credentials for local development.
@@ -11,11 +12,10 @@ import * as admin from "firebase-admin";
 async function getServiceAccountCredential(): Promise<
   admin.credential.Credential
 > {
-  if (process.env.NODE_ENV !== "dev") {
-    throw new Error(
-      "This function should only be called when developing locally!"
-    );
-  }
+  assert(
+    process.env.NODE_ENV === "dev",
+    "This function should only be called in the dev environment"
+  );
 
   const pathToSdk = path.join(__dirname, "..", "..", "firebase-adminsdk.json");
   const jsonFile = fs.readFileSync(pathToSdk, "utf8");

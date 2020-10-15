@@ -1,3 +1,4 @@
+import assert from "assert";
 import MongoClient, { Collection } from "mongodb";
 
 import { Question, Answer, User } from "../models";
@@ -29,10 +30,7 @@ async function initDb(): Promise<void> {
 }
 
 function getDb(): MongoClient.Db {
-  if (!mongoClient.isConnected()) {
-    throw Error("MongoDB: not yet connected");
-  }
-
+  assert(mongoClient.isConnected(), "MongoDB: not yet initialised");
   return mongoClient.db();
 }
 
@@ -47,26 +45,14 @@ async function closeDb(): Promise<void> {
 }
 
 function getQuestionsCollection(): Collection<Question> {
-  if (!mongoClient.isConnected()) {
-    throw Error("MongoDB: not yet connected");
-  }
-
   return getDb().collection("questions");
 }
 
 function getAnswersCollection(): Collection<Answer> {
-  if (!mongoClient.isConnected()) {
-    throw Error("MongoDB: not yet connected");
-  }
-
   return getDb().collection("answers");
 }
 
 function getUsersCollection(): Collection<User> {
-  if (!mongoClient.isConnected()) {
-    throw Error("MongoDB: not yet connected");
-  }
-
   return getDb().collection("users");
 }
 
