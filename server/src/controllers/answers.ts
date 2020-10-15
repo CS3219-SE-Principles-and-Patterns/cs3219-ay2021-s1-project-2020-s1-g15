@@ -115,14 +115,23 @@ async function updateAnswer(
   return updatedAnswer;
 }
 
-async function deleteAnswer(id: string): Promise<boolean> {
-  const objectId: ObjectId = new ObjectId(id);
+async function deleteAnswer(id: string | ObjectId): Promise<boolean> {
+  const answerObjectId: ObjectId = toValidObjectId(id);
 
   const result = await getAnswersCollection().findOneAndDelete({
-    _id: objectId,
+    _id: answerObjectId,
   });
 
-  return result.value != null;
+  const originalAnswer: Answer | undefined = result.value;
+  const isSuccessful: boolean = originalAnswer != null;
+  if (!isSuccessful) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Answer.NOT_FOUND
+    );
+  }
+
+  return isSuccessful;
 }
 
 export { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer };

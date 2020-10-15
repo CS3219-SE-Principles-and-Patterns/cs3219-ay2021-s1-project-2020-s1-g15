@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
 import {
   createAnswer,
@@ -13,12 +12,7 @@ import {
   removeAnswerFromQuestion,
 } from "../controllers/questions";
 import { Answer } from "../models";
-import {
-  HttpStatusCode,
-  ApiError,
-  ApiErrorMessage,
-  AnswerRequestBody,
-} from "../utils";
+import { HttpStatusCode, AnswerRequestBody } from "../utils";
 
 const router: Router = Router();
 
@@ -64,22 +58,11 @@ router.put("/:id", async (req: Request, res: Response) => {
 // DELETE request - delete an answer
 router.delete("/:id", async (req: Request, res: Response) => {
   const answerId: string = req.params.id;
-  if (!ObjectId.isValid(answerId)) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Answer.INVALID_ID
-    );
-  }
 
-  const isSuccessful: boolean = await deleteAnswer(answerId);
-  if (!isSuccessful) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Answer.NOT_FOUND
-    );
-  }
-
-  await removeAnswerFromQuestion(answerId);
+  await Promise.all([
+    deleteAnswer(answerId),
+    removeAnswerFromQuestion(answerId),
+  ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });
