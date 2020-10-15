@@ -6,6 +6,7 @@ import { registerAndCreateUser } from "../controllers/users";
 
 const router: Router = Router();
 
+//CREATE USER
 router.post("/", async (req: Request, res: Response) => {
   const data: UserRequestBody = {
     email: req.body.email,
