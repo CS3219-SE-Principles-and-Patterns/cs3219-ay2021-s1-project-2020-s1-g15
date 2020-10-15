@@ -42,5 +42,13 @@ export async function getServerSideProps() {
   // Pass data to the page via props
   return { props: { data } };
 }*/
+/*
+export async function getStaticPaths() {
+  // prerender static user page here
+  // see https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
+  //const allPosts = await getAllPostsWithSlug();
+
+  return {};
+}*/
 
 export default UserPage;
