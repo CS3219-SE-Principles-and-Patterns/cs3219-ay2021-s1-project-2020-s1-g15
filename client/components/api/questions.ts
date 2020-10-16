@@ -21,7 +21,7 @@ export const getAllQuestion = async ({
   return await res.json();
 };
 
-export const getSingleQuestion = async ({ id }): Promise<Question> => {
+export const getSingleQuestion = async (id: string): Promise<Question> => {
   const res = await fetch(baseUrl + id, {
     method: "GET",
   });

@@ -19,7 +19,11 @@ const renderOnClient = (question: Question | undefined) => {
     return <></>;
   }
 };
-
+/**
+ * Create question page
+ * @params qid - question id : send via url params.
+ * qid will determine whether or not this component will be in edited or not
+ */
 const AskQuestions = (): JSX.Element => {
   const router = useRouter();
   const qid = router.query.qid as string;
@@ -31,7 +35,7 @@ const AskQuestions = (): JSX.Element => {
     const fetchQuestion = async (id: string) => {
       setLoading(true);
       try {
-        const question = await getSingleQuestion({ id });
+        const question = await getSingleQuestion(id);
         setQuestion(question);
       } catch (err) {
         console.log(err);

@@ -1,4 +1,4 @@
-import { Button, Table, PageHeader, Tag, Input, Pagination } from "antd";
+import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -45,11 +45,6 @@ const Forum = ({ data }): JSX.Element => {
 
   const columns: ColumnsType<QuestionTableData> = [
     {
-      title: "id",
-      dataIndex: "_id",
-      key: "id",
-    },
-    {
       title: "title",
       dataIndex: "title",
       key: "title",
@@ -88,14 +83,22 @@ const Forum = ({ data }): JSX.Element => {
         </span>
       ),
     },
-
     {
       title: "action",
       key: "action",
       render: (_, record) => (
-        <Button onClick={() => ViewQuestion(record._id)} type={"primary"}>
-          View Question
-        </Button>
+        <Col>
+          <Button
+            className={styles.tableButton}
+            onClick={() => ViewQuestion(record._id)}
+            type={"primary"}
+          >
+            View Question
+          </Button>
+          <Button onClick={() => navigateToUserPage(record.userId)}>
+            View User
+          </Button>
+        </Col>
       ),
     },
   ];
@@ -107,11 +110,8 @@ const Forum = ({ data }): JSX.Element => {
         ...x,
       } as QuestionTableData)
   );
-  const dummyUser = async () => {
-    if (firebaseUser) {
-      const uid = firebaseUser.uid;
-      router.push({ pathname: `${routesObject.user}/${uid}` });
-    }
+  const navigateToUserPage = async (id: string) => {
+    router.push({ pathname: `${routesObject.user}/${id}` });
   };
 
   useEffect(() => {
@@ -138,9 +138,6 @@ const Forum = ({ data }): JSX.Element => {
             title={<h1>Forum</h1>}
             subTitle="This is the forum"
             extra={[
-              <Button type="primary" key="2" onClick={dummyUser}>
-                View User Page
-              </Button>,
               <Button type="primary" key="3" onClick={dummyAsk}>
                 Ask a Question
               </Button>,

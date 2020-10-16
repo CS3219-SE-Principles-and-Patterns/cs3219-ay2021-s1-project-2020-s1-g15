@@ -68,14 +68,13 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
 
   const login = async (email: string, password: string) => {
     const credential = await auth.signInWithEmailAndPassword(email, password);
-
     setIsAuthenticated(true);
     return credential;
   };
 
   const logout = async () => {
     await auth.signOut();
-    //setUser();
+    setUser(undefined);
     setIsAuthenticated(false);
   };
 
