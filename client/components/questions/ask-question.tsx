@@ -112,7 +112,7 @@ const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
     try {
       setLoading(true);
       if (!questionLocal) {
-        throw new Error("question is undefiend");
+        throw new Error("question is undefined");
       }
       const idToken = await getIdToken();
       await deleteSingleQuestion(idToken, questionLocal?._id);
