@@ -1,8 +1,6 @@
 import MongoClient from "mongodb";
 
 import {
-  DB_NAME,
-  URI,
   initDb,
   closeDb,
   getDb,
@@ -10,13 +8,6 @@ import {
   getAnswersCollection,
   getUsersCollection,
 } from "../../src/services/database";
-
-describe("Database constants", () => {
-  it("should be initialised to TEST environment", () => {
-    expect(DB_NAME).toBe("answerleh-TEST");
-    expect(URI).toBe(process.env.MONGO_URL);
-  });
-});
 
 describe("Initialise database", () => {
   afterAll(async (done) => {
@@ -73,7 +64,7 @@ describe("Get database", () => {
     expect(db1).toBe(db2);
   });
 
-  it("should throw error if database is not yet initialised", async () => {
+  it("should throw assertion error if database is not yet initialised", async () => {
     await closeDb();
 
     expect(getDb).toThrowError();

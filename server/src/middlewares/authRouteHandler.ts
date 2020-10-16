@@ -6,36 +6,34 @@ import {
   ApiError,
   ApiErrorMessage,
   TestConfig,
+  shouldBypassAuth,
+  isProdEnv,
+  toValidObjectId,
 } from "../utils";
-
-// wrap these as functions so we can toggle the states during runtime for dev/test purposes
-const isDevOrTestEnv = () =>
-  process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test";
-const shouldBypassAuth = () => process.env.BYPASS_AUTH === "true";
 
 /**
  * Middleware for authenticated routes. This middleware will extract the `uid`
  * from the provided token in the request headers, and store it in `res.locals`.
  * If no token is provided, or if the token is invalid, an `ApiError` will be
  * thrown with a HTTP 401 UNAUTHORIZED error. If this function succeeds without
- * throwing errors, `res.locals` is guaranteed to have the valid `uid` key.
+ * throwing errors, `res.locals` is guaranteed to have the valid `uid` key,
+ * containing the valid and parsed `ObjectId` of the user.
  *
  * If `process.env.BYPASS_AUTH` is set to the string `true`, and if we are in the
- * `dev` or `test` environemnt, this function will store in `res.locals` the `uid`
- * of the testing account `devtestuser@answerleh.com`.
+ * `dev` or `test` environemnt, this function will store in `res.locals` the valid
+ * `ObjectId` of the `uid` of the testing account `devtestuser@answerleh.com`.
  */
 async function verifyUserAuth(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  if (isDevOrTestEnv() && shouldBypassAuth()) {
+  if (!isProdEnv() && shouldBypassAuth()) {
     console.log(
       `WARNING: bypassing Firebase Auth and using ${TestConfig.DEVTESTUSER_EMAIL} as user`
     );
-    res.locals.uid = TestConfig.DEVTESTUSER_UID;
-    next();
-    return;
+    res.locals.uid = toValidObjectId(TestConfig.DEVTESTUSER_UID);
+    return next();
   }
 
   const authHeader: string | undefined = req.headers.authorization;
@@ -50,10 +48,10 @@ async function verifyUserAuth(
   try {
     // try to decode the idToken
     const decodedToken = await getAuth().verifyIdToken(idToken);
-    // store the recovered UID in res.locals for other the next routes to use
-    res.locals.uid = decodedToken.uid;
+    // store the recovered UID as object ID in res.locals for other the next routes to use
+    res.locals.uid = toValidObjectId(decodedToken.uid);
     // call the next route
-    next();
+    return next();
   } catch (error) {
     // assume token is invalid for any errors
     throw new ApiError(
