@@ -14,14 +14,16 @@ import {
 } from "../../util";
 import React from "react";
 import styles from "./forum.module.css";
+import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
 const Forum = ({ data }): JSX.Element => {
-  console.log(data);
+  const { user } = useAuth();
+  const [isInitial, setIsInitial] = useState<boolean>(false);
   const [questions, setQuestions] = useState<Question[]>(data);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [isLoading, setLoading] = useState(false); //State for loading indicator
+  const [loading, setLoading] = useState(false); //State for loading indicator
 
   const router = useRouter();
   const dummyAsk = (e: { preventDefault: () => void }) => {
@@ -33,7 +35,6 @@ const Forum = ({ data }): JSX.Element => {
     router.push(`${routesObject.question}/${_id}`);
 
   const onPageChange = (page: number) => {
-    console.log(page);
     setPage(page);
   };
 
@@ -101,17 +102,26 @@ const Forum = ({ data }): JSX.Element => {
         ...x,
       } as QuestionTableData)
   );
+  const dummyUser = async () => {
+    if (user) {
+      const uid = user.uid;
+      router.push({ pathname: `${routesObject.user}${uid}` });
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("triggered fetch");
       setLoading(true);
       const data = await getAllQuestion({ page, pageSize });
       setQuestions(data);
+      setLoading(false);
     };
-
-    fetchData();
-  }, [page, pageSize]);
+    if (isInitial) {
+      fetchData();
+    } else {
+      setIsInitial(false);
+    }
+  }, [isInitial, page, pageSize]);
 
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
@@ -122,7 +132,10 @@ const Forum = ({ data }): JSX.Element => {
             title={<h1>Forum</h1>}
             subTitle="This is the forum"
             extra={[
-              <Button key="3" onClick={dummyAsk}>
+              <Button type="primary" key="2" onClick={dummyUser}>
+                View User Page
+              </Button>,
+              <Button type="primary" key="3" onClick={dummyAsk}>
                 Ask a Question
               </Button>,
             ]}
@@ -132,8 +145,14 @@ const Forum = ({ data }): JSX.Element => {
             placeholder="Search for your question"
             enterButton
           />
+
           <br />
-          <Table columns={columns} dataSource={tableData} pagination={false} />
+          <Table
+            loading={loading}
+            columns={columns}
+            dataSource={tableData}
+            pagination={false}
+          />
           <div className={styles.flex}>
             <Pagination
               className={styles.pagination}

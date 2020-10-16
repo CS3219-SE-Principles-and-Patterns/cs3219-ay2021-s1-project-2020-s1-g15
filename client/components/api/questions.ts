@@ -4,7 +4,7 @@ import {
   GetAllQuestionsParam,
   Question,
 } from "../../util";
-import HttpStatusCode from "../../util/HttpStatusCode";
+import { getAuthorizationString, throwAPiError } from "./util";
 
 const baseUrl =
   process.env.NODE_ENV == "development"
@@ -25,17 +25,24 @@ export const getSingleQuestion = async ({ id }): Promise<Question> => {
   const res = await fetch(baseUrl + id, {
     method: "GET",
   });
-  return await res.json();
+
+  if (res.ok) {
+    return (await res.json()) as Question;
+  } else {
+    return throwAPiError(res);
+  }
 };
 
 export const createQuestion = async (
-  question: CreateQuestionParam
+  question: CreateQuestionParam,
+  idToken: string
 ): Promise<Question> => {
   const res = await fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify({ ...question }),
     headers: {
       "Content-Type": "application/json",
+      authorization: getAuthorizationString(idToken),
     },
   });
 
