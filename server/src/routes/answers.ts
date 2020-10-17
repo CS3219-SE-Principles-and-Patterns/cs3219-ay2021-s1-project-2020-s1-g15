@@ -13,7 +13,7 @@ import {
 } from "../controllers/questions";
 import { Answer } from "../models";
 import { HttpStatusCode, AnswerRequestBody } from "../utils";
-import {verifyUserAuth} from "../middlewares/authRouteHandler";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 
 const router: Router = Router();
 
@@ -46,7 +46,7 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 });
 
 // PUT request - update an answer
-router.put("/:id", verifyUserAuth,async (req: Request, res: Response) => {
+router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const answerId: string = req.params.id;
   const data: AnswerRequestBody = {
     markdown: req.body.markdown,
@@ -57,7 +57,7 @@ router.put("/:id", verifyUserAuth,async (req: Request, res: Response) => {
 });
 
 // DELETE request - delete an answer
-router.delete("/:id", verifyUserAuth,async (req: Request, res: Response) => {
+router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const answerId: string = req.params.id;
 
   await Promise.all([
