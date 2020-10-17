@@ -7,14 +7,13 @@ import {
   Divider,
   Form,
   Input,
-  message,
   notification,
   PageHeader,
   Select,
   Spin,
   Typography,
 } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, FC } from "react";
 import FluidPage from "../layout";
 
 import { pageTitles, routesObject } from "../../util";
@@ -29,8 +28,8 @@ import {
 import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "../api";
 import router from "next/router";
-import { ApiError } from "next/dist/next-server/server/api-utils";
-import HttpStatusCode from "../../util/HttpStatusCode";
+import { useAuth } from "../authentication";
+import Link from "next/link";
 
 const { Title } = Typography;
 
@@ -58,9 +57,8 @@ type AskQuestionProp = {
   question?: Question | undefined;
 };
 
-const AskQuestionsForm: React.FC<AskQuestionProp> = ({
-  question,
-}): JSX.Element => {
+const AskQuestionsForm: FC<AskQuestionProp> = ({ question }): JSX.Element => {
+  const { isAuthenticated, getIdToken } = useAuth();
   const editor = useRef<Editor | null>(null);
   const [form] = useForm();
   const [questionLocal, setQuestion] = useState<Question | undefined>(question);
@@ -69,12 +67,11 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish = (values: { title: any }) => {
-    console.log(values);
-
     setLoading(true);
     form.validateFields().then(async (_) => {
       const { title } = values;
-      //@ts-ignore
+      const idToken = await getIdToken();
+      // @ts-ignore
       const markdown = editor.current.getInstance().getMarkdown();
       const questionArg: CreateQuestionParam = {
         title,
@@ -83,7 +80,7 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
         subject,
       };
       try {
-        const res: Question = await createQuestion(questionArg);
+        const res: Question = await createQuestion(questionArg, idToken);
         notification.success({
           message: "Question Created Succesfully",
           duration: 2,
@@ -94,16 +91,15 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
           message: err.message,
           duration: 2,
         });
+        setLoading(false);
       }
     });
-    setLoading(false);
   };
 
   const handleLevel = (value: string) => setLevel(value);
   const handleSubject = (value: string) => setSubject(value);
 
   const layout = {};
-
   return (
     <FluidPage title={pageTitles.askQuestion}>
       <PageHeader
@@ -117,9 +113,8 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
         backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
         onBack={() => window.history.back()}
       />
-      {loading ? (
-        <Spin spinning={loading} />
-      ) : (
+
+      <Spin spinning={loading}>
         <div className={styles.mainContent}>
           <Form
             form={form}
@@ -201,12 +196,18 @@ const AskQuestionsForm: React.FC<AskQuestionProp> = ({
               </div>
             </Card>
             <br />
-            <Button htmlType="submit" type="primary">
-              {questionLocal ? "Edit Question" : "Submit Question"}
-            </Button>
+            {isAuthenticated ? (
+              <Button htmlType="submit" type="primary">
+                {questionLocal ? "Edit Question" : "Submit Question"}
+              </Button>
+            ) : (
+              <Link href={routesObject.login}>
+                You are not logged in. Log in to ask a question!
+              </Link>
+            )}
           </Form>
         </div>
-      )}
+      </Spin>
     </FluidPage>
   );
 };
