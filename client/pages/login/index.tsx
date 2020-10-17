@@ -24,7 +24,6 @@ const Login = (): JSX.Element => {
         <Card className={styles.card}>
           <h1>Login to AnswerLeh</h1>
           <Form
-            name="normal_login"
             className={styles.loginForm}
             initialValues={{ remember: true }}
             onFinish={onFinish}
@@ -56,12 +55,10 @@ const Login = (): JSX.Element => {
               <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
-
               <a className={styles.loginFormForgot} href="">
                 Forgot password
               </a>
             </Form.Item>
-
             <Form.Item>
               <Button
                 type="primary"

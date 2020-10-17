@@ -4,7 +4,12 @@ import React, { FC, useEffect, useState } from "react";
 import ViewUser from "../../components/user";
 import { listOfAnswersMock, questionMock, User, UserApi } from "../../util";
 import { getSingleUser } from "../../components/api";
+import { Spin } from "antd";
 
+/**
+ * A single User Page
+ * @params uid: id of user. Sent via url params
+ */
 const UserPage: FC = (): JSX.Element => {
   const router = useRouter();
   const { uid } = router.query;
@@ -15,9 +20,13 @@ const UserPage: FC = (): JSX.Element => {
     const fetchData = async () => {
       setLoading(true);
       if (uid != undefined && uid) {
-        const user: User = await getSingleUser(uid);
-        console.log(user);
-        setUser(user);
+        try {
+          const user: User = await getSingleUser(uid);
+          console.log(user);
+          setUser(user);
+        } catch (err) {
+          console.log(err);
+        }
       }
       setLoading(false);
     };
@@ -26,7 +35,9 @@ const UserPage: FC = (): JSX.Element => {
 
   return (
     <FluidPage title={`AnswerLeh - ${user?.email ?? "user not found"}`}>
-      {user ? <ViewUser user={user} /> : <>User not found!</>}
+      <Spin spinning={loading}>
+        {user ? <ViewUser user={user} /> : <>User not found!</>}
+      </Spin>
     </FluidPage>
   );
 };

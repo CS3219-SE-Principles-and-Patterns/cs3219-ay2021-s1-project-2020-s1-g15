@@ -1,8 +1,8 @@
 import {
   ApiError,
-  CreateQuestionParam,
   GetAllQuestionsParam,
   Question,
+  QuestionParam,
 } from "../../util";
 import { getAuthorizationString, throwAPiError } from "./util";
 
@@ -21,7 +21,7 @@ export const getAllQuestion = async ({
   return await res.json();
 };
 
-export const getSingleQuestion = async ({ id }): Promise<Question> => {
+export const getSingleQuestion = async (id: string): Promise<Question> => {
   const res = await fetch(baseUrl + id, {
     method: "GET",
   });
@@ -34,7 +34,7 @@ export const getSingleQuestion = async ({ id }): Promise<Question> => {
 };
 
 export const createQuestion = async (
-  question: CreateQuestionParam,
+  question: QuestionParam,
   idToken: string
 ): Promise<Question> => {
   const res = await fetch(baseUrl, {
@@ -49,6 +49,48 @@ export const createQuestion = async (
   if (res.ok) {
     const question = (await res.json()) as Question;
     return question;
+  } else {
+    const { message } = (await res.json()) as ApiError;
+    throw new Error(message);
+  }
+};
+
+export const editQuestion = async (
+  question: QuestionParam,
+  idToken: string,
+  qid: string
+): Promise<Question> => {
+  const res = await fetch(baseUrl + qid, {
+    method: "PUT",
+    body: JSON.stringify({ ...question }),
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(idToken),
+    },
+  });
+
+  if (res.ok) {
+    const question = (await res.json()) as Question;
+    return question;
+  } else {
+    const { message } = (await res.json()) as ApiError;
+    throw new Error(message);
+  }
+};
+
+export const deleteSingleQuestion = async (
+  idToken: string,
+  qid: string
+): Promise<void> => {
+  const res = await fetch(baseUrl + qid, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(idToken),
+    },
+  });
+  if (res.ok) {
+    return;
   } else {
     const { message } = (await res.json()) as ApiError;
     throw new Error(message);
