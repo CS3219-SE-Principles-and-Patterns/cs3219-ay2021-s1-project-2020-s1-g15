@@ -12,7 +12,7 @@ import {
 } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
 
-// TODO: add pagination/search/filter in the future
+// TODO: add search/filter in the future
 async function getQuestions(
   page: number,
   pageSize: number

@@ -287,8 +287,13 @@ OR
 - Method: `GET`
 - URL: `/api/questions`
 - Auth required: NO
-
-- Pagination note: Should accept three parmeters: `page` , `pageSize` , `total` (simple offset based pagination)
+- Body data (example):
+  ```js
+  {
+    "page": "1" // string: required
+    "pageSize": "10" // string: required
+  }
+  ```
 
 **Success response**:
 
@@ -296,24 +301,27 @@ OR
 - Code: `200 OK`
 - Content (example):
   ```js
-  [
-    // ...
-    {
-      "_id": "5f7d327766aa52759df235ff",
-      "createdAt": "2020-10-07T03:13:59.223Z",
-      "updatedAt": "2020-10-07T03:13:59.223Z",
-      "title": "How do I do this?",
-      "slug": "how-do-i-do-this",
-      "markdown": "hello",
-      "userId": "5f7d327766aa52759df235fe",
-      "answerIds": [],
-      "level": "primary",
-      "subject": "mathematics",
-      "upvotes": 0,
-      "downvotes": 0
-    },
-    // ...
-  ]
+  {
+    [
+      // ...
+      {
+        "_id": "5f7d327766aa52759df235ff",
+        "createdAt": "2020-10-07T03:13:59.223Z",
+        "updatedAt": "2020-10-07T03:13:59.223Z",
+        "title": "How do I do this?",
+        "slug": "how-do-i-do-this",
+        "markdown": "hello",
+        "userId": "5f7d327766aa52759df235fe",
+        "answerIds": [],
+        "level": "primary",
+        "subject": "mathematics",
+        "upvotes": 0,
+        "downvotes": 0
+      },
+      // ...
+    ], 
+    "total": 15
+  }
   ```
 
 #### Get a specific question
