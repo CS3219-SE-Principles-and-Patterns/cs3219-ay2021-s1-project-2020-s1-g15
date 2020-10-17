@@ -24,7 +24,7 @@ import {
 } from "antd";
 import React, { useRef, useState } from "react";
 import FluidPage from "../layout";
-import { pageTitles } from "../../util";
+import { pageTitles, routesObject } from "../../util";
 import styles from "./question.module.css";
 import { Answer, Question } from "../../util/types";
 import dynamic from "next/dynamic";
@@ -45,6 +45,10 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
   answers,
 }): JSX.Element => {
   const { user } = useAuth();
+
+  const listOfQuestionIds = user?.questionIds ?? [];
+  const belongsToUser: boolean =
+    listOfQuestionIds.filter((x: string) => x === question._id).length == 1;
 
   const action = [
     <Button icon={<LikeFilled />} key="1">
@@ -87,6 +91,16 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
     }
   };
 
+  const navigateToEditPage = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
+    router.push({
+      pathname: `${routesObject.editQuestion}`,
+      query: {
+        qid: question._id,
+      },
+    });
+  };
+
   return (
     <div key="view-question2">
       <PageHeaderComponent
@@ -115,6 +129,9 @@ const ViewQuestion: FC<ViewQuestionProp> = ({
           </div>
         </Card>
         <br />
+        <Button type="default" onClick={navigateToEditPage}>
+          Edit Question
+        </Button>
         {<AnswerComponent />}
 
         <h1>Answer</h1>

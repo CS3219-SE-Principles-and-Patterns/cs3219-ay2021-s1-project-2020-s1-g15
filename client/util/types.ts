@@ -68,7 +68,7 @@ export type GetAllQuestionsParam = {
   pageSize: number;
 };
 
-export type CreateQuestionParam = {
+export type QuestionParam = {
   title: string;
   markdown: string;
   level: string;

@@ -48,7 +48,7 @@ export const getSingleUser = async (id: string | string[]) => {
     try {
       const res = await Promise.all(
         questionIds.map(async (id: string) => {
-          const question = await getSingleQuestion({ id });
+          const question = await getSingleQuestion(id);
           questions.push(question);
         })
       );

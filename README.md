@@ -51,6 +51,29 @@ cd client/
 yarn
 ```
 
+### Development Notes 
+
+#### Pages 
+
+Currently each folder name corresponds to the url e.g `question` folder will be `base_url/question/`
+- forum
+- login 
+- register
+- user 
+
+Route constants can be found in `util/routes.ts`
+
+#### Question Page ( located in `pages/question` folder )
+
+- `[qid].tsx` page that presents a single question
+  - url params : `qid`
+  - Fetches question based on the url params
+
+- `ask.tsx` page that represents the creation / editing of a single question
+  - url params : `qid`
+  - Fetches qid based on url params (if presence)
+  - if creating, qid is set to null
+
 ### Development environment
 
 ```sh

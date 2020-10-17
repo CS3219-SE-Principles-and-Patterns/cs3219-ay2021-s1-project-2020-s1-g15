@@ -1,4 +1,4 @@
-import { Button, Table, PageHeader, Tag, Input, Pagination } from "antd";
+import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
 const Forum = ({ data }): JSX.Element => {
-  const { user } = useAuth();
+  const { firebaseUser } = useAuth();
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [questions, setQuestions] = useState<Question[]>(data);
   const [page, setPage] = useState<number>(1);
@@ -28,7 +28,12 @@ const Forum = ({ data }): JSX.Element => {
   const router = useRouter();
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    router.push(`${routesObject.question}/ask`);
+    router.push({
+      pathname: `${routesObject.editQuestion}`,
+      query: {
+        qid: null,
+      },
+    });
   };
 
   const ViewQuestion = (_id: string) =>
@@ -39,11 +44,6 @@ const Forum = ({ data }): JSX.Element => {
   };
 
   const columns: ColumnsType<QuestionTableData> = [
-    {
-      title: "id",
-      dataIndex: "_id",
-      key: "id",
-    },
     {
       title: "title",
       dataIndex: "title",
@@ -83,14 +83,22 @@ const Forum = ({ data }): JSX.Element => {
         </span>
       ),
     },
-
     {
       title: "action",
       key: "action",
       render: (_, record) => (
-        <Button onClick={() => ViewQuestion(record._id)} type={"primary"}>
-          View Question
-        </Button>
+        <Col>
+          <Button
+            className={styles.tableButton}
+            onClick={() => ViewQuestion(record._id)}
+            type={"primary"}
+          >
+            View Question
+          </Button>
+          <Button onClick={() => navigateToUserPage(record.userId)}>
+            View User
+          </Button>
+        </Col>
       ),
     },
   ];
@@ -102,11 +110,8 @@ const Forum = ({ data }): JSX.Element => {
         ...x,
       } as QuestionTableData)
   );
-  const dummyUser = async () => {
-    if (user) {
-      const uid = user.uid;
-      router.push({ pathname: `${routesObject.user}${uid}` });
-    }
+  const navigateToUserPage = async (id: string) => {
+    router.push({ pathname: `${routesObject.user}/${id}` });
   };
 
   useEffect(() => {
@@ -117,6 +122,7 @@ const Forum = ({ data }): JSX.Element => {
       setLoading(false);
     };
     if (isInitial) {
+      // prevent re-fetching on first load
       fetchData();
     } else {
       setIsInitial(false);
@@ -132,9 +138,6 @@ const Forum = ({ data }): JSX.Element => {
             title={<h1>Forum</h1>}
             subTitle="This is the forum"
             extra={[
-              <Button type="primary" key="2" onClick={dummyUser}>
-                View User Page
-              </Button>,
               <Button type="primary" key="3" onClick={dummyAsk}>
                 Ask a Question
               </Button>,
