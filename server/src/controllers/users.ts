@@ -140,9 +140,38 @@ async function removeQuestionFromUser(
   return updatedUser;
 }
 
+async function addAnswerToUser(
+  userId: string | ObjectId,
+  answerId: string | ObjectId
+): Promise<User> {
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
+  const result = await getUsersCollection().findOneAndUpdate(
+    { _id: userObjectId },
+    {
+      $addToSet: {
+        answerIds: answerObjectId,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedUser: User | undefined = result.value;
+  if (updatedUser == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.NOT_FOUND
+    );
+  }
+
+  return updatedUser;
+}
+
 export {
   registerAndCreateUser,
   addQuestionToUser,
   removeQuestionFromUser,
   getUserById,
+  addAnswerToUser,
 };

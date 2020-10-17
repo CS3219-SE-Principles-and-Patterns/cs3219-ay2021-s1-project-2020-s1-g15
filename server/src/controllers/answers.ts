@@ -37,7 +37,11 @@ async function getAnswersByQuestionId(
   return answers;
 }
 
-async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
+async function createAnswer(
+  userId: string | ObjectId,
+  data: AnswerRequestBody
+): Promise<Answer> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
   const { questionId, markdown }: AnswerRequestBody = data;
 
   if (!markdown || !questionId) {
@@ -61,6 +65,7 @@ async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
     createdAt: new Date(),
     updatedAt: new Date(),
     markdown: trimmedMarkdown,
+    userId: userObjectId,
     questionId: questionObjectId,
     upvotes: 0,
     downvotes: 0,
