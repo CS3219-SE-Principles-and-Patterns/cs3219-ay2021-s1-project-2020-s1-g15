@@ -10,12 +10,27 @@ import {
   titleToSlug,
   toValidObjectId,
 } from "../utils";
+import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
 
 // TODO: add pagination/search/filter in the future
-async function getQuestions(): Promise<Question[]> {
-  const questions: Question[] = await getQuestionsCollection().find().toArray();
+async function getQuestions(
+  page: number,
+  pageSize: number
+): Promise<GetQuestionRequestResponse> {
+  if (!page || !pageSize || page < 0 || pageSize < 0) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
+    );
+  }
 
-  return questions;
+  const questions: Question[] = await getQuestionsCollection()
+    .find()
+    .skip(page > 0 ? (page - 1) * pageSize : 0)
+    .limit(pageSize)
+    .toArray();
+  const total = await getQuestionsCollection().countDocuments();
+  return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
