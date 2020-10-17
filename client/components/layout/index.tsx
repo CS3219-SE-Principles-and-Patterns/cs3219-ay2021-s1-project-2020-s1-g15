@@ -1,11 +1,13 @@
 import React, { FC } from "react";
-import { Avatar, Layout, Menu } from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
 import styles from "./Layout.module.css";
 import Link from "next/link";
 import { routesObject, menuKeys } from "../../util";
 import Head from "next/head";
 import { useAuth } from "../authentication";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
+import router from "next/router";
+
 const { Header, Footer, Content } = Layout;
 
 type props = {
@@ -15,7 +17,32 @@ type props = {
 };
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
+  const logoutApplication = async (
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (logout) {
+      await logout();
+      router.push(`${routesObject.home}`);
+    }
+  };
+
+  const userMenu = (
+    <Menu mode="vertical" className={styles.dropdownMenu}>
+      <Menu.Item key={menuKeys.user + `${user?.uid}`}>
+        <Link href={routesObject.home}>
+          <Button type="primary">My Page</Button>
+        </Link>
+      </Menu.Item>
+      <Menu.Item key={menuKeys.logout}>
+        <Button icon={<CloseCircleFilled />} onClick={logoutApplication}>
+          Log Out
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <Head>
@@ -37,9 +64,19 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
             <Menu.Item key={menuKeys.forum}>
               <Link href={routesObject.forum}>Forum</Link>
             </Menu.Item>
+            <Menu.Item key={menuKeys.user}>
+              <Link href={routesObject.user}>User</Link>
+            </Menu.Item>
             <Menu.Item key={menuKeys.login} className={styles.userProfile}>
               {isAuthenticated ? (
-                <Avatar icon={<UserOutlined />} />
+                <Dropdown overlay={userMenu} placement="bottomCenter">
+                  <a
+                    className="ant-dropdown-link"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Avatar icon={<UserOutlined />} />
+                  </a>
+                </Dropdown>
               ) : (
                 <Link href={routesObject.login}>Login</Link>
               )}
