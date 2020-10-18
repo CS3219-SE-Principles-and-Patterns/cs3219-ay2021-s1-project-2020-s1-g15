@@ -1,10 +1,11 @@
-import FluidPage from "../../components/layout";
-import { useRouter } from "next/router";
-import { listOfAnswersMock, pageTitles, Question } from "../../util";
 import React, { FC, useEffect, useState } from "react";
-import ViewQuestion from "../../components/questions/view-question";
-import { getSingleQuestion } from "../../components/api";
+import { useRouter } from "next/router";
 import { Spin } from "antd";
+
+import { getSingleQuestion } from "components/api";
+import FluidPage from "components/layout";
+import { listOfAnswersMock, pageTitles, Question } from "util/index";
+import ViewQuestion from "components/questions/view-question";
 
 type QuestionsProps = {
   query: string;

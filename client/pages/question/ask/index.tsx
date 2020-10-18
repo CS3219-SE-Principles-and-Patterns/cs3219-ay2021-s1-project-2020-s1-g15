@@ -1,18 +1,17 @@
-import { render } from "@testing-library/react";
-import { Spin } from "antd";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import { Spin } from "antd";
 
-import React, { useEffect, useState } from "react";
-import { getSingleQuestion } from "../../components/api";
-import FluidPage from "../../components/layout";
-import { menuKeys, pageTitles, Question } from "../../util";
+import { getSingleQuestion } from "components/api";
+import FluidPage from "components/layout";
+import { menuKeys, pageTitles, Question } from "util/index";
 
 const renderOnClient = (question: Question | undefined) => {
   if (typeof window !== "undefined") {
     // client-side-only code
     const AskQuestionsForm = dynamic(
-      () => import("../../components/questions/ask-question")
+      () => import("components/questions/ask-question")
     );
     return <AskQuestionsForm question={question} />;
   } else {
