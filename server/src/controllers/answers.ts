@@ -77,9 +77,11 @@ async function createAnswer(
 }
 
 async function updateAnswer(
+  userId: string | ObjectId,
   answerId: string | ObjectId,
   data: AnswerRequestBody
 ): Promise<Answer> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
   const { markdown }: AnswerRequestBody = data;
 
@@ -99,7 +101,10 @@ async function updateAnswer(
   }
 
   const result = await getAnswersCollection().findOneAndUpdate(
-    { _id: answerObjectId },
+    {
+      _id: answerObjectId,
+      userId: userObjectId, // make sure user can only update his own answer
+    },
     {
       $set: {
         markdown: trimmedMarkdown,

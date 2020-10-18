@@ -53,11 +53,12 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 
 // PUT request - update an answer
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
+  const userId: ObjectId = res.locals.uid;
   const answerId: string = req.params.id;
   const data: AnswerRequestBody = {
     markdown: req.body.markdown,
   };
-  const updatedAnswer: Answer = await updateAnswer(answerId, data);
+  const updatedAnswer: Answer = await updateAnswer(userId, answerId, data);
 
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
