@@ -1,10 +1,10 @@
 import "codemirror/lib/codemirror.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
-import "style/antd.less";
-import "style/app.css";
-import "style/global.css";
-import "style/markdown.css";
+import "styles/antd.less";
+import "styles/app.css";
+import "styles/global.css";
+import "styles/markdown.css";
 
 import React, { useState } from "react";
 import { Router } from "next/router";

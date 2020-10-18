@@ -4,7 +4,7 @@ const withAntdLess = require("next-plugin-antd-less");
 // see: https://github.com/vercel/next.js/issues/8156#issuecomment-516009764
 // fix issue with next-plugin-antd-less
 module.exports = withAntdLess({
-  lessVarsFilePath: "./pages/antd.less",
+  lessVarsFilePath: "./styles/antd.less",
   env: {
     baseUrlDev: "http://localhost:8000/api/",
   },
