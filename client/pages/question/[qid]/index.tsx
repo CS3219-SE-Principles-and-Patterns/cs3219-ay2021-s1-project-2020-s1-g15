@@ -1,10 +1,12 @@
 import React, { FC } from "react";
 import { GetServerSideProps } from "next";
+import { Space } from "antd";
 
 import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
 import { Question, Answer, listOfAnswersMock } from "util/index";
 import { ViewQuestion, ViewAnswers } from "components/questions";
+import styles from "./index.module.css";
 
 type QuestionsProps = {
   question: Question;
@@ -14,8 +16,12 @@ type QuestionsProps = {
 const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
   return (
     <FluidPage title={question.title}>
-      <ViewQuestion question={question} />
-      <ViewAnswers answers={answers} />
+      <div className={styles.flexCenter}>
+        <Space direction="vertical" size="large" className={styles.maxWidthLg}>
+          <ViewQuestion question={question} />
+          <ViewAnswers answers={answers} />
+        </Space>
+      </div>
     </FluidPage>
   );
 };

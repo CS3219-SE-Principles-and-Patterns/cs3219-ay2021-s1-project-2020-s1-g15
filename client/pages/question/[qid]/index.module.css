@@ -1,0 +1,11 @@
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.maxWidthLg {
+  max-width: 700px;
+  width: 100%;
+}
