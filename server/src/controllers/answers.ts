@@ -125,11 +125,15 @@ async function updateAnswer(
   return updatedAnswer;
 }
 
-async function deleteAnswer(id: string | ObjectId): Promise<boolean> {
+async function deleteAnswer(
+  id: string | ObjectId,
+  userId: string | ObjectId): Promise<boolean> {
   const answerObjectId: ObjectId = toValidObjectId(id);
-
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  
   const result = await getAnswersCollection().findOneAndDelete({
     _id: answerObjectId,
+    userId: userObjectId, // make sure user can only delete his own question
   });
 
   const originalAnswer: Answer | undefined = result.value;

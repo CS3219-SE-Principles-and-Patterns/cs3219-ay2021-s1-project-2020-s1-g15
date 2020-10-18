@@ -15,7 +15,7 @@ import { Answer } from "../models";
 import { HttpStatusCode, AnswerRequestBody } from "../utils";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { ObjectId } from "mongodb";
-import { addAnswerToUser } from "../controllers/users";
+import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
 
 const router: Router = Router();
 
@@ -66,10 +66,12 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 // DELETE request - delete an answer
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const answerId: string = req.params.id;
+  const userId: ObjectId = res.locals.uid;
 
   await Promise.all([
-    deleteAnswer(answerId),
+    deleteAnswer(answerId, userId),
     removeAnswerFromQuestion(answerId),
+    removeAnswerFromUser(answerId, userId),
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
