@@ -4,7 +4,7 @@ import NProgress from "nprogress";
 
 import "./antd.less";
 import "./app.css";
-import "github-markdown-css";
+import "./markdown.css";
 
 import { AuthProvider } from "../components/authentication";
 import auth from "./firebase.config";
