@@ -287,7 +287,7 @@ OR
 - Method: `GET`
 - URL: `/api/questions`
 - Auth required: NO
-- Body data (example):
+- param data (example):
   ```js
   {
     "page": "1" // string: required
