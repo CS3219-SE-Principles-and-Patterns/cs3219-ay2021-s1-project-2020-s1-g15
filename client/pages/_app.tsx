@@ -2,9 +2,10 @@ import "codemirror/lib/codemirror.css";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import NProgress from "nprogress";
 
-import "./antd.less";
-import "./app.css";
-import "./markdown.css";
+import "style/antd.less";
+import "style/app.css";
+import "style/global.css";
+import "style/markdown.css";
 
 import { AuthProvider } from "../components/authentication";
 import auth from "./firebase.config";
