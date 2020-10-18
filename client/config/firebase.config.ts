@@ -12,13 +12,11 @@ const config = {
   messagingSenderId: "896806835090",
   appId: "1:896806835090:web:dd3713e71eb0343326674b",
 };
-let auth: firebase.auth.Auth;
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
-  auth = firebase.auth();
-} else {
-  auth = firebase.auth();
 }
+
+const auth = firebase.auth();
 
 export default auth;
