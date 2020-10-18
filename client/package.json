@@ -36,6 +36,7 @@
     "next": "latest",
     "next-plugin-antd-less": "^0.0.6",
     "nprogress": "^0.2.0",
+    "query-string": "^6.13.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-tsparticles": "^1.18.2",

@@ -5,7 +5,11 @@ import {
   Question,
   QuestionParam,
 } from "../../util";
-import { getAuthorizationString, throwAPiError } from "./util";
+import {
+  createUrlParamString,
+  getAuthorizationString,
+  throwAPiError,
+} from "./util";
 
 const baseUrl =
   process.env.NODE_ENV == "development"
@@ -16,12 +20,9 @@ export const getAllQuestion = async ({
   page,
   pageSize,
 }: GetAllQuestionsParam): Promise<GetAllQuestionResponse> => {
-  const res = await fetch(baseUrl, {
+  const args = createUrlParamString({ page, pageSize });
+  const res = await fetch(baseUrl + args, {
     method: "GET",
-    body: JSON.stringify({
-      page,
-      pageSize,
-    }),
   });
   if (res.ok) {
     return (await res.json()) as GetAllQuestionResponse;

@@ -69,7 +69,7 @@ export type GetAllQuestionsParam = {
 };
 
 export type GetAllQuestionResponse = {
-  question: Question[];
+  questions: Question[];
   total: number;
 };
 
