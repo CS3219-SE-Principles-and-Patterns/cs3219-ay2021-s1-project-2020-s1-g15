@@ -14,7 +14,7 @@ type QuestionsProps = {
 const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
   return (
     <FluidPage title={question.title}>
-      <ViewQuestion question={question} answers={answers} />
+      <ViewQuestion question={question} />
     </FluidPage>
   );
 };
