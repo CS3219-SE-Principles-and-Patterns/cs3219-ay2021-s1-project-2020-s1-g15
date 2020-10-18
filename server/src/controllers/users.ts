@@ -171,7 +171,6 @@ async function addAnswerToUser(
 async function removeAnswerFromUser(
   answerId: string | ObjectId,
   userId: string | ObjectId
-  
 ): Promise<User> {
   const answerObjectId: ObjectId = toValidObjectId(answerId);
   const userObjectId: ObjectId = toValidObjectId(userId);
