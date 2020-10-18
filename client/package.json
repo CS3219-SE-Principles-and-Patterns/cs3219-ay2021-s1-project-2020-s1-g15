@@ -39,7 +39,10 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-tsparticles": "^1.18.2",
-    "suneditor-react": "^2.14.2"
+    "remark-parse": "^9.0.0",
+    "remark-react": "^8.0.0",
+    "suneditor-react": "^2.14.2",
+    "unified": "^9.2.0"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",
