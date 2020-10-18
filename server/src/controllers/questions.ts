@@ -17,7 +17,7 @@ async function getQuestions(
   page: number,
   pageSize: number
 ): Promise<GetQuestionRequestResponse> {
-  if (!page || !pageSize || page < 0 || pageSize < 0) {
+  if (!page || !pageSize) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
@@ -26,7 +26,7 @@ async function getQuestions(
 
   const questions: Question[] = await getQuestionsCollection()
     .find()
-    .skip(page > 0 ? (page - 1) * pageSize : 0)
+    .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
   const total = await getQuestionsCollection().countDocuments();
