@@ -21,8 +21,8 @@ const router: Router = Router();
 
 // GET request - list all questions
 router.get("/", async (req: Request, res: Response) => {
-  const page = parseInt(req.body.page);
-  const pageSize = parseInt(req.body.pageSize);
+  const page = parseInt(req.query.page as string);
+  const pageSize = parseInt(req.query.pageSize as string);
 
   const { questions, total }: GetQuestionRequestResponse = await getQuestions(
     page,
