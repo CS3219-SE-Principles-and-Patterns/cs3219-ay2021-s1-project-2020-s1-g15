@@ -1,5 +1,6 @@
 import {
   ApiError,
+  GetAllQuestionResponse,
   GetAllQuestionsParam,
   Question,
   QuestionParam,
@@ -14,11 +15,19 @@ const baseUrl =
 export const getAllQuestion = async ({
   page,
   pageSize,
-}: GetAllQuestionsParam): Promise<Question[]> => {
+}: GetAllQuestionsParam): Promise<GetAllQuestionResponse> => {
   const res = await fetch(baseUrl, {
     method: "GET",
+    body: JSON.stringify({
+      page,
+      pageSize,
+    }),
   });
-  return await res.json();
+  if (res.ok) {
+    return (await res.json()) as GetAllQuestionResponse;
+  } else {
+    return throwAPiError(res);
+  }
 };
 
 export const getSingleQuestion = async (id: string): Promise<Question> => {

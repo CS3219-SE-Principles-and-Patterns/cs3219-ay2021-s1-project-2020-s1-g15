@@ -68,6 +68,11 @@ export type GetAllQuestionsParam = {
   pageSize: number;
 };
 
+export type GetAllQuestionResponse = {
+  question: Question[];
+  total: number;
+};
+
 export type QuestionParam = {
   title: string;
   markdown: string;
