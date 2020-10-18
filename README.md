@@ -302,24 +302,25 @@ OR
 - Content (example):
   ```js
   {
-    [
-      // ...
-      {
-        "_id": "5f7d327766aa52759df235ff",
-        "createdAt": "2020-10-07T03:13:59.223Z",
-        "updatedAt": "2020-10-07T03:13:59.223Z",
-        "title": "How do I do this?",
-        "slug": "how-do-i-do-this",
-        "markdown": "hello",
-        "userId": "5f7d327766aa52759df235fe",
-        "answerIds": [],
-        "level": "primary",
-        "subject": "mathematics",
-        "upvotes": 0,
-        "downvotes": 0
-      },
-      // ...
-    ], 
+    "questions" :
+      [
+                    // ...
+                    {
+                      "_id": "5f7d327766aa52759df235ff",
+                      "createdAt": "2020-10-07T03:13:59.223Z",
+                      "updatedAt": "2020-10-07T03:13:59.223Z",
+                      "title": "How do I do this?",
+                      "slug": "how-do-i-do-this",
+                      "markdown": "hello",
+                      "userId": "5f7d327766aa52759df235fe",
+                      "answerIds": [],
+                      "level": "primary",
+                      "subject": "mathematics",
+                      "upvotes": 0,
+                      "downvotes": 0
+                    },
+                    // ...
+        ],
     "total": 15
   }
   ```
