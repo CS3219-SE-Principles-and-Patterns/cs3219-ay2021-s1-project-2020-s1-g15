@@ -36,8 +36,8 @@ const Forum = ({ data }): JSX.Element => {
     });
   };
 
-  const ViewQuestion = (_id: string) =>
-    router.push(`${routesObject.question}/${_id}`);
+  const ViewQuestion = (_id: string, slug: string) =>
+    router.push(`${routesObject.question}/${_id}/${slug}`);
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -90,7 +90,7 @@ const Forum = ({ data }): JSX.Element => {
         <Col>
           <Button
             className={styles.tableButton}
-            onClick={() => ViewQuestion(record._id)}
+            onClick={() => ViewQuestion(record._id, record.slug)}
             type={"primary"}
           >
             View Question
