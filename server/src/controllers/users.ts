@@ -169,11 +169,11 @@ async function addAnswerToUser(
 }
 
 async function removeAnswerFromUser(
-  answerId: string | ObjectId,
-  userId: string | ObjectId
+  userId: string | ObjectId,
+  answerId: string | ObjectId
 ): Promise<User> {
-  const answerObjectId: ObjectId = toValidObjectId(answerId);
   const userObjectId: ObjectId = toValidObjectId(userId);
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
 
   const result = await getUsersCollection().findOneAndUpdate(
     { _id: userObjectId },

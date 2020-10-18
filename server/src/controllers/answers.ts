@@ -126,11 +126,11 @@ async function updateAnswer(
 }
 
 async function deleteAnswer(
-  id: string | ObjectId,
-  userId: string | ObjectId
+  userId: string | ObjectId,
+  id: string | ObjectId
 ): Promise<boolean> {
-  const answerObjectId: ObjectId = toValidObjectId(id);
   const userObjectId: ObjectId = toValidObjectId(userId);
+  const answerObjectId: ObjectId = toValidObjectId(id);
 
   const result = await getAnswersCollection().findOneAndDelete({
     _id: answerObjectId,

@@ -65,13 +65,13 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
 // DELETE request - delete an answer
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
-  const answerId: string = req.params.id;
   const userId: ObjectId = res.locals.uid;
+  const answerId: string = req.params.id;
 
   await Promise.all([
-    deleteAnswer(answerId, userId),
+    deleteAnswer(userId, answerId),
     removeAnswerFromQuestion(answerId),
-    removeAnswerFromUser(answerId, userId),
+    removeAnswerFromUser(userId, answerId),
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
