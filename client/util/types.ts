@@ -26,9 +26,9 @@ export type QuestionTableData = Util & {
   subject: string;
 };
 
-export type Answer = {
-  _id: string;
+export type Answer = Util & {
   markdown: string;
+  userId: string; // id of the user who created this question
   upvotes: number;
   downvotes: number;
 };

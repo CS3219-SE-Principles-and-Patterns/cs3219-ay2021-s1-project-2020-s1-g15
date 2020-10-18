@@ -3,8 +3,8 @@ import { GetServerSideProps } from "next";
 
 import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
-import { Question, Answer } from "util/index";
-import ViewQuestion from "components/questions/view-question";
+import { Question, Answer, listOfAnswersMock } from "util/index";
+import { ViewQuestion, ViewAnswers } from "components/questions";
 
 type QuestionsProps = {
   question: Question;
@@ -15,6 +15,7 @@ const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
   return (
     <FluidPage title={question.title}>
       <ViewQuestion question={question} />
+      <ViewAnswers answers={answers} />
     </FluidPage>
   );
 };
@@ -27,7 +28,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const { qid } = params;
   const question = await getSingleQuestion(qid as string);
-  const answers = []; // TODO: get actual answers
+  const answers = JSON.parse(JSON.stringify(listOfAnswersMock)); // TODO: get actual answers
+
   return {
     props: {
       question: question,
