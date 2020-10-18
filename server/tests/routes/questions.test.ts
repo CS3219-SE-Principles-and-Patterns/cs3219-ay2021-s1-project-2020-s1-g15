@@ -83,7 +83,8 @@ describe("GET request - list all questions", () => {
   it("should return 200", async (done) => {
     const res = await request(server)
       .get(API_ENDPOINT)
-      .send({ page: 1, pageSize: 10 });
+      .query({ page: 1, pageSize: 10 })
+      .send();
 
     expect(res.status).toBe(HttpStatusCode.OK);
     //! make sure done is called at the end: https://github.com/visionmedia/supertest/issues/520#issuecomment-456340621
