@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   Row,
@@ -19,7 +19,7 @@ import {
   routesObject,
 } from "util/index";
 import { useAuth } from "components/authentication";
-import { createQuestion } from "components/api";
+import { createQuestion, editQuestion } from "components/api";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -76,9 +76,16 @@ const Config = Object.freeze({
 const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   const isEditing: boolean = question !== undefined;
   const { getIdToken } = useAuth();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(isEditing); // set to true if editing to fetch question
   const [form] = Form.useForm();
   const router = useRouter();
+
+  useEffect(() => {
+    // force form to update initialValue when question prop changes
+    // https://github.com/ant-design/ant-design/issues/22372
+    form.resetFields();
+    setLoading(false);
+  }, [form, question]);
 
   const onFormFinish = async (questionParam: QuestionParam) => {
     // validation will throw error and stop execution if it fails
@@ -86,12 +93,13 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
 
     setLoading(true);
     const userIdToken = await getIdToken();
-    const res: Question = await createQuestion(questionParam, userIdToken);
+    const res: Question = isEditing
+      ? await editQuestion(questionParam, userIdToken, question?._id as string)
+      : await createQuestion(questionParam, userIdToken);
     notification.success({
-      message: "Question created succesfully",
+      message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
     });
     router.push(`${routesObject.question}/${res._id}/${res.slug}`);
-    setLoading(false);
   };
 
   const onPreviewClick = () => {
@@ -173,7 +181,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       <Form.Item>
         <Row justify="end">
           <Space>
-            <Button loading={loading} onClick={onPreviewClick}>
+            <Button disabled={loading} onClick={onPreviewClick}>
               Preview
             </Button>
             <Button loading={loading} onClick={onSubmitClick} type="primary">
