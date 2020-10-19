@@ -5,7 +5,7 @@ import assert from "assert";
 
 import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
-import { Question, Answer, listOfAnswersMock } from "util/index";
+import { Question, Answer, listOfAnswersMock, menuKeys } from "util/index";
 import { ViewQuestion, ViewAnswers } from "components/questions";
 import styles from "./index.module.css";
 
@@ -16,7 +16,7 @@ type QuestionsProps = {
 
 const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
   return (
-    <FluidPage title={question.title}>
+    <FluidPage title={question.title} selectedkey={menuKeys.forum}>
       <div className={styles.flexCenter}>
         <Space direction="vertical" size="large" className={styles.maxWidthLg}>
           <ViewQuestion question={question} />
