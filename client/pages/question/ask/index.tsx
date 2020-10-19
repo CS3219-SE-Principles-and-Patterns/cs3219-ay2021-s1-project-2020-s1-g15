@@ -9,7 +9,7 @@ const Ask = (): JSX.Element => {
   return (
     <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
       <Row justify="center">
-        <Col flex="700px">
+        <Col flex="750px">
           <Card>
             <QuestionForm />
           </Card>
