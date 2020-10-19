@@ -1,7 +1,8 @@
 import React, { FC, ReactNode } from "react";
 import { Typography, Card, Tag, Divider, Space } from "antd";
+import { grey } from "@ant-design/colors";
 
-import { Question, markdownToReactNode } from "util/index";
+import { Question, markdownToReactNode, toRelativeTimeAgo } from "util/index";
 
 type ViewQuestionProp = {
   question: Question;
@@ -18,10 +19,12 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
         <Title level={1}>{question.title}</Title>
       </Typography>
       <Space direction="vertical">
-        <div>
-          <Tag>{question.createdAt}</Tag>
-          <Tag>{question.userId}</Tag>
-        </div>
+        <Space>
+          <span style={{ color: grey[4] }}>{question.userId}</span>
+          <span style={{ color: grey[1] }}>
+            {toRelativeTimeAgo(question.createdAt)}
+          </span>
+        </Space>
         <div>
           <Tag color="geekblue">{question.level}</Tag>
           <Tag color="geekblue">{question.subject}</Tag>
