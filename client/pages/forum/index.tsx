@@ -29,10 +29,7 @@ const Forum = ({ data }): JSX.Element => {
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push({
-      pathname: `${routesObject.editQuestion}`,
-      query: {
-        qid: null,
-      },
+      pathname: `${routesObject.askQuestion}`,
     });
   };
 

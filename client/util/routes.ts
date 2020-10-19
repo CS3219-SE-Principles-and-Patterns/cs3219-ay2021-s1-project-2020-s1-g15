@@ -4,7 +4,9 @@ export const routesObject = {
   forum: "/forum",
   register: "/register",
   question: "/question",
-  editQuestion: "/question/ask",
+  askQuestion: "/question/ask",
+  editQuestion: (qid: string, slug: string): string =>
+    `/question/${qid}/${slug}/edit`,
   user: "/user",
 };
 
