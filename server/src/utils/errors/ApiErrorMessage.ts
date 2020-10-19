@@ -3,6 +3,7 @@ enum Question {
   INVALID_ID = "Question ID is invalid",
   MISSING_REQUIRED_FIELDS = "Required fields are missing",
   INVALID_FIELDS = "Required fields are invalid",
+  INVALID_PAGINATION_FIELDS = "Page and Page size values are invalid",
 }
 
 enum Answer {

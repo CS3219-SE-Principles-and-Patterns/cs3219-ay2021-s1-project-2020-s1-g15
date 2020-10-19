@@ -83,7 +83,7 @@ describe("Create a question", () => {
 
 describe("Get all questions", () => {
   it("should return an array", async () => {
-    const questions = await getQuestions();
+    const { questions } = await getQuestions(1, 10);
     expect(Array.isArray(questions)).toBe(true);
   });
 });
