@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { GetServerSideProps } from "next";
 import { Space } from "antd";
+import assert from "assert";
 
 import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
@@ -27,13 +28,24 @@ const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
 };
 
 // SSR: this gets called on every page request
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  if (params == null) {
-    return { props: {} };
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  res,
+}) => {
+  assert(params != null);
+
+  const { qid, slug } = params;
+  const question = await getSingleQuestion(qid as string);
+
+  // redirects the user to correct slug if the slug is incorrect
+  if (slug !== question.slug) {
+    res.writeHead(302, {
+      // or 301
+      Location: question.slug,
+    });
+    res.end();
   }
 
-  const { qid } = params;
-  const question = await getSingleQuestion(qid as string);
   const answers = JSON.parse(JSON.stringify(listOfAnswersMock)); // TODO: get actual answers
 
   return {
