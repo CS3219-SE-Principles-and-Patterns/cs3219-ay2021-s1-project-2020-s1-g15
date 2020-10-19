@@ -1,6 +1,17 @@
 import React, { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
-import { Typography, Card, Tag, Divider, Space, Row, Button } from "antd";
+import {
+  Typography,
+  Card,
+  Tag,
+  Divider,
+  Space,
+  Row,
+  Button,
+  Modal,
+  notification,
+} from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { grey } from "@ant-design/colors";
 
 import {
@@ -9,6 +20,10 @@ import {
   toRelativeTimeAgo,
   routesObject,
 } from "util/index";
+import { deleteSingleQuestion } from "components/api";
+import { useAuth } from "components/authentication";
+
+const { confirm } = Modal;
 
 type ViewQuestionProp = {
   question: Question;
@@ -17,6 +32,7 @@ type ViewQuestionProp = {
 const { Title } = Typography;
 
 const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
+  const { getIdToken } = useAuth();
   const router = useRouter();
   const parsedQuestionNode: ReactNode = markdownToReactNode(question.markdown);
 
@@ -25,7 +41,21 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   };
 
   const onDeleteClick = () => {
-    console.log("delete");
+    confirm({
+      title: "Are you sure you want to delete this question?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Warning: this cannot be undone!",
+      okText: "Delete",
+      okType: "danger",
+      async onOk() {
+        const userIdToken = await getIdToken();
+        await deleteSingleQuestion(userIdToken, question._id);
+        notification.success({
+          message: "Question succesfully deleted",
+        });
+        router.push(routesObject.forum);
+      },
+    });
   };
 
   return (
