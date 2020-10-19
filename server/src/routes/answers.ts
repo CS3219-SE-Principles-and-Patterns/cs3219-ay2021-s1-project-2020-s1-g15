@@ -13,6 +13,9 @@ import {
 } from "../controllers/questions";
 import { Answer } from "../models";
 import { HttpStatusCode, AnswerRequestBody } from "../utils";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import { ObjectId } from "mongodb";
+import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
 
 const router: Router = Router();
 
@@ -26,7 +29,8 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // POST request - create an answer
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
+  const userId: ObjectId = res.locals.uid;
   const data: AnswerRequestBody = {
     questionId: req.body.questionId,
     markdown: req.body.markdown,
@@ -36,32 +40,38 @@ router.post("/", async (req: Request, res: Response) => {
   await getQuestionById(data.questionId as string);
 
   // create the answer:
-  const createdAnswer: Answer = await createAnswer(data);
+  const createdAnswer: Answer = await createAnswer(userId, data);
 
   // add answer ID to the question:
   await addAnswerToQuestion(createdAnswer.questionId, createdAnswer._id);
+
+  // add answer ID to the user:
+  await addAnswerToUser(userId, createdAnswer._id);
 
   return res.status(HttpStatusCode.CREATED).json(createdAnswer);
 });
 
 // PUT request - update an answer
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
+  const userId: ObjectId = res.locals.uid;
   const answerId: string = req.params.id;
   const data: AnswerRequestBody = {
     markdown: req.body.markdown,
   };
-  const updatedAnswer: Answer = await updateAnswer(answerId, data);
+  const updatedAnswer: Answer = await updateAnswer(userId, answerId, data);
 
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
 
 // DELETE request - delete an answer
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
+  const userId: ObjectId = res.locals.uid;
   const answerId: string = req.params.id;
 
   await Promise.all([
-    deleteAnswer(answerId),
+    deleteAnswer(userId, answerId),
     removeAnswerFromQuestion(answerId),
+    removeAnswerFromUser(userId, answerId),
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
