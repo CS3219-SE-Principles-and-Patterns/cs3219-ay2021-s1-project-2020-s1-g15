@@ -131,6 +131,7 @@ async function updateQuestion(
         level: level,
         subject: subject,
         updatedAt: new Date(),
+        upvotes: 
       },
     },
     { returnOriginal: false }

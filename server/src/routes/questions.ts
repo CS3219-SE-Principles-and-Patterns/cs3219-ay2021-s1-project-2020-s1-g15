@@ -59,6 +59,19 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 });
 
 // PUT request - update a question
+router.post(
+  "/:id/upvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const questionId: string = req.params.id;
+    // upvote
+
+    return res.status(HttpStatusCode.OK).json();
+  }
+);
+
+// PUT request - update a question
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
