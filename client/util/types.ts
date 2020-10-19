@@ -45,7 +45,7 @@ export enum Subject {
   DEFAULT = "others",
 }
 
-export type User = {
+export type User = Util & {
   email: string;
   answerIds: string[];
   questionIds: string[];

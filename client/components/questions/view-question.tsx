@@ -15,8 +15,9 @@ type ViewQuestionProp = {
 };
 
 const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
-  const { getIdToken } = useAuth();
+  const { user, getIdToken } = useAuth();
   const router = useRouter();
+  const belongsToUser: boolean = !!user && user._id === question.userId;
 
   const onEditClick = () => {
     router.push(routesObject.editQuestion(question._id, question.slug));
@@ -44,18 +45,22 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
     <Card>
       <ViewQuestionPreview question={question} />
 
-      <Divider />
+      {belongsToUser ? (
+        <>
+          <Divider />
 
-      <Row justify="end">
-        <Space>
-          <Button danger onClick={onDeleteClick}>
-            Delete
-          </Button>
-          <Button type="primary" onClick={onEditClick}>
-            Edit
-          </Button>
-        </Space>
-      </Row>
+          <Row justify="end">
+            <Space>
+              <Button danger onClick={onDeleteClick}>
+                Delete
+              </Button>
+              <Button type="primary" onClick={onEditClick}>
+                Edit
+              </Button>
+            </Space>
+          </Row>
+        </>
+      ) : null}
     </Card>
   );
 };

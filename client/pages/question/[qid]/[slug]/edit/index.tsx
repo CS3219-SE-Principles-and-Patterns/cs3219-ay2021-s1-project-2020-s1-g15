@@ -12,11 +12,7 @@ const Edit = (): JSX.Element => {
   const [question, setQuestion] = useState<Question | undefined>(undefined);
 
   useEffect(() => {
-    const qid = router.query.qid as string | undefined;
-
-    if (qid == null) {
-      return;
-    }
+    const qid = router.query.qid as string;
 
     getSingleQuestion(qid).then((question) => setQuestion(question));
   }, [router.query.qid]);
