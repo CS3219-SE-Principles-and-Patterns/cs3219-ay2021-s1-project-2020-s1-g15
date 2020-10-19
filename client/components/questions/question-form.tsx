@@ -111,11 +111,15 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFormFinish}>
+    <Form
+      form={form}
+      initialValues={question}
+      layout="vertical"
+      onFinish={onFormFinish}
+    >
       {/* QUESTION TITLE */}
       <Form.Item
         name={Config.Title.NAME}
-        initialValue={question?.title}
         label={<FormLabel label={Config.Title.LABEL} />}
         rules={[{ required: true, message: Config.Title.REQUIRED_MESSAGE }]}
       >
@@ -129,7 +133,6 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       {/* MARKDOWN CONTENT */}
       <Form.Item
         name={Config.Markdown.NAME}
-        initialValue={question?.markdown}
         label={<FormLabel label={Config.Markdown.LABEL} />}
         rules={[
           {
@@ -148,7 +151,6 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       {/* LEVEL SELECT */}
       <Form.Item
         name={Config.Level.NAME}
-        initialValue={question?.level}
         label={<FormLabel label={Config.Level.LABEL} />}
         rules={[{ required: true, message: Config.Level.REQUIRED_MESSAGE }]}
       >
@@ -164,7 +166,6 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       {/* SUBJECT SELECT */}
       <Form.Item
         name={Config.Subject.NAME}
-        initialValue={question?.subject}
         label={<FormLabel label={Config.Subject.LABEL} />}
         rules={[{ required: true, message: Config.Subject.REQUIRED_MESSAGE }]}
       >
