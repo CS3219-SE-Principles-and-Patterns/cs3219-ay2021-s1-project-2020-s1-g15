@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/router";
 import {
   Row,
@@ -9,6 +9,7 @@ import {
   Button,
   notification,
   Space,
+  Tabs,
 } from "antd";
 
 import {
@@ -20,10 +21,12 @@ import {
 } from "util/index";
 import { useAuth } from "components/authentication";
 import { createQuestion, editQuestion } from "components/api";
+import ViewQuestionPreview from "./view-question-preview";
 
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
+const { TabPane } = Tabs;
 
 type QuestionFormProp = {
   question?: Question | undefined;
@@ -77,6 +80,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   const isEditing: boolean = question !== undefined;
   const { getIdToken } = useAuth();
   const [loading, setLoading] = useState<boolean>(isEditing); // set to true if editing to fetch question
+  const [questionPreviewNode, setQuestionPreviewNode] = useState<ReactNode>();
   const [form] = Form.useForm();
   const router = useRouter();
 
@@ -102,96 +106,109 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     router.push(`${routesObject.question}/${res._id}/${res.slug}`);
   };
 
-  const onPreviewClick = () => {
-    console.log("preview clicked");
-  };
+  const onTabChange = (key: string) => {
+    if (key !== "preview") {
+      return;
+    }
 
-  const onSubmitClick = () => {
-    form.submit();
+    const questionParam = form.getFieldsValue() as QuestionParam;
+    setQuestionPreviewNode(<ViewQuestionPreview question={questionParam} />);
   };
 
   return (
-    <Form
-      form={form}
-      initialValues={question}
-      layout="vertical"
-      onFinish={onFormFinish}
-    >
-      {/* QUESTION TITLE */}
-      <Form.Item
-        name={Config.Title.NAME}
-        label={<FormLabel label={Config.Title.LABEL} />}
-        rules={[{ required: true, message: Config.Title.REQUIRED_MESSAGE }]}
-      >
-        <Input
-          disabled={loading}
-          size="large"
-          placeholder={Config.Title.PLACEHOLDER}
-        />
-      </Form.Item>
+    <Space style={{ width: "100%" }} direction="vertical" size="large">
+      <Tabs type="card" size="large" onChange={onTabChange}>
+        <TabPane tab="Write" key="write">
+          <Form
+            form={form}
+            initialValues={question}
+            layout="vertical"
+            onFinish={onFormFinish}
+          >
+            {/* QUESTION TITLE */}
+            <Form.Item
+              name={Config.Title.NAME}
+              label={<FormLabel label={Config.Title.LABEL} />}
+              rules={[
+                { required: true, message: Config.Title.REQUIRED_MESSAGE },
+              ]}
+            >
+              <Input
+                disabled={loading}
+                size="large"
+                placeholder={Config.Title.PLACEHOLDER}
+              />
+            </Form.Item>
 
-      {/* MARKDOWN CONTENT */}
-      <Form.Item
-        name={Config.Markdown.NAME}
-        label={<FormLabel label={Config.Markdown.LABEL} />}
-        rules={[
-          {
-            required: true,
-            message: Config.Markdown.REQUIRED_MESSAGE,
-          },
-        ]}
-      >
-        <TextArea
-          disabled={loading}
-          rows={10}
-          placeholder={Config.Markdown.PLACEHOLDER}
-        />
-      </Form.Item>
+            {/* MARKDOWN CONTENT */}
+            <Form.Item
+              name={Config.Markdown.NAME}
+              label={<FormLabel label={Config.Markdown.LABEL} />}
+              rules={[
+                {
+                  required: true,
+                  message: Config.Markdown.REQUIRED_MESSAGE,
+                },
+              ]}
+            >
+              <TextArea
+                disabled={loading}
+                rows={10}
+                placeholder={Config.Markdown.PLACEHOLDER}
+              />
+            </Form.Item>
 
-      {/* LEVEL SELECT */}
-      <Form.Item
-        name={Config.Level.NAME}
-        label={<FormLabel label={Config.Level.LABEL} />}
-        rules={[{ required: true, message: Config.Level.REQUIRED_MESSAGE }]}
-      >
-        <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
-          {levelOptions.map((level) => (
-            <Option key={level} value={level}>
-              {level}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+            {/* LEVEL SELECT */}
+            <Form.Item
+              name={Config.Level.NAME}
+              label={<FormLabel label={Config.Level.LABEL} />}
+              rules={[
+                { required: true, message: Config.Level.REQUIRED_MESSAGE },
+              ]}
+            >
+              <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
+                {levelOptions.map((level) => (
+                  <Option key={level} value={level}>
+                    {level}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-      {/* SUBJECT SELECT */}
-      <Form.Item
-        name={Config.Subject.NAME}
-        label={<FormLabel label={Config.Subject.LABEL} />}
-        rules={[{ required: true, message: Config.Subject.REQUIRED_MESSAGE }]}
-      >
-        <Select disabled={loading} placeholder={Config.Subject.PLACEHOLDER}>
-          {subjectOptions.map((subject) => (
-            <Option key={subject} value={subject}>
-              {subject}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+            {/* SUBJECT SELECT */}
+            <Form.Item
+              name={Config.Subject.NAME}
+              label={<FormLabel label={Config.Subject.LABEL} />}
+              rules={[
+                { required: true, message: Config.Subject.REQUIRED_MESSAGE },
+              ]}
+            >
+              <Select
+                disabled={loading}
+                placeholder={Config.Subject.PLACEHOLDER}
+              >
+                {subjectOptions.map((subject) => (
+                  <Option key={subject} value={subject}>
+                    {subject}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Form>
+        </TabPane>
+
+        <TabPane tab="Preview" key="preview">
+          {questionPreviewNode}
+        </TabPane>
+      </Tabs>
 
       {/* FORM BUTTONS */}
-      <Form.Item>
-        <Row justify="end">
-          <Space>
-            <Button disabled={loading} onClick={onPreviewClick}>
-              Preview
-            </Button>
-            <Button loading={loading} onClick={onSubmitClick} type="primary">
-              Submit
-            </Button>
-          </Space>
-        </Row>
-      </Form.Item>
-    </Form>
+      <Row justify="end">
+        <Button loading={loading} onClick={form.submit} type="primary">
+          Submit
+        </Button>
+      </Row>
+    </Space>
   );
 };
 

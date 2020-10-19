@@ -1,27 +1,12 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
 import { useRouter } from "next/router";
-import {
-  Typography,
-  Card,
-  Tag,
-  Divider,
-  Space,
-  Row,
-  Button,
-  Modal,
-  notification,
-} from "antd";
+import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { grey } from "@ant-design/colors";
 
-import {
-  Question,
-  markdownToReactNode,
-  toRelativeTimeAgo,
-  routesObject,
-} from "util/index";
+import { Question, routesObject } from "util/index";
 import { deleteSingleQuestion } from "components/api";
 import { useAuth } from "components/authentication";
+import ViewQuestionPreview from "./view-question-preview";
 
 const { confirm } = Modal;
 
@@ -29,12 +14,9 @@ type ViewQuestionProp = {
   question: Question;
 };
 
-const { Title } = Typography;
-
 const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   const { getIdToken } = useAuth();
   const router = useRouter();
-  const parsedQuestionNode: ReactNode = markdownToReactNode(question.markdown);
 
   const onEditClick = () => {
     router.push(routesObject.editQuestion(question._id, question.slug));
@@ -60,26 +42,7 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
 
   return (
     <Card>
-      <Typography>
-        <Title level={1}>{question.title}</Title>
-      </Typography>
-
-      <Space direction="vertical">
-        <Space>
-          <span style={{ color: grey[4] }}>{question.userId}</span>
-          <span style={{ color: grey[1] }}>
-            {toRelativeTimeAgo(question.createdAt)}
-          </span>
-        </Space>
-        <Row>
-          <Tag color="geekblue">{question.level}</Tag>
-          <Tag color="geekblue">{question.subject}</Tag>
-        </Row>
-      </Space>
-
-      <Divider />
-
-      <article className="markdown-body">{parsedQuestionNode}</article>
+      <ViewQuestionPreview question={question} />
 
       <Divider />
 
