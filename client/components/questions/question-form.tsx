@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import router from "next/router";
+import { useRouter } from "next/router";
 import {
   Row,
   Typography,
@@ -78,6 +78,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   const { getIdToken } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const onFormFinish = async (questionParam: QuestionParam) => {
     // validation will throw error and stop execution if it fails
