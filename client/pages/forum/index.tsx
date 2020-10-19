@@ -17,10 +17,11 @@ import styles from "./forum.module.css";
 import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
-const Forum = ({ data }): JSX.Element => {
+const Forum = ({ questions, total }): JSX.Element => {
   const { firebaseUser } = useAuth();
   const [isInitial, setIsInitial] = useState<boolean>(false);
-  const [questions, setQuestions] = useState<Question[]>(data);
+  const [currQuestions, setQuestions] = useState<Question[]>(questions);
+  const [currTotal, setCurrTotal] = useState<number>(total);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [loading, setLoading] = useState(false); //State for loading indicator
@@ -103,7 +104,7 @@ const Forum = ({ data }): JSX.Element => {
     },
   ];
 
-  const tableData = questions.map(
+  const tableData = currQuestions.map(
     (x: Question, index: number) =>
       ({
         key: index,
@@ -117,11 +118,12 @@ const Forum = ({ data }): JSX.Element => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const data = await getAllQuestion({ page, pageSize });
-      setQuestions(data);
+      const { questions, total } = await getAllQuestion({ page, pageSize });
+      setQuestions(questions);
+      setCurrTotal(total);
       setLoading(false);
     };
-    if (isInitial) {
+    if (!isInitial) {
       // prevent re-fetching on first load
       fetchData();
     } else {
@@ -163,7 +165,7 @@ const Forum = ({ data }): JSX.Element => {
               onChange={onPageChange}
               pageSize={pageSize}
               defaultPageSize={10}
-              total={20}
+              total={currTotal}
               pageSizeOptions={["10", "20", "30"]}
             />
           </div>
@@ -175,8 +177,8 @@ const Forum = ({ data }): JSX.Element => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const data: Question[] = await getAllQuestion({ page: 1, pageSize: 10 });
+  const { questions, total } = await getAllQuestion({ page: 1, pageSize: 10 });
   // Pass data to the page via props
-  return { props: { data } };
+  return { props: { questions, total } };
 }
 export default Forum;

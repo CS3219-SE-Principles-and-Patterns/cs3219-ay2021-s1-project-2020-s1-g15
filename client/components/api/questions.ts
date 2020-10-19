@@ -1,10 +1,15 @@
 import {
   ApiError,
+  GetAllQuestionResponse,
   GetAllQuestionsParam,
   Question,
   QuestionParam,
 } from "../../util";
-import { getAuthorizationString, throwAPiError } from "./util";
+import {
+  createUrlParamString,
+  getAuthorizationString,
+  throwAPiError,
+} from "./util";
 
 const baseUrl =
   process.env.NODE_ENV == "development"
@@ -14,11 +19,16 @@ const baseUrl =
 export const getAllQuestion = async ({
   page,
   pageSize,
-}: GetAllQuestionsParam): Promise<Question[]> => {
-  const res = await fetch(baseUrl, {
+}: GetAllQuestionsParam): Promise<GetAllQuestionResponse> => {
+  const args = createUrlParamString({ page, pageSize });
+  const res = await fetch(baseUrl + args, {
     method: "GET",
   });
-  return await res.json();
+  if (res.ok) {
+    return (await res.json()) as GetAllQuestionResponse;
+  } else {
+    return throwAPiError(res);
+  }
 };
 
 export const getSingleQuestion = async (id: string): Promise<Question> => {
