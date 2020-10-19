@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { getQuestionsCollection } from "../services/database";
+import { getCollection, getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import {
   HttpStatusCode,
@@ -24,7 +24,7 @@ async function getQuestions(
     );
   }
 
-  const questions: Question[] = await getQuestionsCollection()
+  const questions: Question[] = await getCollection<Question>("questions")
     .find()
     .skip((page - 1) * pageSize)
     .limit(pageSize)

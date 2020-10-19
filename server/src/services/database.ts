@@ -50,6 +50,18 @@ function getAnswersCollection(): Collection<Answer> {
 function getUsersCollection(): Collection<User> {
   return getDb().collection("users");
 }
+// if this is ok then I will proceed to change the rest
+type CollectionType<T> = T extends Question
+  ? "questions"
+  : T extends User
+  ? "users"
+  : T extends Answer
+  ? "answers"
+  : never;
+
+function getCollection<T>(param: CollectionType<T>): Collection<T> {
+  return getDb().collection<T>(param);
+}
 
 export {
   initDb,
@@ -58,4 +70,5 @@ export {
   getQuestionsCollection,
   getAnswersCollection,
   getUsersCollection,
+  getCollection,
 };
