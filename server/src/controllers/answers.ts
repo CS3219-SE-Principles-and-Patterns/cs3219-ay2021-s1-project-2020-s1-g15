@@ -37,7 +37,11 @@ async function getAnswersByQuestionId(
   return answers;
 }
 
-async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
+async function createAnswer(
+  userId: string | ObjectId,
+  data: AnswerRequestBody
+): Promise<Answer> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
   const { questionId, markdown }: AnswerRequestBody = data;
 
   if (!markdown || !questionId) {
@@ -61,6 +65,7 @@ async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
     createdAt: new Date(),
     updatedAt: new Date(),
     markdown: trimmedMarkdown,
+    userId: userObjectId,
     questionId: questionObjectId,
     upvotes: 0,
     downvotes: 0,
@@ -72,9 +77,11 @@ async function createAnswer(data: AnswerRequestBody): Promise<Answer> {
 }
 
 async function updateAnswer(
+  userId: string | ObjectId,
   answerId: string | ObjectId,
   data: AnswerRequestBody
 ): Promise<Answer> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
   const { markdown }: AnswerRequestBody = data;
 
@@ -94,7 +101,10 @@ async function updateAnswer(
   }
 
   const result = await getAnswersCollection().findOneAndUpdate(
-    { _id: answerObjectId },
+    {
+      _id: answerObjectId,
+      userId: userObjectId, // make sure user can only update his own answer
+    },
     {
       $set: {
         markdown: trimmedMarkdown,
@@ -115,11 +125,16 @@ async function updateAnswer(
   return updatedAnswer;
 }
 
-async function deleteAnswer(id: string | ObjectId): Promise<boolean> {
+async function deleteAnswer(
+  userId: string | ObjectId,
+  id: string | ObjectId
+): Promise<boolean> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(id);
 
   const result = await getAnswersCollection().findOneAndDelete({
     _id: answerObjectId,
+    userId: userObjectId, // make sure user can only delete his own question
   });
 
   const originalAnswer: Answer | undefined = result.value;

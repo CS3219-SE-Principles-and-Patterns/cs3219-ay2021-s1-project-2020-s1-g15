@@ -7,6 +7,9 @@
 - [Client](#client)
   - [Prerequisites](#prerequisites)
   - [Installing](#installing)
+  - [Development Notes](#development-notes)
+    - [Pages](#pages)
+    - [Question Page ( located in `pages/question` folder )](#question-page--located-in-pagesquestion-folder-)
   - [Development environment](#development-environment)
 - [Server](#server)
   - [Prerequisites](#prerequisites-1)
@@ -457,6 +460,8 @@ OR
 
 - Method: `POST`
 - URL: `/api/answers`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 - Body data (example):
   ```js
   {
@@ -467,7 +472,7 @@ OR
 
 **Success response**:
 
-- Condition: if everything is OK, and the `markdown` field is valid
+- Condition: if user is authenticated, and the `markdown` field is valid
 - Code: `201 CREATED`
 - Content (example):
   ```js
@@ -485,6 +490,12 @@ OR
 
 **Error response**:
 
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
+
 - Condition: if `markdown` field is missing or the empty string
 - Status: `400 BAD REQUEST`
 - Content: description of error
@@ -499,6 +510,7 @@ OR
 
 - Method: `GET`
 - URL: `/api/answers`
+- Auth required: NO
 - Body data (example):
   ```js
   {
@@ -540,6 +552,8 @@ OR
 - URL: `/api/answers/:id`
 - URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 - Body data (example):
   ```js
   {
@@ -549,7 +563,7 @@ OR
 
 **Success response**:
 
-- Condition: if answer exists, and the `markdown` field is valid
+- Condition: if user is authenticated, answer exists, and the `markdown` field is valid
 - Code: `200 OK`
 - Content (example):
   ```js
@@ -558,11 +572,20 @@ OR
     "markdown": "updated",
     "questionId": "5f570273a83adf5417b48026",
     "createdAt": "2020-09-08T04:02:59.081Z",
-    "updatedAt": "2020-09-08T09:03:21.081Z"
+    "updatedAt": "2020-09-08T09:03:21.081Z",
+    "userId": "5f82feda42ace23941434007",
+    "upvotes": 0,
+    "downvotes": 0
   },
   ```
 
 **Error response**:
+
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
 
 - Condition: if `id` is not valid, or if `markdown` field is missing or the empty string
 - Status: `400 BAD REQUEST`
@@ -580,6 +603,8 @@ OR
 - URL: `/api/answers/:id`
 - URL parameters:
   - `id`: the `ObjectId` of the MongoDB document
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 
 **Success response**:
 
@@ -587,6 +612,12 @@ OR
 - Code: `204 NO CONTENT`
 
 **Error response**:
+
+- Condition: if the user authentication failed for any reason
+- Status: `401 UNAUTHORIZED`
+- Content: description of error
+
+OR
 
 - Condition: if answer does not exist
 - Code: `404 NOT FOUND`
