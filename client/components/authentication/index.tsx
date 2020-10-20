@@ -5,9 +5,10 @@ import React, {
   useEffect,
   FC,
 } from "react";
-
 import { Spin } from "antd";
+
 import { User, getSingleUser } from "../../utils";
+
 type props = {
   auth: firebase.auth.Auth;
   children: React.ReactNode;

@@ -1,15 +1,10 @@
-import FluidPage from "../../components/layout";
-import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
-import ViewUser from "../../components/user";
-import {
-  listOfAnswersMock,
-  questionMock,
-  User,
-  GetSingleUserRes,
-} from "../../utils";
-import { getSingleUser } from "../../utils/api";
+import { useRouter } from "next/router";
 import { Spin } from "antd";
+
+import FluidPage from "../../components/layout";
+import ViewUser from "../../components/user";
+import { User, getSingleUser } from "../../utils";
 
 /**
  * A single User Page
@@ -46,23 +41,5 @@ const UserPage: FC = (): JSX.Element => {
     </FluidPage>
   );
 };
-/*
-// This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
-  //const res = await fetch(`${process.env.localhost}questions/`)
-  //const data = await res.json()
-  const data = {};
-  // Pass data to the page via props
-  return { props: { data } };
-}*/
-/*
-export async function getStaticPaths() {
-  // prerender static user page here
-  // see https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
-  //const allPosts = await getAllPostsWithSlug();
-
-  return {};
-}*/
 
 export default UserPage;

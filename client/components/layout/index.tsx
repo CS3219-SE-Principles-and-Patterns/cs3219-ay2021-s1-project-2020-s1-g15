@@ -1,12 +1,13 @@
 import React, { FC } from "react";
-import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
-import styles from "./Layout.module.css";
-import Link from "next/link";
-import { Route, NavMenuKey } from "utils/index";
-import Head from "next/head";
-import { useAuth } from "../authentication";
-import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
 import router from "next/router";
+import Link from "next/link";
+import Head from "next/head";
+import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
+import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
+
+import styles from "./Layout.module.css";
+import { useAuth } from "../authentication";
+import { Route, NavMenuKey } from "utils/index";
 
 const { Header, Footer, Content } = Layout;
 

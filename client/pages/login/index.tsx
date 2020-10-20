@@ -1,12 +1,12 @@
-import FluidPage from "../../components/layout";
+import router from "next/router";
+import Link from "next/link";
 import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import styles from "./login.module.css";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { NavMenuKey, Route, PageTitle } from "../../utils";
-import Link from "next/link";
 import { useAuth } from "../../components/authentication";
-import router from "next/router";
+import FluidPage from "../../components/layout";
 
 const Login = (): JSX.Element => {
   const { login } = useAuth();

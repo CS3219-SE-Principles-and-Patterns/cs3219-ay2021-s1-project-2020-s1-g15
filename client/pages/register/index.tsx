@@ -1,16 +1,15 @@
-import FluidPage from "../../components/layout";
-import { Card, Form, Input, Button, Spin, notification } from "antd";
-
-import styles from "../login/login.module.css";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { PageTitle, RegisterUserReq, Route, registerUser } from "../../utils";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useForm } from "antd/lib/form/Form";
-import { useState } from "react";
+import { Card, Form, Input, Button, Spin, notification } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
+import FluidPage from "../../components/layout";
+import styles from "../login/login.module.css";
+import { PageTitle, RegisterUserReq, Route, registerUser } from "../../utils";
 import { useAuth } from "../../components/authentication";
 
 const Register = (): JSX.Element => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const { login } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
 

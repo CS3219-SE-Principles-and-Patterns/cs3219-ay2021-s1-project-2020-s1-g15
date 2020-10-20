@@ -1,9 +1,8 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
-import { ColumnProps } from "antd/lib/table";
-import { Router, useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
+
 import {
   NavMenuKey,
   PageTitle,
@@ -12,13 +11,11 @@ import {
   Route,
   getPaginatedQuestions,
 } from "../../utils";
-import React from "react";
+import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
-import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
 const Forum = ({ questions, total }): JSX.Element => {
-  const { firebaseUser } = useAuth();
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [currQuestions, setQuestions] = useState<Question[]>(questions);
   const [currTotal, setCurrTotal] = useState<number>(total);
