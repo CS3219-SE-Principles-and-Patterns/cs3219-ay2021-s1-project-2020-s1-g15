@@ -5,7 +5,7 @@ import styles from "../login/login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { RegisterUserParam, routesObject, GetSingleUserRes } from "../../util";
 import Link from "next/link";
-import { pageTitles } from "../../util";
+import { PageTitle } from "../../util";
 import { useForm } from "antd/lib/form/Form";
 import { useState } from "react";
 import { registerUser } from "../../components/api";
@@ -47,7 +47,7 @@ const Register = (): JSX.Element => {
 
   const layout = {};
   return (
-    <FluidPage title={pageTitles.register}>
+    <FluidPage title={PageTitle.REGSITER}>
       <div className={styles.center}>
         <Spin spinning={loading} tip="Loading...">
           <Card className={styles.card}>

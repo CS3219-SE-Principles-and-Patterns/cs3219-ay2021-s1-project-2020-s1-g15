@@ -5,7 +5,7 @@ import styles from "./login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { menuKeys, routesObject } from "../../util";
 import Link from "next/link";
-import { pageTitles } from "../../util";
+import { PageTitle } from "../../util";
 import { useAuth } from "../../components/authentication";
 import router from "next/router";
 
@@ -19,7 +19,7 @@ const Login = (): JSX.Element => {
   };
 
   return (
-    <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
+    <FluidPage title={PageTitle.LOGIN} selectedkey={menuKeys.login}>
       <div className={styles.center}>
         <Card className={styles.card}>
           <h1>Login to AnswerLeh</h1>

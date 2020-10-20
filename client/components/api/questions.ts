@@ -22,7 +22,7 @@ async function getPaginatedQuestions(
   );
 
   if (!res.ok) {
-    throwApiError(res);
+    return throwApiError(res);
   }
 
   return res.json();
@@ -34,7 +34,7 @@ async function getSingleQuestion(id: string): Promise<Question> {
   });
 
   if (!res.ok) {
-    throwApiError(res);
+    return throwApiError(res);
   }
 
   return res.json();
@@ -54,7 +54,7 @@ async function createQuestion(
   });
 
   if (!res.ok) {
-    throwApiError(res);
+    return throwApiError(res);
   }
 
   return res.json();
@@ -75,7 +75,7 @@ async function editQuestion(
   });
 
   if (!res.ok) {
-    throwApiError(res);
+    return throwApiError(res);
   }
 
   return res.json();
@@ -94,7 +94,7 @@ async function deleteSingleQuestion(
   });
 
   if (!res.ok) {
-    throwApiError(res);
+    return throwApiError(res);
   }
 }
 

@@ -7,7 +7,7 @@ import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
 import {
   menuKeys,
-  pageTitles,
+  PageTitle,
   Question,
   QuestionTableData,
   routesObject,
@@ -132,7 +132,7 @@ const Forum = ({ questions, total }): JSX.Element => {
   }, [isInitial, page, pageSize]);
 
   return (
-    <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={menuKeys.forum}>
       {
         <div className={styles.mainContent}>
           <PageHeader
