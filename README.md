@@ -374,17 +374,28 @@ OR
 
 #### Upvote a question
 
-- Method: `POST`
+- Method: `PUT`
 - URL: `/api/questions/:id/upvote`
 - Auth required: YES
 - Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
-
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
 #### Downvote a question
 
-- Method: `POST`
+- Method: `PUT`
 - URL: `/api/questions/:id/downvote`
 - Auth required: YES
 - Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
 
 #### Update a question
 
