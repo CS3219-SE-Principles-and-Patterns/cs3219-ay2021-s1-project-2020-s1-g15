@@ -370,6 +370,34 @@ OR
 - Status: `404 NOT FOUND`
 - Content: description of error
 
+#### Upvote a question
+
+- Method: `POST`
+- URL: `/api/questions/:id/upvote`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- query:
+  ```js
+  {
+    "userId":  "ObjectId" // string; required
+    "questionId": "ObjectId"  // string; required
+  }
+  ```
+
+  #### Downvote a question
+
+- Method: `POST`
+- URL: `/api/questions/:id/downvote`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- query:
+  ```js
+  {
+    "userId":  "ObjectId" // string; required
+    "questionId": "ObjectId"  // string; required
+  }
+  ```
+
 #### Update a question
 
 - Method: `PUT`
