@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import React, { FC } from "react";
-import styles from "./landing.module.css";
 import Particles from "react-tsparticles";
-import { Typography, PageHeader, Button, Divider, Card } from "antd";
+import { Typography, Divider } from "antd";
+
+import styles from "./landing.module.css";
 
 const { Paragraph, Title, Text } = Typography;
 
@@ -75,6 +75,7 @@ const LandingPage: FC = () => {
               number: {
                 density: {
                   enable: true,
+                  // eslint-disable-next-line @typescript-eslint/camelcase
                   value_area: 200,
                 },
                 value: 20,

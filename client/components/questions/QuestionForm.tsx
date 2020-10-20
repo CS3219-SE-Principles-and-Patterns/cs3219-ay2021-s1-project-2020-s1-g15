@@ -16,12 +16,13 @@ import {
   Question,
   Subject,
   Level,
-  QuestionParam,
-  routesObject,
-} from "util/index";
+  CreateQuestionReq,
+  Route,
+  createQuestion,
+  editQuestion,
+} from "utils/index";
 import { useAuth } from "components/authentication";
-import { createQuestion, editQuestion } from "components/api";
-import ViewQuestionPreview from "./view-question-preview";
+import QuestionPreview from "./QuestionPreview";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -91,19 +92,19 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     setLoading(false);
   }, [form, question]);
 
-  const onFormFinish = async (questionParam: QuestionParam) => {
+  const onFormFinish = async (questionReq: CreateQuestionReq) => {
     // validation will throw error and stop execution if it fails
     await form.validateFields();
 
     setLoading(true);
     const userIdToken = await getIdToken();
     const res: Question = isEditing
-      ? await editQuestion(questionParam, userIdToken, question?._id as string)
-      : await createQuestion(questionParam, userIdToken);
+      ? await editQuestion(questionReq, userIdToken, question?._id as string)
+      : await createQuestion(questionReq, userIdToken);
     notification.success({
       message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
     });
-    router.push(`${routesObject.question}/${res._id}/${res.slug}`);
+    router.push(Route.QUESTION_VIEW(res._id, res.slug));
   };
 
   const onTabChange = (key: string) => {
@@ -111,8 +112,8 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       return;
     }
 
-    const questionParam = form.getFieldsValue() as QuestionParam;
-    setQuestionPreviewNode(<ViewQuestionPreview question={questionParam} />);
+    const questionReq = form.getFieldsValue() as CreateQuestionReq;
+    setQuestionPreviewNode(<QuestionPreview question={questionReq} />);
   };
 
   return (

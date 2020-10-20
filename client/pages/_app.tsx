@@ -11,7 +11,6 @@ import { Router } from "next/router";
 import { Spin } from "antd";
 
 import { AuthProvider } from "components/authentication";
-import auth from "config/firebase.config";
 
 const App = ({ Component, pageProps }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -20,7 +19,7 @@ const App = ({ Component, pageProps }) => {
   Router.events.on("routeChangeError", () => setLoading(false));
 
   return (
-    <AuthProvider auth={auth}>
+    <AuthProvider>
       <Spin spinning={loading} tip={"Loading..."}>
         <Component {...pageProps} />
       </Spin>

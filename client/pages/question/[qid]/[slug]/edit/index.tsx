@@ -3,22 +3,27 @@ import { useRouter } from "next/router";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { menuKeys, pageTitles, Question } from "util/index";
+import { NavMenuKey, PageTitle, Question } from "utils/index";
 import { QuestionForm } from "components/questions";
-import { getSingleQuestion } from "components/api";
+import { getSingleQuestion } from "utils/api";
 
-const Edit = (): JSX.Element => {
+const QuestionEditPage = (): JSX.Element => {
   const router = useRouter();
   const [question, setQuestion] = useState<Question | undefined>(undefined);
 
   useEffect(() => {
-    const qid = router.query.qid as string;
+    const qid = router.query.qid as string | undefined;
+
+    if (qid == null) {
+      // this check is needed as qid may be null on page reload
+      return;
+    }
 
     getSingleQuestion(qid).then((question) => setQuestion(question));
   }, [router.query.qid]);
 
   return (
-    <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
           <Card>
@@ -30,4 +35,4 @@ const Edit = (): JSX.Element => {
   );
 };
 
-export default Edit;
+export default QuestionEditPage;

@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+import React, { FC } from "react";
+import { Level, User } from "../../utils";
 import {
   AlertOutlined,
   LeftOutlined,
-  QuestionCircleFilled,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import {
-  Descriptions,
   PageHeader,
   Row,
   Statistic,
@@ -18,13 +17,9 @@ import {
   Tag,
 } from "antd";
 
-const { TabPane } = Tabs;
-
-import React, { FC } from "react";
-import { Level, User } from "../../util";
-
 import styles from "./user.module.css";
-import dynamic from "next/dynamic";
+
+const { TabPane } = Tabs;
 
 const userPageTabKeys = {
   questions: "questions",
@@ -43,17 +38,7 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
   };
 
   const renderAnswerWithMarkdown = (markdown: string) => {
-    if (typeof window !== "undefined") {
-      //@ts-ignore
-      const ViewRender = dynamic(() =>
-        import("../questions/render-markdown-viewer").then(
-          (val) => val.RenderMarkdownViewer
-        )
-      );
-      return <ViewRender className={styles.renderAnswer} markdown={markdown} />;
-    } else {
-      return null;
-    }
+    return null; // TODO: fix this
   };
 
   return (

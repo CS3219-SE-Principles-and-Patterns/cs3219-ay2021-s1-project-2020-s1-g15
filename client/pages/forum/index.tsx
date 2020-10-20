@@ -1,24 +1,21 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
-import { ColumnProps } from "antd/lib/table";
-import { Router, useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { getAllQuestion } from "../../components/api";
-import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
+
 import {
-  menuKeys,
-  pageTitles,
+  NavMenuKey,
+  PageTitle,
   Question,
   QuestionTableData,
-  routesObject,
-} from "../../util";
-import React from "react";
+  Route,
+  getPaginatedQuestions,
+} from "../../utils";
+import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
-import { useAuth } from "../../components/authentication";
 
 const { Search } = Input;
-const Forum = ({ questions, total }): JSX.Element => {
-  const { firebaseUser } = useAuth();
+const ForumPage = ({ questions, total }): JSX.Element => {
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [currQuestions, setQuestions] = useState<Question[]>(questions);
   const [currTotal, setCurrTotal] = useState<number>(total);
@@ -30,12 +27,12 @@ const Forum = ({ questions, total }): JSX.Element => {
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push({
-      pathname: `${routesObject.askQuestion}`,
+      pathname: `${Route.QUESTION_ASK}`,
     });
   };
 
   const ViewQuestion = (_id: string, slug: string) =>
-    router.push(`${routesObject.question}/${_id}/${slug}`);
+    router.push(Route.QUESTION_VIEW(_id, slug));
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -109,13 +106,16 @@ const Forum = ({ questions, total }): JSX.Element => {
       } as QuestionTableData)
   );
   const navigateToUserPage = async (id: string) => {
-    router.push({ pathname: `${routesObject.user}/${id}` });
+    router.push(`${Route.USER}/${id}`);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { questions, total } = await getAllQuestion({ page, pageSize });
+      const { questions, total } = await getPaginatedQuestions({
+        page,
+        pageSize,
+      });
       setQuestions(questions);
       setCurrTotal(total);
       setLoading(false);
@@ -129,7 +129,7 @@ const Forum = ({ questions, total }): JSX.Element => {
   }, [isInitial, page, pageSize]);
 
   return (
-    <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       {
         <div className={styles.mainContent}>
           <PageHeader
@@ -174,8 +174,11 @@ const Forum = ({ questions, total }): JSX.Element => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const { questions, total } = await getAllQuestion({ page: 1, pageSize: 10 });
+  const { questions, total } = await getPaginatedQuestions({
+    page: 1,
+    pageSize: 10,
+  });
   // Pass data to the page via props
   return { props: { questions, total } };
 }
-export default Forum;
+export default ForumPage;

@@ -2,12 +2,12 @@ import React from "react";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { menuKeys, pageTitles } from "util/index";
+import { NavMenuKey, PageTitle } from "utils/index";
 import { QuestionForm } from "components/questions";
 
-const Ask = (): JSX.Element => {
+const QuestionAskPage = (): JSX.Element => {
   return (
-    <FluidPage title={pageTitles.forum} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
           <Card>
@@ -19,4 +19,4 @@ const Ask = (): JSX.Element => {
   );
 };
 
-export default Ask;
+export default QuestionAskPage;
