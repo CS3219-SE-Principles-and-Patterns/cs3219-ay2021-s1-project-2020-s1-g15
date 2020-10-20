@@ -15,7 +15,7 @@ import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
 
 const { Search } = Input;
-const Forum = ({ questions, total }): JSX.Element => {
+const ForumPage = ({ questions, total }): JSX.Element => {
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [currQuestions, setQuestions] = useState<Question[]>(questions);
   const [currTotal, setCurrTotal] = useState<number>(total);
@@ -181,4 +181,4 @@ export async function getServerSideProps() {
   // Pass data to the page via props
   return { props: { questions, total } };
 }
-export default Forum;
+export default ForumPage;

@@ -8,7 +8,7 @@ import styles from "../login/login.module.css";
 import { PageTitle, RegisterUserReq, Route, registerUser } from "../../utils";
 import { useAuth } from "../../components/authentication";
 
-const Register = (): JSX.Element => {
+const RegisterPage = (): JSX.Element => {
   const [form] = Form.useForm();
   const { login } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
@@ -95,4 +95,4 @@ const Register = (): JSX.Element => {
   );
 };
 
-export default Register;
+export default RegisterPage;

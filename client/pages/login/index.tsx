@@ -8,7 +8,7 @@ import { NavMenuKey, Route, PageTitle } from "../../utils";
 import { useAuth } from "../../components/authentication";
 import FluidPage from "../../components/layout";
 
-const Login = (): JSX.Element => {
+const LoginPage = (): JSX.Element => {
   const { login } = useAuth();
   const onFinish = async ({ username, password }) => {
     if (login) {
@@ -79,4 +79,4 @@ const Login = (): JSX.Element => {
   );
 };
 
-export default Login;
+export default LoginPage;

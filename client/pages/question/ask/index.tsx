@@ -5,7 +5,7 @@ import FluidPage from "components/layout";
 import { NavMenuKey, PageTitle } from "utils/index";
 import { QuestionForm } from "components/questions";
 
-const Ask = (): JSX.Element => {
+const QuestionAskPage = (): JSX.Element => {
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
@@ -19,4 +19,4 @@ const Ask = (): JSX.Element => {
   );
 };
 
-export default Ask;
+export default QuestionAskPage;

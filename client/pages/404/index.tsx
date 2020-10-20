@@ -1,7 +1,7 @@
 import FluidPage from "components/layout";
 import { PageTitle } from "utils/index";
 
-const ErrorPage = () => {
+const NotFoundPage = () => {
   return (
     <FluidPage title={PageTitle.NOT_FOUND}>
       <h1>404 Page Not Found</h1>
@@ -9,4 +9,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default NotFoundPage;
