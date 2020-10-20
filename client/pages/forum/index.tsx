@@ -2,7 +2,7 @@ import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getAllQuestion } from "../../components/api";
+import { getPaginatedQuestions } from "../../components/api";
 import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
 import {
@@ -115,7 +115,10 @@ const Forum = ({ questions, total }): JSX.Element => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { questions, total } = await getAllQuestion({ page, pageSize });
+      const { questions, total } = await getPaginatedQuestions({
+        page,
+        pageSize,
+      });
       setQuestions(questions);
       setCurrTotal(total);
       setLoading(false);
@@ -174,7 +177,10 @@ const Forum = ({ questions, total }): JSX.Element => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const { questions, total } = await getAllQuestion({ page: 1, pageSize: 10 });
+  const { questions, total } = await getPaginatedQuestions({
+    page: 1,
+    pageSize: 10,
+  });
   // Pass data to the page via props
   return { props: { questions, total } };
 }

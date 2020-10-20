@@ -16,7 +16,7 @@ import {
   Question,
   Subject,
   Level,
-  QuestionParam,
+  GetSingleQuestionParam,
   routesObject,
 } from "util/index";
 import { useAuth } from "components/authentication";
@@ -91,7 +91,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     setLoading(false);
   }, [form, question]);
 
-  const onFormFinish = async (questionParam: QuestionParam) => {
+  const onFormFinish = async (questionParam: GetSingleQuestionParam) => {
     // validation will throw error and stop execution if it fails
     await form.validateFields();
 
@@ -111,7 +111,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       return;
     }
 
-    const questionParam = form.getFieldsValue() as QuestionParam;
+    const questionParam = form.getFieldsValue() as GetSingleQuestionParam;
     setQuestionPreviewNode(<ViewQuestionPreview question={questionParam} />);
   };
 

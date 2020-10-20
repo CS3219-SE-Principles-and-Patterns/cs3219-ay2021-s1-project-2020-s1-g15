@@ -2,7 +2,12 @@ import FluidPage from "../../components/layout";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import ViewUser from "../../components/user";
-import { listOfAnswersMock, questionMock, User, UserApi } from "../../util";
+import {
+  listOfAnswersMock,
+  questionMock,
+  User,
+  GetSingleUserRes,
+} from "../../util";
 import { getSingleUser } from "../../components/api";
 import { Spin } from "antd";
 
@@ -21,7 +26,7 @@ const UserPage: FC = (): JSX.Element => {
       setLoading(true);
       if (uid != undefined && uid) {
         try {
-          const user: User = await getSingleUser(uid);
+          const user: User = await getSingleUser(uid as string);
           console.log(user);
           setUser(user);
         } catch (err) {

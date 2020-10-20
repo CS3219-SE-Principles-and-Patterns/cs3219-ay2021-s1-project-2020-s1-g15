@@ -3,7 +3,7 @@ import { Card, Form, Input, Button, Spin, notification } from "antd";
 
 import styles from "../login/login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { RegisterUserParam, routesObject, UserApi } from "../../util";
+import { RegisterUserParam, routesObject, GetSingleUserRes } from "../../util";
 import Link from "next/link";
 import { pageTitles } from "../../util";
 import { useForm } from "antd/lib/form/Form";

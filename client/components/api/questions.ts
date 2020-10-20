@@ -1,108 +1,107 @@
 import {
-  ApiError,
-  GetAllQuestionResponse,
-  GetAllQuestionsParam,
   Question,
-  QuestionParam,
+  GetSingleQuestionParam,
+  GetPaginatedQuestionRes,
+  GetPaginatedQuestionsParam,
 } from "../../util";
 import {
+  QUESTIONS_API_URL,
   createUrlParamString,
   getAuthorizationString,
-  throwAPiError,
+  throwApiError,
 } from "./util";
 
-const baseUrl =
-  process.env.NODE_ENV == "development"
-    ? `${process.env.baseUrlDev}questions/`
-    : `${process.env.baseUrlDev}questions/`;
+async function getPaginatedQuestions(
+  getAllQuestionsParam: GetPaginatedQuestionsParam
+): Promise<GetPaginatedQuestionRes> {
+  const res = await fetch(
+    `${QUESTIONS_API_URL}/${createUrlParamString(getAllQuestionsParam)}`,
+    {
+      method: "GET",
+    }
+  );
 
-export const getAllQuestion = async ({
-  page,
-  pageSize,
-}: GetAllQuestionsParam): Promise<GetAllQuestionResponse> => {
-  const args = createUrlParamString({ page, pageSize });
-  const res = await fetch(baseUrl + args, {
-    method: "GET",
-  });
-  if (res.ok) {
-    return (await res.json()) as GetAllQuestionResponse;
-  } else {
-    return throwAPiError(res);
+  if (!res.ok) {
+    throwApiError(res);
   }
-};
 
-export const getSingleQuestion = async (id: string): Promise<Question> => {
-  const res = await fetch(baseUrl + id, {
+  return res.json();
+}
+
+async function getSingleQuestion(id: string): Promise<Question> {
+  const res = await fetch(`${QUESTIONS_API_URL}/${id}`, {
     method: "GET",
   });
 
-  if (res.ok) {
-    return (await res.json()) as Question;
-  } else {
-    return throwAPiError(res);
+  if (!res.ok) {
+    throwApiError(res);
   }
-};
 
-export const createQuestion = async (
-  question: QuestionParam,
-  idToken: string
-): Promise<Question> => {
-  const res = await fetch(baseUrl, {
+  return res.json();
+}
+
+async function createQuestion(
+  questionReqParam: GetSingleQuestionParam,
+  userIdToken: string
+): Promise<Question> {
+  const res = await fetch(QUESTIONS_API_URL, {
     method: "POST",
-    body: JSON.stringify({ ...question }),
+    body: JSON.stringify(questionReqParam),
     headers: {
       "Content-Type": "application/json",
-      authorization: getAuthorizationString(idToken),
+      authorization: getAuthorizationString(userIdToken),
     },
   });
 
-  if (res.ok) {
-    const question = (await res.json()) as Question;
-    return question;
-  } else {
-    const { message } = (await res.json()) as ApiError;
-    throw new Error(message);
+  if (!res.ok) {
+    throwApiError(res);
   }
-};
 
-export const editQuestion = async (
-  question: QuestionParam,
-  idToken: string,
-  qid: string
-): Promise<Question> => {
-  const res = await fetch(baseUrl + qid, {
+  return res.json();
+}
+
+async function editQuestion(
+  questionReqParam: GetSingleQuestionParam,
+  userIdToken: string,
+  questionId: string
+): Promise<Question> {
+  const res = await fetch(`${QUESTIONS_API_URL}/${questionId}`, {
     method: "PUT",
-    body: JSON.stringify({ ...question }),
+    body: JSON.stringify(questionReqParam),
     headers: {
       "Content-Type": "application/json",
-      authorization: getAuthorizationString(idToken),
+      authorization: getAuthorizationString(userIdToken),
     },
   });
 
-  if (res.ok) {
-    const question = (await res.json()) as Question;
-    return question;
-  } else {
-    const { message } = (await res.json()) as ApiError;
-    throw new Error(message);
+  if (!res.ok) {
+    throwApiError(res);
   }
-};
 
-export const deleteSingleQuestion = async (
-  idToken: string,
-  qid: string
-): Promise<void> => {
-  const res = await fetch(baseUrl + qid, {
+  return res.json();
+}
+
+async function deleteSingleQuestion(
+  userIdToken: string,
+  questionId: string
+): Promise<void> {
+  const res = await fetch(`${QUESTIONS_API_URL}/${questionId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      authorization: getAuthorizationString(idToken),
+      authorization: getAuthorizationString(userIdToken),
     },
   });
-  if (res.ok) {
-    return;
-  } else {
-    const { message } = (await res.json()) as ApiError;
-    throw new Error(message);
+
+  if (!res.ok) {
+    throwApiError(res);
   }
+}
+
+export {
+  getPaginatedQuestions,
+  getSingleQuestion,
+  createQuestion,
+  editQuestion,
+  deleteSingleQuestion,
 };

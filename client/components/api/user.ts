@@ -1,24 +1,16 @@
-import {
-  ApiError,
-  Question,
-  RegisterUserParam,
-  User,
-  UserApi,
-} from "../../util";
-import { getSingleQuestion } from "./questions";
-import { throwAPiError } from "./util";
+import { RegisterUserParam, User, GetSingleUserRes } from "../../util";
+import { USERS_API_URL, throwApiError } from "./util";
 
-const baseUrl =
-  process.env.NODE_ENV == "development"
-    ? `${process.env.baseUrlDev}users/`
-    : `${process.env.baseUrlDev}users/`;
+function getUsersIdUrl(id: string) {
+  return `${USERS_API_URL}/${id}`;
+}
 
-export const registerUser = async (
+async function registerUser(
   param: RegisterUserParam
-): Promise<UserApi> => {
+): Promise<GetSingleUserRes> {
   const { email, password } = param;
 
-  const res = await fetch(baseUrl, {
+  const res = await fetch(USERS_API_URL, {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: {
@@ -27,37 +19,25 @@ export const registerUser = async (
     },
   });
 
-  if (res.ok) {
-    const userApi = (await res.json()) as UserApi;
-    return userApi;
-  } else {
-    const { message } = (await res.json()) as ApiError;
-    throw new Error(message);
+  if (!res.ok) {
+    return throwApiError(res);
   }
-};
-// get past type check
-export const getSingleUser = async (id: string | string[]) => {
-  const res = await fetch(baseUrl + id, {
+
+  const userApi = (await res.json()) as GetSingleUserRes;
+  return userApi;
+}
+
+async function getSingleUser(id: string): Promise<User> {
+  const res = await fetch(getUsersIdUrl(id), {
     method: "GET",
   });
 
-  if (res.ok) {
-    const userApi = (await res.json()) as UserApi;
-    const { questionIds, answerIds } = userApi;
-    const questions: Question[] = [];
-    try {
-      const res = await Promise.all(
-        questionIds.map(async (id: string) => {
-          const question = await getSingleQuestion(id);
-          questions.push(question);
-        })
-      );
-    } catch (err) {
-      return throwAPiError(err);
-    }
-
-    return { ...userApi, questions, answers: [] } as User;
-  } else {
-    return throwAPiError(res);
+  if (!res.ok) {
+    return throwApiError(res);
   }
-};
+
+  const userApi = (await res.json()) as GetSingleUserRes;
+  return userApi as User;
+}
+
+export { registerUser, getSingleUser };
