@@ -38,18 +38,18 @@ async function closeDb(): Promise<void> {
   await mongoClient.close();
   console.log("MongoDB: connection closed");
 }
-
-function getQuestionsCollection(): Collection<Question> {
+/*
+function getCollection<Question>("questions"): Collection<Question> {
   return getDb().collection("questions");
 }
 
-function getAnswersCollection(): Collection<Answer> {
+function getCollection<Answer>("answers"): Collection<Answer> {
   return getDb().collection("answers");
 }
 
-function getUsersCollection(): Collection<User> {
+function getCollection<User>("users"): Collection<User> {
   return getDb().collection("users");
-}
+}*/
 // if this is ok then I will proceed to change the rest
 type CollectionType<T> = T extends Question
   ? "questions"
@@ -63,12 +63,4 @@ function getCollection<T>(param: CollectionType<T>): Collection<T> {
   return getDb().collection<T>(param);
 }
 
-export {
-  initDb,
-  getDb,
-  closeDb,
-  getQuestionsCollection,
-  getAnswersCollection,
-  getUsersCollection,
-  getCollection,
-};
+export { initDb, getDb, closeDb, getCollection };

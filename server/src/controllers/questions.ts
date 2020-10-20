@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { getCollection, getQuestionsCollection } from "../services/database";
+import { getCollection } from "../services/database";
 import { Question } from "../models";
 import {
   HttpStatusCode,
@@ -29,14 +29,16 @@ async function getQuestions(
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
-  const total = await getQuestionsCollection().countDocuments();
+  const total = await getCollection<Question>("questions").countDocuments();
   return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
   const questionObjectId: ObjectId = toValidObjectId(id);
 
-  const question: Question | null = await getQuestionsCollection().findOne({
+  const question: Question | null = await getCollection<Question>(
+    "questions"
+  ).findOne({
     _id: questionObjectId,
   });
 
@@ -88,7 +90,7 @@ async function createQuestion(
     downvotes: 0,
   };
 
-  await getQuestionsCollection().insertOne(doc);
+  await getCollection<Question>("questions").insertOne(doc);
 
   return doc;
 }
@@ -118,7 +120,7 @@ async function updateQuestion(
     );
   }
 
-  const result = await getQuestionsCollection().findOneAndUpdate(
+  const result = await getCollection<Question>("questions").findOneAndUpdate(
     {
       _id: questionObjectId,
       userId: userObjectId, // make sure user can only update his own question
@@ -154,7 +156,7 @@ async function deleteQuestion(
   const userObjectId = toValidObjectId(userId);
   const questionObjectId = toValidObjectId(questionId);
 
-  const result = await getQuestionsCollection().findOneAndDelete({
+  const result = await getCollection<Question>("questions").findOneAndDelete({
     _id: questionObjectId,
     userId: userObjectId, // make sure user can only delete his own question
   });
@@ -178,7 +180,7 @@ async function addAnswerToQuestion(
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
 
-  const result = await getQuestionsCollection().findOneAndUpdate(
+  const result = await getCollection<Question>("questions").findOneAndUpdate(
     { _id: questionObjectId },
     {
       $addToSet: {
@@ -204,7 +206,7 @@ async function removeAnswerFromQuestion(
 ): Promise<Question> {
   const answerObjectId: ObjectId = toValidObjectId(answerId);
 
-  const result = await getQuestionsCollection().findOneAndUpdate(
+  const result = await getCollection<Question>("questions").findOneAndUpdate(
     { answerIds: answerObjectId },
     {
       $pull: {
