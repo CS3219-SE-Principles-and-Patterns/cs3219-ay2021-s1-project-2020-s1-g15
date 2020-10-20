@@ -1,6 +1,5 @@
 import React from "react";
 import { GetServerSideProps } from "next";
-import assert from "assert";
 
 import { getSingleQuestion } from "components/api";
 
@@ -9,22 +8,21 @@ const DummyNode = (): JSX.Element => {
 };
 
 /**
- * Redirects the user from `/question/[qid]` to the correct `/question/[qid]/[slug]`
+ * Server side redirect the user from `/question/[qid]` to the correct URL
+ * with the correct slug: `/question/[qid]/[slug]`
  */
 export const getServerSideProps: GetServerSideProps = async ({
   params,
   res,
 }) => {
-  assert(params != null);
+  const { qid } = params as { qid: string };
+  const question = await getSingleQuestion(qid);
 
-  const { qid } = params;
-  const question = await getSingleQuestion(qid as string);
-
-  // redirects the user to correct slug if the slug is missing
-  res.writeHead(302, {
-    Location: `${question._id}/${question.slug}`,
-  });
-  res.end();
+  res
+    .writeHead(302, {
+      Location: `${question._id}/${question.slug}`,
+    })
+    .end();
 
   return { props: {} };
 };
