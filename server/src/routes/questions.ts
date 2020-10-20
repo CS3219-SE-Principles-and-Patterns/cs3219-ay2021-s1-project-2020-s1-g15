@@ -71,13 +71,8 @@ router.post(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const upvotes: number = req.body.upvotes;
     // upvote
-    const updatedQuestion: Question = await upvoteQuestion(
-      userId,
-      questionId,
-      upvotes
-    );
+    const updatedQuestion: Question = await upvoteQuestion(userId, questionId);
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
@@ -89,12 +84,10 @@ router.post(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const downvotes: number = req.body.downvotes;
     // upvote
     const updatedQuestion: Question = await downvoteQuestion(
       userId,
-      questionId,
-      downvotes
+      questionId
     );
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }

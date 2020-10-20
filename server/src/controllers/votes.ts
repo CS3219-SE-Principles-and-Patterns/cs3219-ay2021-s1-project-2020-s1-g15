@@ -1,34 +1,40 @@
 import { ObjectId } from "mongodb";
 import { Vote } from "src/models";
-import { getVoteCollection } from "src/services/database";
+import { getVotesCollection } from "src/services/database";
 import { VoteType } from "src/utils";
 
 export async function handleUpvoteDownvoteQuestion(
   userObjectId: ObjectId,
   questionObjectId: ObjectId,
-  type: VoteType
+  type: VoteType,
+  isSameType: boolean,
+  currentVote: Vote | null
 ): Promise<void> {
-  const updatedResult = await getVoteCollection().findOneAndUpdate(
-    {
+  // if present and same type, we delete
+  if (isSameType) {
+    await getVotesCollection().deleteOne({
       userId: userObjectId,
       questionId: questionObjectId,
-    },
-    {
-      $set: {
-        updatedAt: new Date(),
-        type,
-      }, // if present we change value based on voteType
-    }
-  );
-  if (!updatedResult.value) {
-    const doc: Vote = {
-      _id: new ObjectId(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      userId: userObjectId,
-      questionId: questionObjectId,
-      type,
-    };
-    await getVoteCollection().insertOne(doc);
+    });
+    return;
   }
+
+  // if present and different type , we update
+  // if not present we create
+  if (currentVote) {
+    await getVotesCollection().deleteOne({
+      userId: userObjectId,
+      questionId: questionObjectId,
+    });
+  }
+  const doc: Vote = {
+    _id: new ObjectId(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: userObjectId,
+    questionId: questionObjectId,
+    type,
+  };
+  await getVotesCollection().insertOne(doc);
+  return;
 }

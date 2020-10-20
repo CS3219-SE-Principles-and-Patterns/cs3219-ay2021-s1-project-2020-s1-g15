@@ -50,7 +50,7 @@ function getUsersCollection(): Collection<User> {
   return getDb().collection("users");
 }
 
-function getVoteCollection(): Collection<Vote> {
+function getVotesCollection(): Collection<Vote> {
   return getDb().collection("votes");
 }
 
@@ -61,5 +61,5 @@ export {
   getQuestionsCollection,
   getAnswersCollection,
   getUsersCollection,
-  getVoteCollection,
+  getVotesCollection,
 };

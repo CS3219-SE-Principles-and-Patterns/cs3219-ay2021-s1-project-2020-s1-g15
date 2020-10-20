@@ -15,11 +15,11 @@ import { Question } from "src/models";
 import {
   initDb,
   closeDb,
-  getVoteCollection,
+  getVotesCollection,
   getAnswersCollection,
-  getQuestionsCollection,
 } from "src/services/database";
 import { QuestionRequestBody, Level, Subject, VoteType } from "src/utils";
+import { getQuestionsCollection } from "src/services/database";
 
 const MISSING_REQUEST_DATA = {};
 const INVALID_REQUEST_DATA: QuestionRequestBody = {
@@ -238,8 +238,7 @@ describe("Upvote a question", () => {
 
     const question: Question = await upvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id,
-      1
+      createdQuestion._id
     );
 
     expect(question.upvotes).toStrictEqual(1);
@@ -253,10 +252,9 @@ describe("Upvote a question", () => {
 
     const question: Question = await upvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id,
-      1
+      createdQuestion._id
     );
-    const voteDoc = await getVoteCollection().findOne({
+    const voteDoc = await getVotesCollection().findOne({
       userId: VALID_USER_ID,
       questionId: question._id,
     });
@@ -274,8 +272,7 @@ describe("Downvote a question", () => {
 
     const question: Question = await downvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id,
-      1
+      createdQuestion._id
     );
 
     expect(question.downvotes).toStrictEqual(1);
@@ -289,10 +286,9 @@ describe("Downvote a question", () => {
 
     const question: Question = await downvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id,
-      1
+      createdQuestion._id
     );
-    const voteDoc = await getVoteCollection().findOne({
+    const voteDoc = await getVotesCollection().findOne({
       userId: VALID_USER_ID,
       questionId: question._id,
     });

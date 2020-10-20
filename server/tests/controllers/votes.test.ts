@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { createQuestion } from "src/controllers/questions";
 import { handleUpvoteDownvoteQuestion } from "src/controllers/votes";
-import { closeDb, getVoteCollection, initDb } from "src/services/database";
+import { closeDb, getVotesCollection, initDb } from "src/services/database";
 import { Level, QuestionRequestBody, Subject, VoteType } from "src/utils";
 const VALID_USER_ID = new ObjectId();
 const VALID_REQUEST_DATA: QuestionRequestBody = {
@@ -29,14 +29,16 @@ describe("Vote Creation", () => {
       VALID_USER_ID,
       VALID_REQUEST_DATA
     );
-
+    /*
     await handleUpvoteDownvoteQuestion(
       VALID_USER_ID,
       createdQuestion._id,
-      VoteType.UPVOTE
-    );
+      VoteType.UPVOTE,
+      false,
 
-    const voteDoc = await getVoteCollection().findOne({
+    );*/
+
+    const voteDoc = await getVotesCollection().findOne({
       userId: VALID_USER_ID,
       questionId: createdQuestion._id,
     });

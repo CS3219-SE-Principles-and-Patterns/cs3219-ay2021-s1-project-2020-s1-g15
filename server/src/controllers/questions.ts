@@ -1,6 +1,9 @@
 import { ObjectId } from "mongodb";
 
-import { getQuestionsCollection } from "../services/database";
+import {
+  getQuestionsCollection,
+  getVotesCollection,
+} from "../services/database";
 import { Question } from "../models";
 import {
   HttpStatusCode,
@@ -151,26 +154,24 @@ async function updateQuestion(
 
 async function upvoteQuestion(
   userId: string | ObjectId,
-  questionId: string | ObjectId,
-  upvotes: number
+  questionId: string | ObjectId
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  if (!upvotes) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
-    );
-  }
-
+  const currentVote = await getVotesCollection().findOne({
+    userId: userObjectId,
+    questionId: questionObjectId,
+  });
+  const isSameType = currentVote?.type == VoteType.UPVOTE;
+  const incValue = currentVote ? (isSameType ? -1 : 0) : 1;
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
       userId: userObjectId, // make sure user can only update his own question
     },
     {
-      $set: {
-        upvotes: upvotes,
+      $inc: {
+        upvotes: incValue,
       },
     },
     { returnOriginal: false }
@@ -187,7 +188,9 @@ async function upvoteQuestion(
   await handleUpvoteDownvoteQuestion(
     userObjectId,
     questionObjectId,
-    VoteType.UPVOTE
+    VoteType.UPVOTE,
+    isSameType,
+    currentVote
   );
 
   return updatedQuestion;
@@ -195,25 +198,25 @@ async function upvoteQuestion(
 
 async function downvoteQuestion(
   userId: string | ObjectId,
-  questionId: string | ObjectId,
-  downvotes: number
+  questionId: string | ObjectId
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  if (!downvotes) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
-    );
-  }
   // update upvote in question
+  const currentVote = await getVotesCollection().findOne({
+    userId: userObjectId,
+    questionId: questionObjectId,
+  });
+  const isSameType = currentVote?.type == VoteType.DOWNVOTE;
+  const incValue = currentVote ? (isSameType ? -1 : 0) : 1;
+
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
     },
     {
-      $set: {
-        downvotes: downvotes,
+      $inc: {
+        downvotes: incValue,
       },
     },
     { returnOriginal: false }
@@ -229,7 +232,9 @@ async function downvoteQuestion(
   await handleUpvoteDownvoteQuestion(
     userObjectId,
     questionObjectId,
-    VoteType.DOWNVOTE
+    VoteType.DOWNVOTE,
+    isSameType,
+    currentVote
   );
 
   return updatedQuestion;
