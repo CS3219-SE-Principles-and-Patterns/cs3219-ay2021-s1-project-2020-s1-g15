@@ -3,7 +3,7 @@ import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
 import styles from "./login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { menuKeys, Route } from "../../util";
+import { NavMenuKey, Route } from "../../util";
 import Link from "next/link";
 import { PageTitle } from "../../util";
 import { useAuth } from "../../components/authentication";
@@ -19,7 +19,7 @@ const Login = (): JSX.Element => {
   };
 
   return (
-    <FluidPage title={PageTitle.LOGIN} selectedkey={menuKeys.login}>
+    <FluidPage title={PageTitle.LOGIN} selectedkey={NavMenuKey.LOGIN}>
       <div className={styles.center}>
         <Card className={styles.card}>
           <h1>Login to AnswerLeh</h1>

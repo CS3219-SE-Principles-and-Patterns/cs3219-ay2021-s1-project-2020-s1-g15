@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
 import styles from "./Layout.module.css";
 import Link from "next/link";
-import { Route, menuKeys } from "../../util";
+import { Route, NavMenuKey } from "util/index";
 import Head from "next/head";
 import { useAuth } from "../authentication";
 import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
@@ -30,12 +30,12 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
 
   const userMenu = (
     <Menu mode="vertical" className={styles.dropdownMenu}>
-      <Menu.Item key={menuKeys.user}>
+      <Menu.Item key={NavMenuKey.USER}>
         <Link href={Route.USER + `${firebaseUser?.uid}`}>
           <Button type="primary">My Page</Button>
         </Link>
       </Menu.Item>
-      <Menu.Item key={menuKeys.logout}>
+      <Menu.Item key={NavMenuKey.LOGOUT}>
         <Button icon={<CloseCircleFilled />} onClick={logoutApplication}>
           Log Out
         </Button>
@@ -58,16 +58,16 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
             mode="horizontal"
             selectedKeys={[selectedkey ?? ""]}
           >
-            <Menu.Item key={menuKeys.home}>
+            <Menu.Item key={NavMenuKey.HOME}>
               <Link href={Route.HOME}>Home</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.forum}>
+            <Menu.Item key={NavMenuKey.FORUM}>
               <Link href={Route.FORUM}>Forum</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.user}>
+            <Menu.Item key={NavMenuKey.USER}>
               <Link href={Route.USER}>User</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.login} className={styles.userProfile}>
+            <Menu.Item key={NavMenuKey.LOGIN} className={styles.userProfile}>
               {isAuthenticated ? (
                 <Dropdown overlay={userMenu} placement="bottomCenter">
                   <a

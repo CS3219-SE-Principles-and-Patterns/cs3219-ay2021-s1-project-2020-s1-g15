@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { menuKeys, PageTitle, Question } from "util/index";
+import { NavMenuKey, PageTitle, Question } from "util/index";
 import { QuestionForm } from "components/questions";
 import { getSingleQuestion } from "components/api";
 
@@ -23,7 +23,7 @@ const Edit = (): JSX.Element => {
   }, [router.query.qid]);
 
   return (
-    <FluidPage title={PageTitle.FORUM} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
           <Card>

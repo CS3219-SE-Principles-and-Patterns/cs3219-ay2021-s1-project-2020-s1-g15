@@ -4,7 +4,7 @@ import { Space, Row, Col } from "antd";
 
 import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
-import { Question, Answer, listOfAnswersMock, menuKeys } from "util/index";
+import { Question, Answer, listOfAnswersMock, NavMenuKey } from "util/index";
 import { ViewQuestion, ViewAnswers } from "components/questions";
 
 type QuestionsProps = {
@@ -14,7 +14,7 @@ type QuestionsProps = {
 
 const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
   return (
-    <FluidPage title={question.title} selectedkey={menuKeys.forum}>
+    <FluidPage title={question.title} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">

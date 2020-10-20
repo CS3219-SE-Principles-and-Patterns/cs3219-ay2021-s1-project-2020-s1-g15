@@ -6,7 +6,7 @@ import { getPaginatedQuestions } from "../../components/api";
 import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
 import {
-  menuKeys,
+  NavMenuKey,
   PageTitle,
   Question,
   QuestionTableData,
@@ -132,7 +132,7 @@ const Forum = ({ questions, total }): JSX.Element => {
   }, [isInitial, page, pageSize]);
 
   return (
-    <FluidPage title={PageTitle.FORUM} selectedkey={menuKeys.forum}>
+    <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       {
         <div className={styles.mainContent}>
           <PageHeader
