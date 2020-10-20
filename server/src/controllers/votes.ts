@@ -4,41 +4,7 @@ import { getVotesCollection } from "src/services/database";
 import { VoteType, toValidObjectId, VOTE_CMD } from "src/utils";
 import { UpvoteDownvoteIncObject } from "src/utils/types/GetQuestionRequestResponse";
 
-/*
 async function handleQuestionVote(
-  userObjectId: ObjectId,
-  questionObjectId: ObjectId,
-  type: VoteType,
-  isCurrentVotePresent: boolean,
-  isSameVoteType: boolean
-): Promise<void> {
-  if (isCurrentVotePresent) {
-    // delete any vote if present:
-    await getVotesCollection().deleteOne({
-      userId: userObjectId,
-      questionId: questionObjectId,
-    });
-  }
-
-  if (isSameVoteType) {
-    // undoing a previous action, no need to proceed further
-    return;
-  }
-
-  const doc: Vote = {
-    _id: new ObjectId(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    userId: userObjectId,
-    questionId: questionObjectId,
-    type: type,
-  };
-
-  await getVotesCollection().insertOne(doc);
-  return;
-}
-*/
-async function handleQuestionVoteV2(
   userId: string | ObjectId,
   questionId: string | ObjectId,
   command: VOTE_CMD,
@@ -128,4 +94,4 @@ async function getQuestionVoteByUser(
   });
 }
 
-export { handleQuestionVoteV2 };
+export { handleQuestionVote };

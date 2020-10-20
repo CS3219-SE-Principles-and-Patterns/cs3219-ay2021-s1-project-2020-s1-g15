@@ -21,7 +21,7 @@ import {
   GetQuestionRequestResponse,
   UpvoteQuestionRequestBody,
 } from "src/utils/types/GetQuestionRequestResponse";
-import { handleQuestionVoteV2 } from "src/controllers/votes";
+import { handleQuestionVote } from "src/controllers/votes";
 
 const router: Router = Router();
 
@@ -73,7 +73,7 @@ router.put(
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
     const { command } = req.body as UpvoteQuestionRequestBody;
-    const incObject = await handleQuestionVoteV2(
+    const incObject = await handleQuestionVote(
       userId,
       questionId,
       command,
@@ -96,7 +96,7 @@ router.put(
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
     const { command } = req.body as UpvoteQuestionRequestBody;
-    const incObject = await handleQuestionVoteV2(
+    const incObject = await handleQuestionVote(
       userId,
       questionId,
       command,

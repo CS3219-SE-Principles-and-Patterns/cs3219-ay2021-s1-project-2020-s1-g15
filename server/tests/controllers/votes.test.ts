@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { handleQuestionVoteV2 } from "src/controllers/votes";
+import { handleQuestionVote } from "src/controllers/votes";
 import { closeDb, getVotesCollection, initDb } from "src/services/database";
 import { VOTE_CMD, VoteType } from "src/utils";
 
@@ -26,7 +26,7 @@ beforeEach(async (done) => {
 
 describe("Vote Creation", () => {
   it("should create a vote document", async () => {
-    const res = await handleQuestionVoteV2(
+    const res = await handleQuestionVote(
       VALID_USER_ID,
       VALID_QUESTION_ID,
       VOTE_CMD.insert,
