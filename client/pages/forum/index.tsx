@@ -10,7 +10,7 @@ import {
   PageTitle,
   Question,
   QuestionTableData,
-  routesObject,
+  Route,
 } from "../../util";
 import React from "react";
 import styles from "./forum.module.css";
@@ -30,12 +30,12 @@ const Forum = ({ questions, total }): JSX.Element => {
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push({
-      pathname: `${routesObject.askQuestion}`,
+      pathname: `${Route.QUESTION_ASK}`,
     });
   };
 
   const ViewQuestion = (_id: string, slug: string) =>
-    router.push(`${routesObject.question}/${_id}/${slug}`);
+    router.push(Route.QUESTION_VIEW(_id, slug));
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -109,7 +109,7 @@ const Forum = ({ questions, total }): JSX.Element => {
       } as QuestionTableData)
   );
   const navigateToUserPage = async (id: string) => {
-    router.push({ pathname: `${routesObject.user}/${id}` });
+    router.push(`${Route.USER}/${id}`);
   };
 
   useEffect(() => {

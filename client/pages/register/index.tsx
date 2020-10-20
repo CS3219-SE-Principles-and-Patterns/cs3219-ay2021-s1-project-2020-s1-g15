@@ -3,7 +3,7 @@ import { Card, Form, Input, Button, Spin, notification } from "antd";
 
 import styles from "../login/login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { RegisterUserParam, routesObject, GetSingleUserRes } from "../../util";
+import { RegisterUserParam, Route, GetSingleUserRes } from "../../util";
 import Link from "next/link";
 import { PageTitle } from "../../util";
 import { useForm } from "antd/lib/form/Form";
@@ -34,7 +34,6 @@ const Register = (): JSX.Element => {
         if (login) {
           await login(email, password);
         }
-        //router.push(`${routesObject.login}`);
       } catch (err) {
         notification.error({
           message: err.message,
@@ -90,7 +89,7 @@ const Register = (): JSX.Element => {
                 >
                   Sign Up
                 </Button>
-                Or <Link href={routesObject.login}>login!</Link>
+                Or <Link href={Route.LOGIN}>login!</Link>
               </Form.Item>
             </Form>
           </Card>

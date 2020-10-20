@@ -3,7 +3,7 @@ import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
 import styles from "./login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { menuKeys, routesObject } from "../../util";
+import { menuKeys, Route } from "../../util";
 import Link from "next/link";
 import { PageTitle } from "../../util";
 import { useAuth } from "../../components/authentication";
@@ -14,7 +14,7 @@ const Login = (): JSX.Element => {
   const onFinish = async ({ username, password }) => {
     if (login) {
       await login(username, password);
-      router.push(`${routesObject.home}`);
+      router.push(Route.HOME);
     } // undefined fails silently for now
   };
 
@@ -67,7 +67,7 @@ const Login = (): JSX.Element => {
               >
                 Login
               </Button>
-              Or <Link href={routesObject.register}>register now!</Link>
+              Or <Link href={Route.REGISTER}>register now!</Link>
             </Form.Item>
           </Form>
           <Divider />

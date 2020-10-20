@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import { Question, routesObject } from "util/index";
+import { Question, Route } from "util/index";
 import { deleteSingleQuestion } from "components/api";
 import { useAuth } from "components/authentication";
 import ViewQuestionPreview from "./view-question-preview";
@@ -20,7 +20,7 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   const belongsToUser: boolean = !!user && user._id === question.userId;
 
   const onEditClick = () => {
-    router.push(routesObject.editQuestion(question._id, question.slug));
+    router.push(Route.QUESTION_EDIT(question._id, question.slug));
   };
 
   const onDeleteClick = () => {
@@ -36,7 +36,7 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
         notification.success({
           message: "Question succesfully deleted",
         });
-        router.push(routesObject.forum);
+        router.push(Route.FORUM);
       },
     });
   };

@@ -17,7 +17,7 @@ import {
   Subject,
   Level,
   GetSingleQuestionParam,
-  routesObject,
+  Route,
 } from "util/index";
 import { useAuth } from "components/authentication";
 import { createQuestion, editQuestion } from "components/api";
@@ -103,7 +103,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     notification.success({
       message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
     });
-    router.push(`${routesObject.question}/${res._id}/${res.slug}`);
+    router.push(Route.QUESTION_VIEW(res._id, res.slug));
   };
 
   const onTabChange = (key: string) => {
