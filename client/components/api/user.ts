@@ -1,13 +1,11 @@
-import { RegisterUserParam, User, GetSingleUserRes } from "../../util";
+import { RegisterUserReq, User, GetSingleUserRes } from "../../util";
 import { USERS_API_URL, throwApiError } from "./util";
 
 function getUsersIdUrl(id: string) {
   return `${USERS_API_URL}/${id}`;
 }
 
-async function registerUser(
-  param: RegisterUserParam
-): Promise<GetSingleUserRes> {
+async function registerUser(param: RegisterUserReq): Promise<GetSingleUserRes> {
   const { email, password } = param;
 
   const res = await fetch(USERS_API_URL, {

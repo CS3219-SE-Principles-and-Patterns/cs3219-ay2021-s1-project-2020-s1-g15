@@ -12,13 +12,7 @@ import {
   Tabs,
 } from "antd";
 
-import {
-  Question,
-  Subject,
-  Level,
-  GetSingleQuestionParam,
-  Route,
-} from "util/index";
+import { Question, Subject, Level, CreateQuestionReq, Route } from "util/index";
 import { useAuth } from "components/authentication";
 import { createQuestion, editQuestion } from "components/api";
 import ViewQuestionPreview from "./view-question-preview";
@@ -91,15 +85,15 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     setLoading(false);
   }, [form, question]);
 
-  const onFormFinish = async (questionParam: GetSingleQuestionParam) => {
+  const onFormFinish = async (questionReq: CreateQuestionReq) => {
     // validation will throw error and stop execution if it fails
     await form.validateFields();
 
     setLoading(true);
     const userIdToken = await getIdToken();
     const res: Question = isEditing
-      ? await editQuestion(questionParam, userIdToken, question?._id as string)
-      : await createQuestion(questionParam, userIdToken);
+      ? await editQuestion(questionReq, userIdToken, question?._id as string)
+      : await createQuestion(questionReq, userIdToken);
     notification.success({
       message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
     });
@@ -111,8 +105,8 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       return;
     }
 
-    const questionParam = form.getFieldsValue() as GetSingleQuestionParam;
-    setQuestionPreviewNode(<ViewQuestionPreview question={questionParam} />);
+    const questionReq = form.getFieldsValue() as CreateQuestionReq;
+    setQuestionPreviewNode(<ViewQuestionPreview question={questionReq} />);
   };
 
   return (

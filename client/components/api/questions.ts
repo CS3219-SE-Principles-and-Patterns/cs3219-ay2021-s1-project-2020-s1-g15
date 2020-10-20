@@ -1,8 +1,9 @@
 import {
   Question,
-  GetSingleQuestionParam,
   GetPaginatedQuestionRes,
-  GetPaginatedQuestionsParam,
+  GetPaginatedQuestionsReq,
+  CreateQuestionReq,
+  EditQuestionReq,
 } from "../../util";
 import {
   QUESTIONS_API_URL,
@@ -12,14 +13,11 @@ import {
 } from "./util";
 
 async function getPaginatedQuestions(
-  getAllQuestionsParam: GetPaginatedQuestionsParam
+  req: GetPaginatedQuestionsReq
 ): Promise<GetPaginatedQuestionRes> {
-  const res = await fetch(
-    `${QUESTIONS_API_URL}/${createUrlParamString(getAllQuestionsParam)}`,
-    {
-      method: "GET",
-    }
-  );
+  const res = await fetch(`${QUESTIONS_API_URL}/${createUrlParamString(req)}`, {
+    method: "GET",
+  });
 
   if (!res.ok) {
     return throwApiError(res);
@@ -41,12 +39,12 @@ async function getSingleQuestion(id: string): Promise<Question> {
 }
 
 async function createQuestion(
-  questionReqParam: GetSingleQuestionParam,
+  req: CreateQuestionReq,
   userIdToken: string
 ): Promise<Question> {
   const res = await fetch(QUESTIONS_API_URL, {
     method: "POST",
-    body: JSON.stringify(questionReqParam),
+    body: JSON.stringify(req),
     headers: {
       "Content-Type": "application/json",
       authorization: getAuthorizationString(userIdToken),
@@ -61,13 +59,13 @@ async function createQuestion(
 }
 
 async function editQuestion(
-  questionReqParam: GetSingleQuestionParam,
+  req: EditQuestionReq,
   userIdToken: string,
   questionId: string
 ): Promise<Question> {
   const res = await fetch(`${QUESTIONS_API_URL}/${questionId}`, {
     method: "PUT",
-    body: JSON.stringify(questionReqParam),
+    body: JSON.stringify(req),
     headers: {
       "Content-Type": "application/json",
       authorization: getAuthorizationString(userIdToken),

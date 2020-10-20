@@ -3,7 +3,7 @@ import { Card, Form, Input, Button, Spin, notification } from "antd";
 
 import styles from "../login/login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { RegisterUserParam, Route, GetSingleUserRes } from "../../util";
+import { RegisterUserReq, Route, GetSingleUserRes } from "../../util";
 import Link from "next/link";
 import { PageTitle } from "../../util";
 import { useForm } from "antd/lib/form/Form";
@@ -21,7 +21,7 @@ const Register = (): JSX.Element => {
     setLoading(() => true);
     console.log(loading);
     form.validateFields().then(async ({ email, password }) => {
-      const createUserArgs: RegisterUserParam = {
+      const createUserArgs: RegisterUserReq = {
         email,
         password,
       };

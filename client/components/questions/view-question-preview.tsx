@@ -3,7 +3,7 @@ import { Typography, Space, Tag, Row, Divider } from "antd";
 import { grey } from "@ant-design/colors";
 
 import {
-  GetSingleQuestionParam,
+  CreateQuestionReq,
   toRelativeTimeAgo,
   markdownToReactNode,
 } from "util/index";
@@ -11,7 +11,7 @@ import {
 const { Title } = Typography;
 
 type ViewQuestionProp = {
-  question: GetSingleQuestionParam & {
+  question: CreateQuestionReq & {
     userId?: string | undefined;
     createdAt?: Date | string | undefined;
   };
