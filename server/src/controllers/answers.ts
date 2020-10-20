@@ -149,4 +149,30 @@ async function deleteAnswer(
   return isSuccessful;
 }
 
-export { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer };
+async function deleteAllAnswersFromQuestion(
+  questionId: string | ObjectId
+): Promise<boolean> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+
+  const result = await getAnswersCollection().deleteMany({
+    questionId: questionObjectId,
+  });
+
+  const isSuccessful: boolean = result != null;
+  if (!isSuccessful) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  return isSuccessful;
+}
+
+export {
+  createAnswer,
+  getAnswersByQuestionId,
+  deleteAnswer,
+  updateAnswer,
+  deleteAllAnswersFromQuestion,
+};

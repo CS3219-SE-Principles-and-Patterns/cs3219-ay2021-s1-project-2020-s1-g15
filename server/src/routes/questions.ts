@@ -16,6 +16,7 @@ import { Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { QuestionRequestBody, HttpStatusCode } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
+import { deleteAllAnswersFromQuestion } from "../controllers/answers";
 
 const router: Router = Router();
 
@@ -86,6 +87,8 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),
+    deleteAllAnswersFromQuestion(questionId),
+    // removeAllAnswersFromUsers()
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
