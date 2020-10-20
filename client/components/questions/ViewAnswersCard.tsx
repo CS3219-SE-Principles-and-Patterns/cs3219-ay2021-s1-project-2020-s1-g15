@@ -1,37 +1,17 @@
 import React, { FC, ReactNode } from "react";
 import { List, Card, Space } from "antd";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
-import { grey } from "@ant-design/colors";
 
-import { Answer, markdownToReactNode, toRelativeTimeAgo } from "utils/index";
-import styles from "./question.module.css";
+import { Answer } from "utils/index";
+import { AnswerPreview } from "./AnswerPreview";
 
-type AnswerCardProp = {
-  answer: Answer;
-};
-
-type ViewAnswersProp = {
+type ViewAnswersCardProp = {
   answers: Answer[];
 };
 
 type IconTextProp = {
   icon: ReactNode;
   text: number;
-};
-
-const ParsedAnswerContent: FC<AnswerCardProp> = ({ answer }): JSX.Element => {
-  const parsedAnswerNode: ReactNode = markdownToReactNode(answer.markdown);
-  return (
-    <Space className={styles.my16} direction="vertical">
-      <Space>
-        <span style={{ color: grey[4] }}>{answer.userId}</span>
-        <span style={{ color: grey[1] }}>
-          {toRelativeTimeAgo(answer.createdAt)}
-        </span>
-      </Space>
-      <article className="markdown-body">{parsedAnswerNode}</article>
-    </Space>
-  );
 };
 
 const IconText: FC<IconTextProp> = ({ icon, text }): JSX.Element => (
@@ -41,7 +21,7 @@ const IconText: FC<IconTextProp> = ({ icon, text }): JSX.Element => (
   </Space>
 );
 
-const ViewAnswers: FC<ViewAnswersProp> = ({ answers }): JSX.Element => {
+const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
   return (
     <Card>
       <List
@@ -64,7 +44,7 @@ const ViewAnswers: FC<ViewAnswersProp> = ({ answers }): JSX.Element => {
               />,
             ]}
           >
-            <ParsedAnswerContent answer={answer} />
+            <AnswerPreview answer={answer} />
           </List.Item>
         )}
       />
@@ -72,4 +52,4 @@ const ViewAnswers: FC<ViewAnswersProp> = ({ answers }): JSX.Element => {
   );
 };
 
-export { ViewAnswers };
+export { ViewAnswersCard };

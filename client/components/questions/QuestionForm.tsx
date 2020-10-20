@@ -22,7 +22,7 @@ import {
   editQuestion,
 } from "utils/index";
 import { useAuth } from "components/authentication";
-import ViewQuestionPreview from "./view-question-preview";
+import QuestionPreview from "./QuestionPreview";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -113,7 +113,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     }
 
     const questionReq = form.getFieldsValue() as CreateQuestionReq;
-    setQuestionPreviewNode(<ViewQuestionPreview question={questionReq} />);
+    setQuestionPreviewNode(<QuestionPreview question={questionReq} />);
   };
 
   return (

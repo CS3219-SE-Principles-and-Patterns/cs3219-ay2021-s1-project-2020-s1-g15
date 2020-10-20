@@ -7,7 +7,7 @@ import { NavMenuKey, PageTitle, Question } from "utils/index";
 import { QuestionForm } from "components/questions";
 import { getSingleQuestion } from "utils/api";
 
-const Edit = (): JSX.Element => {
+const QuestionEditPage = (): JSX.Element => {
   const router = useRouter();
   const [question, setQuestion] = useState<Question | undefined>(undefined);
 
@@ -35,4 +35,4 @@ const Edit = (): JSX.Element => {
   );
 };
 
-export default Edit;
+export default QuestionEditPage;

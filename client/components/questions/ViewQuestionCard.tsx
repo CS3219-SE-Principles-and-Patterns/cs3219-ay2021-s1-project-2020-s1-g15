@@ -5,15 +5,17 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { Question, Route, deleteSingleQuestion } from "utils/index";
 import { useAuth } from "components/authentication";
-import ViewQuestionPreview from "./view-question-preview";
+import QuestionPreview from "./QuestionPreview";
 
 const { confirm } = Modal;
 
-type ViewQuestionProp = {
+type ViewQuestionCardProp = {
   question: Question;
 };
 
-const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
+const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
+  question,
+}): JSX.Element => {
   const { user, getIdToken } = useAuth();
   const router = useRouter();
   const belongsToUser: boolean = !!user && user._id === question.userId;
@@ -42,7 +44,7 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
 
   return (
     <Card>
-      <ViewQuestionPreview question={question} />
+      <QuestionPreview question={question} />
 
       {belongsToUser ? (
         <>
@@ -64,4 +66,4 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   );
 };
 
-export { ViewQuestion };
+export { ViewQuestionCard };

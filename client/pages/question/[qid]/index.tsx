@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 
 import { getSingleQuestion } from "utils/api";
 
-const DummyNode = (): JSX.Element => {
+const DummyPage = (): JSX.Element => {
   return <></>;
 };
 
@@ -27,4 +27,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   return { props: {} };
 };
 
-export default DummyNode;
+export default DummyPage;

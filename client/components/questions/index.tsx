@@ -1,3 +1,3 @@
-export * from "./view-question";
-export * from "./view-answers";
-export * from "./question-form";
+export * from "./ViewQuestionCard";
+export * from "./ViewAnswersCard";
+export * from "./QuestionForm";

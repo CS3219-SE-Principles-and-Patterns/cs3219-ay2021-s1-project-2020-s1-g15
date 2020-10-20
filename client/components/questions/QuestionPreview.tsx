@@ -17,9 +17,7 @@ type ViewQuestionProp = {
   };
 };
 
-const ViewQuestionPreview: FC<ViewQuestionProp> = ({
-  question,
-}): JSX.Element => {
+const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   const { title, userId, createdAt, level, subject, markdown } = question;
 
   return (
@@ -52,4 +50,4 @@ const ViewQuestionPreview: FC<ViewQuestionProp> = ({
   );
 };
 
-export default ViewQuestionPreview;
+export default QuestionPreview;
