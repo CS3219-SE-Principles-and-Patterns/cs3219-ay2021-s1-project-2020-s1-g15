@@ -9,16 +9,16 @@ import { Spin } from "antd";
 
 import { User, getSingleUser } from "../../utils";
 
-type props = {
+type AuthProviderProps = {
   auth: firebase.auth.Auth;
   children: React.ReactNode;
 };
 
 type AuthContextType = {
-  firebaseUser?: firebase.User;
-  user?: User;
-  isAuthenticated?: boolean;
-  loading?: boolean;
+  firebaseUser: firebase.User | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
   login?: (
     email: string,
     password: string
@@ -28,18 +28,16 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType>({
-  firebaseUser: undefined,
-  user: undefined,
-  isAuthenticated: true,
-  loading: false,
+  firebaseUser: null,
+  user: null,
+  isAuthenticated: false,
+  loading: true,
   getIdToken: () => new Promise(() => console.log("test")),
 });
 
-export const AuthProvider: FC<props> = ({ auth, children }) => {
-  const [firebaseUser, setFirebaseUser] = useState<firebase.User | undefined>(
-    undefined
-  );
-  const [user, setUser] = useState<User | undefined>(undefined);
+export const AuthProvider: FC<AuthProviderProps> = ({ auth, children }) => {
+  const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -47,16 +45,14 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
     const onAuthStateChange = (
       callback: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
-      setLoading(true);
       return auth.onAuthStateChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          const user: User = await getSingleUser(firebaseUser.uid);
-          setUser(user);
-          setFirebaseUser(firebaseUser);
-          callback(true);
-        } else {
-          callback(false);
-        }
+        setLoading(true);
+        setFirebaseUser(firebaseUser);
+        setUser(firebaseUser ? await getSingleUser(firebaseUser.uid) : null);
+
+        const isAuthenticated = firebaseUser !== null;
+        setIsAuthenticated(isAuthenticated);
+        callback(isAuthenticated);
         setLoading(false);
       });
     };
@@ -67,15 +63,11 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
   }, [auth]);
 
   const login = async (email: string, password: string) => {
-    const credential = await auth.signInWithEmailAndPassword(email, password);
-    setIsAuthenticated(true);
-    return credential;
+    return auth.signInWithEmailAndPassword(email, password);
   };
 
   const logout = async () => {
-    await auth.signOut();
-    setUser(undefined);
-    setIsAuthenticated(false);
+    return auth.signOut();
   };
 
   const getIdToken = async () => {
@@ -106,9 +98,7 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-
-  return context;
+  return useContext<AuthContextType>(AuthContext);
 };
 /*
 https://medium.com/@tafka_labs/auth-redirect-in-nextjs-3a3a524c0a06
