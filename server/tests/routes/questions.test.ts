@@ -23,6 +23,7 @@ import {
   Subject,
   QuestionRequestBody,
   TestConfig,
+  VOTE_CMD,
 } from "src/utils";
 import { initAuth } from "src/services/authentication";
 import { User } from "src/models";
@@ -130,9 +131,11 @@ describe("POST request - upvote a single question", () => {
       TestConfig.DEVTESTUSER_UID,
       VALID_REQUEST_DATA_1
     );
-    const res = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`
-    );
+    const res = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
+      .send({
+        command: VOTE_CMD.insert,
+      });
 
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.upvotes).toStrictEqual(1);
@@ -146,13 +149,17 @@ describe("POST request - user undo his upvote", () => {
       TestConfig.DEVTESTUSER_UID,
       VALID_REQUEST_DATA_1
     );
-    const res = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`
-    );
+    const res = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
+      .send({
+        command: VOTE_CMD.insert,
+      });
 
-    const res2 = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`
-    );
+    const res2 = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
+      .send({
+        command: VOTE_CMD.remove,
+      });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.upvotes).toStrictEqual(1);
     expect(res2.status).toBe(HttpStatusCode.OK);
@@ -162,35 +169,41 @@ describe("POST request - user undo his upvote", () => {
 });
 
 describe("POST request - downvote a single question", () => {
-  it("should return 201 and the question on success", async (done) => {
+  it("should return 200 and the question on success", async (done) => {
     // create a question first:
     const createdQuestion = await createQuestion(
       TestConfig.DEVTESTUSER_UID,
       VALID_REQUEST_DATA_1
     );
-    const res = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`
-    );
+    const res = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
+      .send({
+        command: VOTE_CMD.insert,
+      });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.downvotes).toStrictEqual(1);
     done();
   });
 });
 
-describe("POST request - user undo his downvote", () => {
+describe("PUT request - user undo his downvote", () => {
   it("should return reset downvote to zero if user downvotes and clear his downvotes", async (done) => {
     // create a question first:
     const createdQuestion = await createQuestion(
       TestConfig.DEVTESTUSER_UID,
       VALID_REQUEST_DATA_1
     );
-    const res = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`
-    );
+    const res = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
+      .send({
+        command: VOTE_CMD.insert,
+      });
 
-    const res2 = await request(server).post(
-      `${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`
-    );
+    const res2 = await request(server)
+      .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
+      .send({
+        command: VOTE_CMD.remove,
+      });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.downvotes).toStrictEqual(1);
     expect(res2.status).toBe(HttpStatusCode.OK);

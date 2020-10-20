@@ -8,17 +8,11 @@ import {
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,
-  upvoteQuestion,
-  downvoteQuestion,
+  editUpvoteDownvoteQuestion,
 } from "src/controllers/questions";
 import { Question } from "src/models";
-import {
-  initDb,
-  closeDb,
-  getVotesCollection,
-  getAnswersCollection,
-} from "src/services/database";
-import { QuestionRequestBody, Level, Subject, VoteType } from "src/utils";
+import { initDb, closeDb, getAnswersCollection } from "src/services/database";
+import { QuestionRequestBody, Level, Subject } from "src/utils";
 import { getQuestionsCollection } from "src/services/database";
 
 const MISSING_REQUEST_DATA = {};
@@ -236,30 +230,16 @@ describe("Upvote a question", () => {
       VALID_REQUEST_DATA
     );
 
-    const question: Question = await upvoteQuestion(
+    const question: Question = await editUpvoteDownvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id
+      createdQuestion._id,
+      {
+        upvotes: 1,
+        downvotes: 0,
+      }
     );
 
     expect(question.upvotes).toStrictEqual(1);
-  });
-
-  it("should create a vote document", async () => {
-    // create a question:
-    const createdQuestion = await createQuestion(
-      VALID_USER_ID,
-      VALID_REQUEST_DATA
-    );
-
-    const question: Question = await upvoteQuestion(
-      VALID_USER_ID,
-      createdQuestion._id
-    );
-    const voteDoc = await getVotesCollection().findOne({
-      userId: VALID_USER_ID,
-      questionId: question._id,
-    });
-    expect(voteDoc).toHaveProperty("type", VoteType.UPVOTE);
   });
 });
 
@@ -271,30 +251,15 @@ describe("Downvote a question", () => {
       VALID_REQUEST_DATA
     );
 
-    const question: Question = await downvoteQuestion(
+    const question: Question = await editUpvoteDownvoteQuestion(
       VALID_USER_ID,
-      createdQuestion._id
+      createdQuestion._id,
+      {
+        upvotes: 0,
+        downvotes: 1,
+      }
     );
 
     expect(question.downvotes).toStrictEqual(1);
-  });
-
-  it("should create a vote document", async () => {
-    // create a question:
-    const createdQuestion = await createQuestion(
-      VALID_USER_ID,
-      VALID_REQUEST_DATA
-    );
-
-    const question: Question = await downvoteQuestion(
-      VALID_USER_ID,
-      createdQuestion._id
-    );
-    const voteDoc = await getVotesCollection().findOne({
-      userId: VALID_USER_ID,
-      questionId: question._id,
-    });
-
-    expect(voteDoc).toHaveProperty("type", VoteType.DOWNVOTE);
   });
 });
