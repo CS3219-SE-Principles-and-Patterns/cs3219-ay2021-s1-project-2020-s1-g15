@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { getUsersCollection } from "../services/database";
+import { getCollection } from "../services/database";
 import { User } from "../models";
 import { getAuth } from "../services/authentication";
 import {
@@ -18,7 +18,7 @@ import {
  */
 async function getUserById(id: string | ObjectId): Promise<User> {
   const userObjectId: ObjectId = toValidObjectId(id);
-  const user: User | null = await getUsersCollection().findOne({
+  const user: User | null = await getCollection<User>("users").findOne({
     _id: userObjectId,
   });
 
@@ -79,7 +79,7 @@ async function registerAndCreateUser(data: UserRequestBody): Promise<User> {
     questionIds: [],
     answerIds: [],
   };
-  await getUsersCollection().insertOne(doc);
+  await getCollection<User>("users").insertOne(doc);
 
   return doc;
 }
@@ -91,7 +91,7 @@ async function addQuestionToUser(
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const userObjectId: ObjectId = toValidObjectId(userId);
 
-  const result = await getUsersCollection().findOneAndUpdate(
+  const result = await getCollection<User>("users").findOneAndUpdate(
     { _id: userObjectId },
     {
       $addToSet: {
@@ -119,7 +119,7 @@ async function removeQuestionFromUser(
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const userObjectId: ObjectId = toValidObjectId(userId);
 
-  const result = await getUsersCollection().findOneAndUpdate(
+  const result = await getCollection<User>("users").findOneAndUpdate(
     { _id: userObjectId },
     {
       $pull: {
@@ -147,7 +147,7 @@ async function addAnswerToUser(
   const answerObjectId: ObjectId = toValidObjectId(answerId);
   const userObjectId: ObjectId = toValidObjectId(userId);
 
-  const result = await getUsersCollection().findOneAndUpdate(
+  const result = await getCollection<User>("users").findOneAndUpdate(
     { _id: userObjectId },
     {
       $addToSet: {
@@ -175,7 +175,7 @@ async function removeAnswerFromUser(
   const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
 
-  const result = await getUsersCollection().findOneAndUpdate(
+  const result = await getCollection<User>("users").findOneAndUpdate(
     { _id: userObjectId },
     {
       $pull: {

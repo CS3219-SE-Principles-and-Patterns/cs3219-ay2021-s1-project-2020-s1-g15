@@ -39,28 +39,16 @@ async function closeDb(): Promise<void> {
   console.log("MongoDB: connection closed");
 }
 
-function getQuestionsCollection(): Collection<Question> {
-  return getDb().collection("questions");
+type CollectionType<T> = T extends Question
+  ? "questions"
+  : T extends User
+  ? "users"
+  : T extends Answer
+  ? "answers"
+  : never;
+
+function getCollection<T>(param: CollectionType<T>): Collection<T> {
+  return getDb().collection<T>(param);
 }
 
-function getAnswersCollection(): Collection<Answer> {
-  return getDb().collection("answers");
-}
-
-function getUsersCollection(): Collection<User> {
-  return getDb().collection("users");
-}
-
-function getVotesCollection(): Collection<Vote> {
-  return getDb().collection("votes");
-}
-
-export {
-  initDb,
-  getDb,
-  closeDb,
-  getQuestionsCollection,
-  getAnswersCollection,
-  getUsersCollection,
-  getVotesCollection,
-};
+export { initDb, getDb, closeDb, getCollection };

@@ -9,12 +9,8 @@ import {
   addAnswerToQuestion,
   removeAnswerFromQuestion,
 } from "src/controllers/questions";
-import {
-  initDb,
-  closeDb,
-  getQuestionsCollection,
-  getAnswersCollection,
-} from "src/services/database";
+import { Answer, Question } from "src/models";
+import { initDb, closeDb, getCollection } from "src/services/database";
 import { QuestionRequestBody, Level, Subject } from "src/utils";
 
 const MISSING_REQUEST_DATA = {};
@@ -54,8 +50,8 @@ afterAll(async (done) => {
 
 beforeEach(async (done) => {
   // clear all docs from all collections before each test suite to prevent runs from interfering with one another
-  await getAnswersCollection().deleteMany({});
-  await getQuestionsCollection().deleteMany({});
+  await getCollection<Answer>("answers").deleteMany({});
+  await getCollection<Question>("questions").deleteMany({});
   done();
 });
 

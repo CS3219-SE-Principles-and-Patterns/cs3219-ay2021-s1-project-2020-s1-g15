@@ -1,9 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import {
-  getAnswersCollection,
-  getQuestionsCollection,
-} from "../services/database";
+import { getCollection } from "../services/database";
 import { Answer, Question } from "../models";
 import {
   HttpStatusCode,
@@ -18,7 +15,9 @@ async function getAnswersByQuestionId(
 ): Promise<Answer[]> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
 
-  const question: Question | null = await getQuestionsCollection().findOne({
+  const question: Question | null = await getCollection<Question>(
+    "questions"
+  ).findOne({
     _id: questionObjectId,
   });
 
@@ -29,7 +28,7 @@ async function getAnswersByQuestionId(
     );
   }
 
-  const answers: Answer[] = await getAnswersCollection()
+  const answers: Answer[] = await getCollection<Answer>("answers")
     .find({
       questionId: questionObjectId,
     })
@@ -71,7 +70,7 @@ async function createAnswer(
     downvotes: 0,
   };
 
-  await getAnswersCollection().insertOne(doc);
+  await getCollection<Answer>("answers").insertOne(doc);
 
   return doc;
 }
@@ -100,7 +99,7 @@ async function updateAnswer(
     );
   }
 
-  const result = await getAnswersCollection().findOneAndUpdate(
+  const result = await getCollection<Answer>("answers").findOneAndUpdate(
     {
       _id: answerObjectId,
       userId: userObjectId, // make sure user can only update his own answer
@@ -132,7 +131,7 @@ async function deleteAnswer(
   const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(id);
 
-  const result = await getAnswersCollection().findOneAndDelete({
+  const result = await getCollection<Answer>("answers").findOneAndDelete({
     _id: answerObjectId,
     userId: userObjectId, // make sure user can only delete his own question
   });
