@@ -30,15 +30,12 @@ const Forum = ({ questions, total }): JSX.Element => {
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push({
-      pathname: `${routesObject.editQuestion}`,
-      query: {
-        qid: null,
-      },
+      pathname: `${routesObject.askQuestion}`,
     });
   };
 
-  const ViewQuestion = (_id: string) =>
-    router.push(`${routesObject.question}/${_id}`);
+  const ViewQuestion = (_id: string, slug: string) =>
+    router.push(`${routesObject.question}/${_id}/${slug}`);
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -91,7 +88,7 @@ const Forum = ({ questions, total }): JSX.Element => {
         <Col>
           <Button
             className={styles.tableButton}
-            onClick={() => ViewQuestion(record._id)}
+            onClick={() => ViewQuestion(record._id, record.slug)}
             type={"primary"}
           >
             View Question

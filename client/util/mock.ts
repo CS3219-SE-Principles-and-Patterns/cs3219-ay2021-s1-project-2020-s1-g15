@@ -18,33 +18,40 @@ const questionMock: Question = {
 const listOfAnswersMock: Answer[] = [
   {
     _id: "01",
-    markdown: "test_markdown \n asdas\n## addada adada",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: "test_id", // id of the user who created this question
+    markdown:
+      "Maybe you should try `console.log`?\n> Don't blame me if it breaks.",
     upvotes: 10,
     downvotes: 0,
   },
   {
     _id: "02",
-    upvotes: 10,
-    downvotes: 0,
-    markdown: "test_markdown \n asdas\n## addada adada",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: "test_id", // id of the user who created this question
+    upvotes: 1,
+    downvotes: 2,
+    markdown: "Here are some ways:\n- way 1\n- way 2\n- way 3",
   },
   {
     _id: "03",
-    markdown: "test_markdown \n asdas\n## addada adada",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: "test_id", // id of the user who created this question
+    markdown: "Here is another method: `if fork() fork()`",
     upvotes: 10,
-    downvotes: 0,
+    downvotes: 5,
   },
   {
     _id: "04",
-    markdown: "test_markdown \n asdas\n## addada adada",
-    upvotes: 10,
-    downvotes: 0,
-  },
-  {
-    _id: "05",
-    markdown: "test_markdown \n asdas\n## addada adada",
-    upvotes: 10,
-    downvotes: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    markdown: "# Title over here cos why not\nJust do it =D",
+    userId: "test_id", // id of the user who created this question
+    upvotes: 1,
+    downvotes: 54,
   },
 ];
 
