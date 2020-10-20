@@ -1,39 +1,52 @@
 import { ObjectId } from "mongodb";
 import { Vote } from "src/models";
 import { getVotesCollection } from "src/services/database";
-import { VoteType } from "src/utils";
+import { VoteType, toValidObjectId } from "src/utils";
 
-export async function handleUpvoteDownvoteQuestion(
+async function getQuestionVoteByUser(
+  userId: string | ObjectId,
+  questionId: string | ObjectId
+): Promise<Vote | null> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+
+  return getVotesCollection().findOne({
+    userId: userObjectId,
+    questionId: questionObjectId,
+  });
+}
+
+async function handleQuestionVote(
   userObjectId: ObjectId,
   questionObjectId: ObjectId,
   type: VoteType,
-  isSameType: boolean,
-  currentVote: boolean
+  isCurrentVotePresent: boolean,
+  isSameVoteType: boolean
 ): Promise<void> {
-  // if present and same type, we delete
-  if (isSameType && currentVote) {
+  if (isCurrentVotePresent) {
+    // delete any vote if present:
     await getVotesCollection().deleteOne({
       userId: userObjectId,
       questionId: questionObjectId,
     });
+  }
+
+  if (isSameVoteType) {
+    // undoing a previous action, no need to proceed further
     return;
   }
-  // if present and different type , we update
-  // if not present we create
-  if (currentVote) {
-    await getVotesCollection().deleteOne({
-      userId: userObjectId,
-      questionId: questionObjectId,
-    });
-  }
+
   const doc: Vote = {
     _id: new ObjectId(),
     createdAt: new Date(),
     updatedAt: new Date(),
     userId: userObjectId,
     questionId: questionObjectId,
-    type,
+    type: type,
   };
+
   await getVotesCollection().insertOne(doc);
   return;
 }
+
+export { getQuestionVoteByUser, handleQuestionVote };

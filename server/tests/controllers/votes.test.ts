@@ -1,8 +1,9 @@
 import { ObjectId } from "mongodb";
 import { createQuestion } from "src/controllers/questions";
-import { handleUpvoteDownvoteQuestion } from "src/controllers/votes";
+import { handleQuestionVote } from "src/controllers/votes";
 import { closeDb, getVotesCollection, initDb } from "src/services/database";
 import { Level, QuestionRequestBody, Subject, VoteType } from "src/utils";
+
 const VALID_USER_ID = new ObjectId();
 const VALID_REQUEST_DATA: QuestionRequestBody = {
   title: "This is the title!",
@@ -10,6 +11,7 @@ const VALID_REQUEST_DATA: QuestionRequestBody = {
   level: Level.DEFAULT,
   subject: Subject.GENERAL,
 };
+
 beforeAll(async (done) => {
   // initialise the testing DB before starting
   await initDb();
@@ -30,7 +32,7 @@ describe("Vote Creation", () => {
       VALID_REQUEST_DATA
     );
 
-    await handleUpvoteDownvoteQuestion(
+    await handleQuestionVote(
       VALID_USER_ID,
       createdQuestion._id,
       VoteType.UPVOTE,

@@ -64,27 +64,27 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
 
-// PUT request - update a question
+// POST request - upvote a question
 router.post(
   "/:id/upvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    // upvote
+
     const updatedQuestion: Question = await upvoteQuestion(userId, questionId);
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
 
-// PUT request - update a question
+// POST request - downvote a question
 router.post(
   "/:id/downvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    // upvote
+
     const updatedQuestion: Question = await downvoteQuestion(
       userId,
       questionId

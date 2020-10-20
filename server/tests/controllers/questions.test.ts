@@ -243,6 +243,7 @@ describe("Upvote a question", () => {
 
     expect(question.upvotes).toStrictEqual(1);
   });
+
   it("should create a vote document", async () => {
     // create a question:
     const createdQuestion = await createQuestion(
@@ -277,6 +278,7 @@ describe("Downvote a question", () => {
 
     expect(question.downvotes).toStrictEqual(1);
   });
+
   it("should create a vote document", async () => {
     // create a question:
     const createdQuestion = await createQuestion(

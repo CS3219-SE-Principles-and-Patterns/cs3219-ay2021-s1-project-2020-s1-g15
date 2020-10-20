@@ -1,10 +1,7 @@
 import { ObjectId } from "mongodb";
 
-import {
-  getQuestionsCollection,
-  getVotesCollection,
-} from "../services/database";
-import { Question } from "../models";
+import { getQuestionsCollection } from "../services/database";
+import { Question, Vote } from "../models";
 import {
   HttpStatusCode,
   ApiError,
@@ -15,7 +12,7 @@ import {
   VoteType,
 } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
-import { handleUpvoteDownvoteQuestion } from "./votes";
+import { handleQuestionVote, getQuestionVoteByUser } from "./votes";
 
 // TODO: add search/filter in the future
 async function getQuestions(
@@ -158,18 +155,27 @@ async function upvoteQuestion(
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  const currentVote = await getVotesCollection().findOne({
-    userId: userObjectId,
-    questionId: questionObjectId,
-  });
-  const isSameType = currentVote?.type == VoteType.UPVOTE;
+  const currentVote: Vote | null = await getQuestionVoteByUser(
+    userObjectId,
+    questionObjectId
+  );
+
+  const isCurrentVotePresent: boolean = currentVote !== null;
+  const isAlreadyUpvoted: boolean =
+    currentVote !== null && currentVote.type === VoteType.UPVOTE;
+  const isAlreadyDownvoted: boolean =
+    currentVote !== null && currentVote.type === VoteType.DOWNVOTE;
+
   const incValue = { upvotes: 0, downvotes: 0 };
-  if (isSameType && currentVote) {
-    incValue.upvotes = -1;
-  } else if (!isSameType && currentVote) {
-    incValue.downvotes = -1;
+  if (!isCurrentVotePresent) {
+    // no vote doc yet, simply upvote it:
     incValue.upvotes = 1;
-  } else {
+  } else if (isAlreadyUpvoted) {
+    // upvote doc already exists, undo the upvote:
+    incValue.upvotes = -1;
+  } else if (isAlreadyDownvoted) {
+    // downvote doc already exists, undo the downvote, and upvote it:
+    incValue.downvotes = -1;
     incValue.upvotes = 1;
   }
 
@@ -191,13 +197,13 @@ async function upvoteQuestion(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
-  const isCurrentVotePresent = currentVote ? true : false;
-  await handleUpvoteDownvoteQuestion(
+
+  await handleQuestionVote(
     userObjectId,
     questionObjectId,
     VoteType.UPVOTE,
-    isSameType,
-    isCurrentVotePresent
+    isCurrentVotePresent,
+    isAlreadyUpvoted
   );
 
   return updatedQuestion;
@@ -209,31 +215,41 @@ async function downvoteQuestion(
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  // update upvote in question
-  const currentVote = await getVotesCollection().findOne({
-    userId: userObjectId,
-    questionId: questionObjectId,
-  });
-  const isSameType = currentVote?.type == VoteType.DOWNVOTE;
+  const currentVote: Vote | null = await getQuestionVoteByUser(
+    userObjectId,
+    questionObjectId
+  );
+
+  const isCurrentVotePresent: boolean = currentVote !== null;
+  const isAlreadyUpvoted: boolean =
+    currentVote !== null && currentVote.type === VoteType.UPVOTE;
+  const isAlreadyDownvoted: boolean =
+    currentVote !== null && currentVote.type === VoteType.DOWNVOTE;
+
   const incValue = { upvotes: 0, downvotes: 0 };
-  if (isSameType && currentVote) {
-    incValue.downvotes = -1;
-  } else if (!isSameType && currentVote) {
-    incValue.upvotes = -1;
+  if (!isCurrentVotePresent) {
+    // no vote doc yet, simply downvote it:
     incValue.downvotes = 1;
-  } else {
+  } else if (isAlreadyDownvoted) {
+    // downvote doc already exists, undo the downvote:
+    incValue.downvotes = -1;
+  } else if (isAlreadyUpvoted) {
+    // upvote doc already exists, undo the upvote, and downvote it:
+    incValue.upvotes = -1;
     incValue.downvotes = 1;
   }
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
+      userId: userObjectId, // make sure user can only update his own question
     },
     {
       $inc: incValue,
     },
     { returnOriginal: false }
   );
+
   const updatedQuestion: Question | undefined = result.value;
   if (updatedQuestion == null) {
     throw new ApiError(
@@ -241,13 +257,13 @@ async function downvoteQuestion(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
-  const isCurrentVotePresent = currentVote ? true : false;
-  await handleUpvoteDownvoteQuestion(
+
+  await handleQuestionVote(
     userObjectId,
     questionObjectId,
     VoteType.DOWNVOTE,
-    isSameType,
-    isCurrentVotePresent
+    isCurrentVotePresent,
+    isAlreadyDownvoted
   );
 
   return updatedQuestion;
