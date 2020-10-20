@@ -28,6 +28,11 @@ import { initAuth } from "src/services/authentication";
 import { User } from "src/models";
 
 const API_ENDPOINT = "/api/questions";
+const UPVOTE = "upvote";
+const DOWNVOTE = "downvote";
+const VALID_UPVOTE = {
+  upvotes: 1,
+};
 
 const VALID_REQUEST_DATA_1: QuestionRequestBody = {
   title: "This is the title!",
@@ -117,6 +122,23 @@ describe("POST request - create a single question", () => {
 
     expect(res.status).toBe(HttpStatusCode.CREATED);
     expect(res.body._id).not.toBeNull();
+    done();
+  });
+});
+
+describe("POST request - upvote a single question", () => {
+  it("should return 201 and the question on success", async (done) => {
+    // create a question first:
+    const createdQuestion = await createQuestion(
+      TestConfig.DEVTESTUSER_UID,
+      VALID_REQUEST_DATA_1
+    );
+    const res = await request(server)
+      .post(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
+      .send(VALID_UPVOTE);
+
+    expect(res.status).toBe(HttpStatusCode.OK);
+    expect(res.body.upvotes).toStrictEqual(1);
     done();
   });
 });
