@@ -8,17 +8,16 @@ export async function handleUpvoteDownvoteQuestion(
   questionObjectId: ObjectId,
   type: VoteType,
   isSameType: boolean,
-  currentVote: Vote | null
+  currentVote: boolean
 ): Promise<void> {
   // if present and same type, we delete
-  if (isSameType) {
+  if (isSameType && currentVote) {
     await getVotesCollection().deleteOne({
       userId: userObjectId,
       questionId: questionObjectId,
     });
     return;
   }
-
   // if present and different type , we update
   // if not present we create
   if (currentVote) {

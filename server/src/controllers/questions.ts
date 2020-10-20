@@ -163,16 +163,23 @@ async function upvoteQuestion(
     questionId: questionObjectId,
   });
   const isSameType = currentVote?.type == VoteType.UPVOTE;
-  const incValue = currentVote ? (isSameType ? -1 : 0) : 1;
+  const incValue = { upvotes: 0, downvotes: 0 };
+  if (isSameType && currentVote) {
+    incValue.upvotes = -1;
+  } else if (!isSameType && currentVote) {
+    incValue.downvotes = -1;
+    incValue.upvotes = 1;
+  } else {
+    incValue.upvotes = 1;
+  }
+
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
       userId: userObjectId, // make sure user can only update his own question
     },
     {
-      $inc: {
-        upvotes: incValue,
-      },
+      $inc: incValue,
     },
     { returnOriginal: false }
   );
@@ -184,13 +191,13 @@ async function upvoteQuestion(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
-
+  const isCurrentVotePresent = currentVote ? true : false;
   await handleUpvoteDownvoteQuestion(
     userObjectId,
     questionObjectId,
     VoteType.UPVOTE,
     isSameType,
-    currentVote
+    isCurrentVotePresent
   );
 
   return updatedQuestion;
@@ -208,16 +215,22 @@ async function downvoteQuestion(
     questionId: questionObjectId,
   });
   const isSameType = currentVote?.type == VoteType.DOWNVOTE;
-  const incValue = currentVote ? (isSameType ? -1 : 0) : 1;
+  const incValue = { upvotes: 0, downvotes: 0 };
+  if (isSameType && currentVote) {
+    incValue.downvotes = -1;
+  } else if (!isSameType && currentVote) {
+    incValue.upvotes = -1;
+    incValue.downvotes = 1;
+  } else {
+    incValue.downvotes = 1;
+  }
 
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
     },
     {
-      $inc: {
-        downvotes: incValue,
-      },
+      $inc: incValue,
     },
     { returnOriginal: false }
   );
@@ -228,13 +241,13 @@ async function downvoteQuestion(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
-
+  const isCurrentVotePresent = currentVote ? true : false;
   await handleUpvoteDownvoteQuestion(
     userObjectId,
     questionObjectId,
     VoteType.DOWNVOTE,
     isSameType,
-    currentVote
+    isCurrentVotePresent
   );
 
   return updatedQuestion;

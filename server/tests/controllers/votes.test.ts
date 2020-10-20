@@ -29,14 +29,14 @@ describe("Vote Creation", () => {
       VALID_USER_ID,
       VALID_REQUEST_DATA
     );
-    /*
+
     await handleUpvoteDownvoteQuestion(
       VALID_USER_ID,
       createdQuestion._id,
       VoteType.UPVOTE,
       false,
-
-    );*/
+      false
+    );
 
     const voteDoc = await getVotesCollection().findOne({
       userId: VALID_USER_ID,
