@@ -1,7 +1,6 @@
 import assert from "assert";
 import MongoClient, { Collection } from "mongodb";
-
-import { Question, Answer, User } from "../models";
+import { Question, Answer, User, Vote } from "src/models";
 import { getMongoDbName, getMongoDbUrl } from "../utils";
 
 const mongoClient: MongoClient.MongoClient = new MongoClient.MongoClient(
@@ -51,6 +50,10 @@ function getUsersCollection(): Collection<User> {
   return getDb().collection("users");
 }
 
+function getVotesCollection(): Collection<Vote> {
+  return getDb().collection("votes");
+}
+
 export {
   initDb,
   getDb,
@@ -58,4 +61,5 @@ export {
   getQuestionsCollection,
   getAnswersCollection,
   getUsersCollection,
+  getVotesCollection,
 };

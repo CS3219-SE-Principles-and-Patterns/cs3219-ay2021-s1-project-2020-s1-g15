@@ -1,9 +1,8 @@
 import { ObjectId } from "mongodb";
-
 import {
   getAnswersCollection,
   getQuestionsCollection,
-} from "../services/database";
+} from "src/services/database";
 import { Answer, Question } from "../models";
 import {
   HttpStatusCode,
