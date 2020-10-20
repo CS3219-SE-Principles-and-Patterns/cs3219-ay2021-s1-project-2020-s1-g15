@@ -7,10 +7,16 @@ import React, {
 } from "react";
 import { Spin } from "antd";
 
-import { User, getSingleUser } from "../../utils";
+import {
+  User,
+  getSingleUser,
+  login,
+  logout,
+  getIdToken,
+  useFirebaseAuthentication,
+} from "utils/index";
 
 type AuthProviderProps = {
-  auth: firebase.auth.Auth;
   children: React.ReactNode;
 };
 
@@ -19,12 +25,9 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login?: (
-    email: string,
-    password: string
-  ) => Promise<firebase.auth.UserCredential>;
-  logout?: () => Promise<void>;
-  getIdToken: () => Promise<string>;
+  login: typeof login;
+  logout: typeof logout;
+  getIdToken: typeof getIdToken;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,53 +35,27 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   loading: true,
-  getIdToken: () => new Promise(() => console.log("test")),
+  login,
+  logout,
+  getIdToken,
 });
 
-export const AuthProvider: FC<AuthProviderProps> = ({ auth, children }) => {
-  const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null);
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+  const firebaseUser: firebase.User | null = useFirebaseAuthentication();
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const onAuthStateChange = (
-      callback: React.Dispatch<React.SetStateAction<boolean>>
-    ) => {
-      return auth.onAuthStateChanged(async (firebaseUser) => {
-        setLoading(true);
-        setFirebaseUser(firebaseUser);
-        setUser(firebaseUser ? await getSingleUser(firebaseUser.uid) : null);
-
-        const isAuthenticated = firebaseUser !== null;
-        setIsAuthenticated(isAuthenticated);
-        callback(isAuthenticated);
-        setLoading(false);
-      });
-    };
-    const unsubscribe = onAuthStateChange(setIsAuthenticated);
-    return () => {
-      unsubscribe();
-    };
-  }, [auth]);
-
-  const login = async (email: string, password: string) => {
-    return auth.signInWithEmailAndPassword(email, password);
-  };
-
-  const logout = async () => {
-    return auth.signOut();
-  };
-
-  const getIdToken = async () => {
-    const userInstance: firebase.User | null = await auth.currentUser;
-    if (userInstance != null) {
-      const idToken = userInstance.getIdToken(/* forceRefresh */ true);
-      return idToken;
-    } else {
-      return "NULL";
-    }
-  };
+    setIsLoading(true);
+    (async () => {
+      const user: User | null =
+        firebaseUser !== null ? await getSingleUser(firebaseUser.uid) : null;
+      setUser(user);
+      setIsAuthenticated(user !== null);
+      setIsLoading(false);
+    })();
+  }, [firebaseUser]);
 
   return (
     <AuthContext.Provider
@@ -86,13 +63,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ auth, children }) => {
         isAuthenticated,
         firebaseUser,
         user,
-        loading,
+        loading: isLoading,
         login,
         logout,
         getIdToken,
       }}
     >
-      <Spin spinning={loading}>{children}</Spin>
+      <Spin spinning={isLoading}>{children}</Spin>
     </AuthContext.Provider>
   );
 };
