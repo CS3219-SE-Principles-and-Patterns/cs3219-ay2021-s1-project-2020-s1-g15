@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { getCollection } from "../services/database";
+import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
 import {
   HttpStatusCode,
@@ -9,8 +9,10 @@ import {
   QuestionRequestBody,
   titleToSlug,
   toValidObjectId,
+  VoteType,
 } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
+import { handleUpvoteDownvoteQuestion } from "./votes";
 
 // TODO: add search/filter in the future
 async function getQuestions(
@@ -24,21 +26,19 @@ async function getQuestions(
     );
   }
 
-  const questions: Question[] = await getCollection<Question>("questions")
+  const questions: Question[] = await getQuestionsCollection()
     .find()
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
-  const total = await getCollection<Question>("questions").countDocuments();
+  const total = await getQuestionsCollection().countDocuments();
   return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
   const questionObjectId: ObjectId = toValidObjectId(id);
 
-  const question: Question | null = await getCollection<Question>(
-    "questions"
-  ).findOne({
+  const question: Question | null = await getQuestionsCollection().findOne({
     _id: questionObjectId,
   });
 
@@ -90,7 +90,7 @@ async function createQuestion(
     downvotes: 0,
   };
 
-  await getCollection<Question>("questions").insertOne(doc);
+  await getQuestionsCollection().insertOne(doc);
 
   return doc;
 }
@@ -120,7 +120,7 @@ async function updateQuestion(
     );
   }
 
-  const result = await getCollection<Question>("questions").findOneAndUpdate(
+  const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
       userId: userObjectId, // make sure user can only update his own question
@@ -133,7 +133,6 @@ async function updateQuestion(
         level: level,
         subject: subject,
         updatedAt: new Date(),
-        upvotes: 
       },
     },
     { returnOriginal: false }
@@ -150,6 +149,92 @@ async function updateQuestion(
   return updatedQuestion;
 }
 
+async function upvoteQuestion(
+  userId: string | ObjectId,
+  questionId: string | ObjectId,
+  upvotes: number
+): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  if (!upvotes) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    {
+      _id: questionObjectId,
+      userId: userObjectId, // make sure user can only update his own question
+    },
+    {
+      $set: {
+        upvotes: upvotes,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  await handleUpvoteDownvoteQuestion(
+    userObjectId,
+    questionObjectId,
+    VoteType.UPVOTE
+  );
+
+  return updatedQuestion;
+}
+
+async function downvoteQuestion(
+  userId: string | ObjectId,
+  questionId: string | ObjectId,
+  downvotes: number
+): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  if (!downvotes) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.MISSING_REQUIRED_FIELDS
+    );
+  }
+  // update upvote in question
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    {
+      _id: questionObjectId,
+    },
+    {
+      $set: {
+        downvotes: downvotes,
+      },
+    },
+    { returnOriginal: false }
+  );
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+
+  await handleUpvoteDownvoteQuestion(
+    userObjectId,
+    questionObjectId,
+    VoteType.DOWNVOTE
+  );
+
+  return updatedQuestion;
+}
+
 async function deleteQuestion(
   userId: string | ObjectId,
   questionId: string | ObjectId
@@ -157,7 +242,7 @@ async function deleteQuestion(
   const userObjectId = toValidObjectId(userId);
   const questionObjectId = toValidObjectId(questionId);
 
-  const result = await getCollection<Question>("questions").findOneAndDelete({
+  const result = await getQuestionsCollection().findOneAndDelete({
     _id: questionObjectId,
     userId: userObjectId, // make sure user can only delete his own question
   });
@@ -181,7 +266,7 @@ async function addAnswerToQuestion(
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
 
-  const result = await getCollection<Question>("questions").findOneAndUpdate(
+  const result = await getQuestionsCollection().findOneAndUpdate(
     { _id: questionObjectId },
     {
       $addToSet: {
@@ -207,7 +292,7 @@ async function removeAnswerFromQuestion(
 ): Promise<Question> {
   const answerObjectId: ObjectId = toValidObjectId(answerId);
 
-  const result = await getCollection<Question>("questions").findOneAndUpdate(
+  const result = await getQuestionsCollection().findOneAndUpdate(
     { answerIds: answerObjectId },
     {
       $pull: {
@@ -233,6 +318,8 @@ export {
   getQuestionById,
   createQuestion,
   updateQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,

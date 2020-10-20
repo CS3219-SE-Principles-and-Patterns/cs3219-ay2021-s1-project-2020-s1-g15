@@ -1,19 +1,10 @@
 import { ObjectId } from "mongodb";
 
 import { Util } from "./Util";
-import { VoteType } from "../utils/constants";
-
-interface Upvote {
-  value: VoteType.UPVOTE;
-}
-
-interface Downvote {
-  value: VoteType.DOWNVOTE;
-}
 
 interface BaseVote extends Util {
   userId: ObjectId;
-  type: Upvote | Downvote;
+  type: 1 | -1;
 }
 
 interface AnswerVote extends BaseVote {

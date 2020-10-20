@@ -8,10 +8,18 @@ import {
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
 } from "src/controllers/questions";
-import { Answer, Question } from "src/models";
-import { initDb, closeDb, getCollection } from "src/services/database";
-import { QuestionRequestBody, Level, Subject } from "src/utils";
+import { Question } from "src/models";
+import {
+  initDb,
+  closeDb,
+  getVoteCollection,
+  getAnswersCollection,
+  getQuestionsCollection,
+} from "src/services/database";
+import { QuestionRequestBody, Level, Subject, VoteType } from "src/utils";
 
 const MISSING_REQUEST_DATA = {};
 const INVALID_REQUEST_DATA: QuestionRequestBody = {
@@ -50,8 +58,8 @@ afterAll(async (done) => {
 
 beforeEach(async (done) => {
   // clear all docs from all collections before each test suite to prevent runs from interfering with one another
-  await getCollection<Answer>("answers").deleteMany({});
-  await getCollection<Question>("questions").deleteMany({});
+  await getAnswersCollection().deleteMany({});
+  await getQuestionsCollection().deleteMany({});
   done();
 });
 
@@ -217,5 +225,78 @@ describe("Remove an answer reference to a question", () => {
     const updatedQuestion = await removeAnswerFromQuestion(VALID_ANSWER_ID);
 
     expect(updatedQuestion).toStrictEqual(createdQuestion);
+  });
+});
+
+describe("Upvote a question", () => {
+  it("should update question upvote value", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await upvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      1
+    );
+
+    expect(question.upvotes).toStrictEqual(1);
+  });
+  it("should create a vote document", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await upvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      1
+    );
+    const voteDoc = await getVoteCollection().findOne({
+      userId: VALID_USER_ID,
+      questionId: question._id,
+    });
+    expect(voteDoc).toHaveProperty("type", VoteType.UPVOTE);
+  });
+});
+
+describe("Downvote a question", () => {
+  it("should update question downvote value", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await downvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      1
+    );
+
+    expect(question.downvotes).toStrictEqual(1);
+  });
+  it("should create a vote document", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await downvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      1
+    );
+    const voteDoc = await getVoteCollection().findOne({
+      userId: VALID_USER_ID,
+      questionId: question._id,
+    });
+
+    expect(voteDoc).toHaveProperty("type", VoteType.DOWNVOTE);
   });
 });

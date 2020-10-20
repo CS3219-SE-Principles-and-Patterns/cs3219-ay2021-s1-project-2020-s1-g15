@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { initDb, closeDb, getCollection } from "src/services/database";
+import { initDb, closeDb, getUsersCollection } from "src/services/database";
 import {
   addQuestionToUser,
   registerAndCreateUser,
@@ -20,7 +20,7 @@ const createTestUserDoc = async (): Promise<User> => {
     questionIds: [],
     answerIds: [],
   };
-  await getCollection<User>("users").insertOne(doc);
+  await getUsersCollection().insertOne(doc);
   return doc;
 };
 
@@ -32,14 +32,14 @@ beforeAll(async (done) => {
 
 afterAll(async (done) => {
   // reset and close DB before ending
-  await getCollection<User>("users").deleteMany({});
+  await getUsersCollection().deleteMany({});
   await closeDb();
   done();
 });
 
 beforeEach(async (done) => {
   // clear all docs before each test suite to prevent runs from interfering with one another
-  await getCollection<User>("users").deleteMany({});
+  await getUsersCollection().deleteMany({});
   done();
 });
 

@@ -7,6 +7,8 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
 } from "../controllers/questions";
 import {
   addQuestionToUser,
@@ -15,14 +17,18 @@ import {
 import { Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { QuestionRequestBody, HttpStatusCode } from "../utils";
-import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
+import {
+  GetPaginatedQuestionRequestQuery,
+  GetQuestionRequestResponse,
+} from "src/utils/types/GetQuestionRequestResponse";
 
 const router: Router = Router();
 
 // GET request - list all questions
 router.get("/", async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string);
-  const pageSize = parseInt(req.query.pageSize as string);
+  const args = req.query as GetPaginatedQuestionRequestQuery;
+  const page = parseInt(args.page);
+  const pageSize = parseInt(args.pageSize);
 
   const { questions, total }: GetQuestionRequestResponse = await getQuestions(
     page,
@@ -65,9 +71,32 @@ router.post(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
+    const upvotes: number = req.body.upvotes;
     // upvote
+    const updatedQuestion: Question = await upvoteQuestion(
+      userId,
+      questionId,
+      upvotes
+    );
+    return res.status(HttpStatusCode.OK).json(updatedQuestion);
+  }
+);
 
-    return res.status(HttpStatusCode.OK).json();
+// PUT request - update a question
+router.post(
+  "/:id/downvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const questionId: string = req.params.id;
+    const downvotes: number = req.body.downvotes;
+    // upvote
+    const updatedQuestion: Question = await downvoteQuestion(
+      userId,
+      questionId,
+      downvotes
+    );
+    return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
 

@@ -1,11 +1,12 @@
 import MongoClient from "mongodb";
-import { Answer, Question, User } from "src/models";
 
 import {
   initDb,
   closeDb,
   getDb,
-  getCollection,
+  getAnswersCollection,
+  getQuestionsCollection,
+  getUsersCollection,
 } from "../../src/services/database";
 
 describe("Initialise database", () => {
@@ -82,14 +83,14 @@ describe("Get questions collection", () => {
   });
 
   it("should return questions collection", async () => {
-    const questionsCollection = getCollection<Question>("questions");
+    const questionsCollection = getQuestionsCollection();
     expect(questionsCollection.collectionName).toBe("questions");
   });
 
   it("should throw error if database is not yet initialised", async () => {
     await closeDb();
 
-    expect(getCollection).toThrowError();
+    expect(getQuestionsCollection).toThrowError();
   });
 });
 
@@ -105,14 +106,14 @@ describe("Get answers collection", () => {
   });
 
   it("should return answers collection", async () => {
-    const answersCollection = getCollection<Answer>("answers");
+    const answersCollection = getAnswersCollection();
     expect(answersCollection.collectionName).toBe("answers");
   });
 
   it("should throw error if database is not yet initialised", async () => {
     await closeDb();
 
-    expect(getCollection).toThrowError();
+    expect(getUsersCollection).toThrowError();
   });
 });
 
@@ -128,13 +129,13 @@ describe("Get users collection", () => {
   });
 
   it("should return users collection", async () => {
-    const usersCollection = getCollection<User>("users");
+    const usersCollection = getUsersCollection();
     expect(usersCollection.collectionName).toBe("users");
   });
 
   it("should throw error if database is not yet initialised", async () => {
     await closeDb();
 
-    expect(getCollection).toThrowError();
+    expect(getUsersCollection).toThrowError();
   });
 });

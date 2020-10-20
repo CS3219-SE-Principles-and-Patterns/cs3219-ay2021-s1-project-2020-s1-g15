@@ -1,7 +1,6 @@
 import assert from "assert";
 import MongoClient, { Collection } from "mongodb";
-
-import { Question, Answer, User, Vote } from "../models";
+import { Question, Answer, User, Vote } from "src/models";
 import { getMongoDbName, getMongoDbUrl } from "../utils";
 
 const mongoClient: MongoClient.MongoClient = new MongoClient.MongoClient(
@@ -39,16 +38,28 @@ async function closeDb(): Promise<void> {
   console.log("MongoDB: connection closed");
 }
 
-type CollectionType<T> = T extends Question
-  ? "questions"
-  : T extends User
-  ? "users"
-  : T extends Answer
-  ? "answers"
-  : never;
-
-function getCollection<T>(param: CollectionType<T>): Collection<T> {
-  return getDb().collection<T>(param);
+function getQuestionsCollection(): Collection<Question> {
+  return getDb().collection("questions");
 }
 
-export { initDb, getDb, closeDb, getCollection };
+function getAnswersCollection(): Collection<Answer> {
+  return getDb().collection("answers");
+}
+
+function getUsersCollection(): Collection<User> {
+  return getDb().collection("users");
+}
+
+function getVoteCollection(): Collection<Vote> {
+  return getDb().collection("votes");
+}
+
+export {
+  initDb,
+  getDb,
+  closeDb,
+  getQuestionsCollection,
+  getAnswersCollection,
+  getUsersCollection,
+  getVoteCollection,
+};

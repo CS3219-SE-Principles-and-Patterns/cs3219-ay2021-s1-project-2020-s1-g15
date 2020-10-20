@@ -9,7 +9,13 @@ import request from "supertest";
 import { ObjectId } from "mongodb";
 
 import server from "src/services/server";
-import { initDb, closeDb, getCollection } from "src/services/database";
+import {
+  initDb,
+  closeDb,
+  getAnswersCollection,
+  getQuestionsCollection,
+  getUsersCollection,
+} from "src/services/database";
 import { createQuestion } from "src/controllers/questions";
 import {
   HttpStatusCode,
@@ -19,7 +25,7 @@ import {
   TestConfig,
 } from "src/utils";
 import { initAuth } from "src/services/authentication";
-import { Answer, Question, User } from "src/models";
+import { User } from "src/models";
 
 const API_ENDPOINT = "/api/questions";
 
@@ -52,15 +58,15 @@ beforeAll(async (done) => {
     questionIds: [],
     answerIds: [],
   };
-  await getCollection<User>("users").insertOne(doc);
+  await getUsersCollection().insertOne(doc);
   done();
 });
 
 afterAll(async (done) => {
   // clear all docs from all collections
-  await getCollection<Answer>("answers").deleteMany({});
-  await getCollection<Question>("questions").deleteMany({});
-  await getCollection<User>("users").deleteMany({});
+  await getAnswersCollection().deleteMany({});
+  await getQuestionsCollection().deleteMany({});
+  await getUsersCollection().deleteMany({});
   // close the DB connection before ending
   await closeDb();
   done();
@@ -68,8 +74,8 @@ afterAll(async (done) => {
 
 beforeEach(async (done) => {
   // clear Q&A docs to prevent test suite runs from interfering with one another
-  await getCollection<Answer>("answers").deleteMany({});
-  await getCollection<Question>("questions").deleteMany({});
+  await getAnswersCollection().deleteMany({});
+  await getQuestionsCollection().deleteMany({});
   done();
 });
 
