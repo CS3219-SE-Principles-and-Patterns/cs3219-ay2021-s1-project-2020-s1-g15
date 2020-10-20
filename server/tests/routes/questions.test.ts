@@ -33,6 +33,9 @@ const DOWNVOTE = "downvote";
 const VALID_UPVOTE = {
   upvotes: 1,
 };
+const VALID_DOWNVOTE = {
+  downvotes: 1,
+};
 
 const VALID_REQUEST_DATA_1: QuestionRequestBody = {
   title: "This is the title!",
@@ -139,6 +142,23 @@ describe("POST request - upvote a single question", () => {
 
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.upvotes).toStrictEqual(1);
+    done();
+  });
+});
+
+describe("POST request - downvote a single question", () => {
+  it("should return 201 and the question on success", async (done) => {
+    // create a question first:
+    const createdQuestion = await createQuestion(
+      TestConfig.DEVTESTUSER_UID,
+      VALID_REQUEST_DATA_1
+    );
+    const res = await request(server)
+      .post(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
+      .send(VALID_DOWNVOTE);
+
+    expect(res.status).toBe(HttpStatusCode.OK);
+    expect(res.body.downvotes).toStrictEqual(1);
     done();
   });
 });
