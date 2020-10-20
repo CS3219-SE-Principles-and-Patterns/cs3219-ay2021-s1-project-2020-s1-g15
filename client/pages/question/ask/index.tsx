@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, PageTitle } from "util/index";
+import { NavMenuKey, PageTitle } from "utils/index";
 import { QuestionForm } from "components/questions";
 
 const Ask = (): JSX.Element => {

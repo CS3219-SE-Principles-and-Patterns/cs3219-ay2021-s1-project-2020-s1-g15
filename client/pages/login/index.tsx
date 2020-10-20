@@ -3,9 +3,8 @@ import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
 
 import styles from "./login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { NavMenuKey, Route } from "../../util";
+import { NavMenuKey, Route, PageTitle } from "../../utils";
 import Link from "next/link";
-import { PageTitle } from "../../util";
 import { useAuth } from "../../components/authentication";
 import router from "next/router";
 

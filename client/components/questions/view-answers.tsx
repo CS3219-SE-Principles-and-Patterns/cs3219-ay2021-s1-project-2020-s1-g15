@@ -3,7 +3,7 @@ import { List, Card, Space } from "antd";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 import { grey } from "@ant-design/colors";
 
-import { Answer, markdownToReactNode, toRelativeTimeAgo } from "util/index";
+import { Answer, markdownToReactNode, toRelativeTimeAgo } from "utils/index";
 import styles from "./question.module.css";
 
 type AnswerCardProp = {

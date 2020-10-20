@@ -2,9 +2,14 @@ import React, { FC } from "react";
 import { GetServerSideProps } from "next";
 import { Space, Row, Col } from "antd";
 
-import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
-import { Question, Answer, listOfAnswersMock, NavMenuKey } from "util/index";
+import {
+  NavMenuKey,
+  Question,
+  Answer,
+  listOfAnswersMock,
+  getSingleQuestion,
+} from "utils/index";
 import { ViewQuestion, ViewAnswers } from "components/questions";
 
 type QuestionsProps = {

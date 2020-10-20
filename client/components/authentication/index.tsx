@@ -7,8 +7,7 @@ import React, {
 } from "react";
 
 import { Spin } from "antd";
-import { User } from "../../util";
-import { getSingleUser } from "../api";
+import { User, getSingleUser } from "../../utils";
 type props = {
   auth: firebase.auth.Auth;
   children: React.ReactNode;

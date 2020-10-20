@@ -4,7 +4,7 @@ import {
   GetPaginatedQuestionsReq,
   CreateQuestionReq,
   EditQuestionReq,
-} from "../../util";
+} from "..";
 import {
   QUESTIONS_API_URL,
   createUrlParamString,

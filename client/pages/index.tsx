@@ -1,5 +1,5 @@
 import FluidPage from "../components/layout";
-import { NavMenuKey, PageTitle } from "../util";
+import { NavMenuKey, PageTitle } from "../utils";
 import Landing from "../components/landing";
 
 export const Home = (): JSX.Element => (

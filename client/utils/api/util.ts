@@ -1,5 +1,5 @@
 import { stringify } from "querystring";
-import { ApiErrorRes } from "../../util";
+import { ApiErrorRes } from "..";
 
 const BASE_API_URL: string =
   process.env.NODE_ENV == "development"

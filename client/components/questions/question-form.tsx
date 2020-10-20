@@ -12,9 +12,16 @@ import {
   Tabs,
 } from "antd";
 
-import { Question, Subject, Level, CreateQuestionReq, Route } from "util/index";
+import {
+  Question,
+  Subject,
+  Level,
+  CreateQuestionReq,
+  Route,
+  createQuestion,
+  editQuestion,
+} from "utils/index";
 import { useAuth } from "components/authentication";
-import { createQuestion, editQuestion } from "components/api";
 import ViewQuestionPreview from "./view-question-preview";
 
 const { Title } = Typography;

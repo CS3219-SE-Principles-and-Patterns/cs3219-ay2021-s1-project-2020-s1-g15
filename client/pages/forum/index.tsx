@@ -2,7 +2,6 @@ import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getPaginatedQuestions } from "../../components/api";
 import FluidPage from "../../components/layout";
 import { ColumnsType } from "antd/es/table";
 import {
@@ -11,7 +10,8 @@ import {
   Question,
   QuestionTableData,
   Route,
-} from "../../util";
+  getPaginatedQuestions,
+} from "../../utils";
 import React from "react";
 import styles from "./forum.module.css";
 import { useAuth } from "../../components/authentication";

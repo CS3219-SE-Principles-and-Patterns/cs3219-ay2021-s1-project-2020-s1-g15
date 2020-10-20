@@ -1,4 +1,4 @@
-import { RegisterUserReq, User, GetSingleUserRes } from "../../util";
+import { RegisterUserReq, User, GetSingleUserRes } from "..";
 import { USERS_API_URL, throwApiError } from "./util";
 
 function getUsersIdUrl(id: string) {

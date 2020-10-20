@@ -1,7 +1,7 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 
-import { getSingleQuestion } from "components/api";
+import { getSingleQuestion } from "utils/api";
 
 const DummyNode = (): JSX.Element => {
   return <></>;

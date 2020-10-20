@@ -1,5 +1,5 @@
 import FluidPage from "components/layout";
-import { PageTitle } from "util/index";
+import { PageTitle } from "utils/index";
 
 const ErrorPage = () => {
   return (

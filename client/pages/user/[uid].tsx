@@ -7,8 +7,8 @@ import {
   questionMock,
   User,
   GetSingleUserRes,
-} from "../../util";
-import { getSingleUser } from "../../components/api";
+} from "../../utils";
+import { getSingleUser } from "../../utils/api";
 import { Spin } from "antd";
 
 /**

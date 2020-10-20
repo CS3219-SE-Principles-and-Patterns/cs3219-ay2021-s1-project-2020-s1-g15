@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, PageTitle, Question } from "util/index";
+import { NavMenuKey, PageTitle, Question } from "utils/index";
 import { QuestionForm } from "components/questions";
-import { getSingleQuestion } from "components/api";
+import { getSingleQuestion } from "utils/api";
 
 const Edit = (): JSX.Element => {
   const router = useRouter();

@@ -6,7 +6,7 @@ import {
   CreateQuestionReq,
   toRelativeTimeAgo,
   markdownToReactNode,
-} from "util/index";
+} from "utils/index";
 
 const { Title } = Typography;
 

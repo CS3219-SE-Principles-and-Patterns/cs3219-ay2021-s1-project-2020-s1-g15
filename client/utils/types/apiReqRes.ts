@@ -1,4 +1,4 @@
-import { Util, Question } from "util/index";
+import { Util, Question } from "utils/index";
 
 export type GetPaginatedQuestionsReq = {
   page: number;

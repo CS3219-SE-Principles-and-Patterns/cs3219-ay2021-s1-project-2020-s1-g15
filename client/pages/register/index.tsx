@@ -3,13 +3,10 @@ import { Card, Form, Input, Button, Spin, notification } from "antd";
 
 import styles from "../login/login.module.css";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { RegisterUserReq, Route, GetSingleUserRes } from "../../util";
+import { PageTitle, RegisterUserReq, Route, registerUser } from "../../utils";
 import Link from "next/link";
-import { PageTitle } from "../../util";
 import { useForm } from "antd/lib/form/Form";
 import { useState } from "react";
-import { registerUser } from "../../components/api";
-import router from "next/router";
 import { useAuth } from "../../components/authentication";
 
 const Register = (): JSX.Element => {

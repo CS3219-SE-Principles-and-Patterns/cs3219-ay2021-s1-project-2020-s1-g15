@@ -21,7 +21,7 @@ import {
 const { TabPane } = Tabs;
 
 import React, { FC } from "react";
-import { Level, User } from "../../util";
+import { Level, User } from "../../utils";
 
 import styles from "./user.module.css";
 import dynamic from "next/dynamic";

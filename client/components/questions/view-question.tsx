@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import { Question, Route } from "util/index";
-import { deleteSingleQuestion } from "components/api";
+import { Question, Route, deleteSingleQuestion } from "utils/index";
 import { useAuth } from "components/authentication";
 import ViewQuestionPreview from "./view-question-preview";
 
