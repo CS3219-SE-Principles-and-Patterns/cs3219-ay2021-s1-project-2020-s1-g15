@@ -24,7 +24,7 @@ type AuthContextType = {
   firebaseUser: firebase.User | null;
   user: User | null;
   isAuthenticated: boolean;
-  loading: boolean;
+  isLoading: boolean;
   login: typeof login;
   logout: typeof logout;
   getIdToken: typeof getIdToken;
@@ -34,7 +34,7 @@ const AuthContext = createContext<AuthContextType>({
   firebaseUser: null,
   user: null,
   isAuthenticated: false,
-  loading: true,
+  isLoading: true,
   login,
   logout,
   getIdToken,
@@ -63,7 +63,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         isAuthenticated,
         firebaseUser,
         user,
-        loading: isLoading,
+        isLoading,
         login,
         logout,
         getIdToken,
