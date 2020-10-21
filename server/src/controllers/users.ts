@@ -197,7 +197,11 @@ async function removeAnswerFromUser(
   return updatedUser;
 }
 
-async function removeAllAnswersFromUsers(answers: Answer[]): Promise<boolean> {
+async function removeAllAnswersFromUsers(answers: Answer[]): Promise<void> {
+  if (answers.length === 0) {
+    return;
+  }
+
   const bulk: OrderedBulkOperation = getUsersCollection().initializeOrderedBulkOp();
 
   for (const answer of answers) {
@@ -211,8 +215,8 @@ async function removeAllAnswersFromUsers(answers: Answer[]): Promise<boolean> {
     });
   }
 
-  const status: boolean = (await bulk.execute()).ok;
-  return status;
+  bulk.execute();
+  return;
 }
 
 export {

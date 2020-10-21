@@ -167,11 +167,8 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),
     deleteAllAnswersByQuestionId(questionId),
+    removeAllAnswersFromUsers(answers),
   ]);
-
-  if (answers.length != 0) {
-    await removeAllAnswersFromUsers(answers);
-  }
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });
