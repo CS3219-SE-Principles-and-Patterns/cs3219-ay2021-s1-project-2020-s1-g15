@@ -1,9 +1,12 @@
 import React, { FC, ReactNode } from "react";
-import { List, Card, Space } from "antd";
+import { List, Card, Space, Divider, Typography } from "antd";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 
 import { Answer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
+import { AnswerForm } from "./AnswerForm";
+
+const { Text } = Typography;
 
 type ViewAnswersCardProp = {
   answers: Answer[];
@@ -24,8 +27,13 @@ const IconText: FC<IconTextProp> = ({ icon, text }): JSX.Element => (
 const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
   return (
     <Card>
+      {/* ANSWERS LIST */}
       <List
-        header={`${answers.length} answers`}
+        header={
+          <Text style={{ fontSize: "1.2rem" }} type="secondary">
+            {answers.length} Answers
+          </Text>
+        }
         itemLayout="vertical"
         dataSource={answers}
         renderItem={(answer) => (
@@ -48,6 +56,16 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
           </List.Item>
         )}
       />
+
+      <Divider />
+
+      {/* ANSWER FORM */}
+      <Space style={{ width: "100%" }} direction="vertical" size="middle">
+        <Text style={{ fontSize: "1.2rem" }} type="secondary">
+          Your Answer
+        </Text>
+        <AnswerForm />
+      </Space>
     </Card>
   );
 };
