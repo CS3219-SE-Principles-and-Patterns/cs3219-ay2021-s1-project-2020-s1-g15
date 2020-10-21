@@ -21,7 +21,8 @@ const router: Router = Router();
 
 // GET request - get all answers by question ID
 router.get("/", async (req: Request, res: Response) => {
-  const questionId: string = req.body.questionId;
+  // typecase to string; let controller handle the error handling
+  const questionId: string = req.query.questionId as string;
 
   const answers: Answer[] = await getAnswersByQuestionId(questionId);
 
