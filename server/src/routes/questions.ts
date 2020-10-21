@@ -18,7 +18,7 @@ import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { QuestionRequestBody, HttpStatusCode } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
 import {
-  deleteAllAnswersFromQuestion,
+  deleteAllAnswersByQuestionId,
   getAnswersByQuestionId,
 } from "../controllers/answers";
 
@@ -92,7 +92,7 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),
-    deleteAllAnswersFromQuestion(questionId),
+    deleteAllAnswersByQuestionId(questionId),
   ]);
 
   if (answers.length != 0) {

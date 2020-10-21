@@ -149,7 +149,7 @@ async function deleteAnswer(
   return isSuccessful;
 }
 
-async function deleteAllAnswersFromQuestion(
+async function deleteAllAnswersByQuestionId(
   questionId: string | ObjectId
 ): Promise<boolean> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
@@ -174,5 +174,5 @@ export {
   getAnswersByQuestionId,
   deleteAnswer,
   updateAnswer,
-  deleteAllAnswersFromQuestion,
+  deleteAllAnswersByQuestionId,
 };
