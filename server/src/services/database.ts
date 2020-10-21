@@ -1,6 +1,6 @@
 import assert from "assert";
 import MongoClient, { Collection } from "mongodb";
-import { Question, Answer, User, Vote } from "src/models";
+import { Question, Answer, User, Vote } from "../models";
 import { getMongoDbName, getMongoDbUrl } from "../utils";
 
 const mongoClient: MongoClient.MongoClient = new MongoClient.MongoClient(

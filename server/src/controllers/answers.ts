@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import {
   getAnswersCollection,
   getQuestionsCollection,
-} from "src/services/database";
+} from "../services/database";
 import { Answer, Question } from "../models";
 import {
   HttpStatusCode,

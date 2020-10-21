@@ -1,16 +1,10 @@
 import { ObjectId } from "mongodb";
-import { createQuestion } from "src/controllers/questions";
 import { handleQuestionVote } from "src/controllers/votes";
 import { closeDb, getVotesCollection, initDb } from "src/services/database";
-import { Level, QuestionRequestBody, Subject, VoteType } from "src/utils";
+import { VOTE_CMD, VoteType } from "src/utils";
 
 const VALID_USER_ID = new ObjectId();
-const VALID_REQUEST_DATA: QuestionRequestBody = {
-  title: "This is the title!",
-  markdown: "hello",
-  level: Level.DEFAULT,
-  subject: Subject.GENERAL,
-};
+const VALID_QUESTION_ID = new ObjectId();
 
 beforeAll(async (done) => {
   // initialise the testing DB before starting
@@ -23,26 +17,27 @@ afterAll(async (done) => {
   await closeDb();
   done();
 });
+beforeEach(async (done) => {
+  // clear all docs from all collections before each test suite to prevent runs from interfering with one another
+  await getVotesCollection().deleteMany({});
+  await getVotesCollection().deleteMany({});
+  done();
+});
 
 describe("Vote Creation", () => {
   it("should create a vote document", async () => {
-    // create a question:
-    const createdQuestion = await createQuestion(
+    const res = await handleQuestionVote(
       VALID_USER_ID,
-      VALID_REQUEST_DATA
+      VALID_QUESTION_ID,
+      VOTE_CMD.insert,
+      VoteType.UPVOTE
     );
 
-    await handleQuestionVote(
-      VALID_USER_ID,
-      createdQuestion._id,
-      VoteType.UPVOTE,
-      false,
-      false
-    );
+    expect(res).toHaveProperty("upvotes", 1);
 
     const voteDoc = await getVotesCollection().findOne({
       userId: VALID_USER_ID,
-      questionId: createdQuestion._id,
+      questionId: VALID_QUESTION_ID,
     });
 
     expect(voteDoc).toHaveProperty("type", VoteType.UPVOTE);

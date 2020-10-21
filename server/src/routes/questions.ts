@@ -7,8 +7,7 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  upvoteQuestion,
-  downvoteQuestion,
+  editUpvoteDownvoteQuestion,
 } from "../controllers/questions";
 import {
   addQuestionToUser,
@@ -16,11 +15,18 @@ import {
 } from "../controllers/users";
 import { Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { QuestionRequestBody, HttpStatusCode } from "../utils";
+import {
+  QuestionRequestBody,
+  HttpStatusCode,
+  VoteType,
+  UpvoteDownvoteStatus,
+} from "../utils";
 import {
   GetPaginatedQuestionRequestQuery,
   GetQuestionRequestResponse,
-} from "src/utils/types/GetQuestionRequestResponse";
+  UpvoteQuestionRequestBody,
+} from "../utils/types/GetQuestionRequestResponse";
+import { checkUpvoteDownvote, handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 
@@ -64,30 +70,63 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
 
-// POST request - upvote a question
-router.post(
+// GET request - check if  user has voted for question
+router.put(
+  "/:id/vote-status",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const questionId: string = req.params.id;
+    const status: UpvoteDownvoteStatus = await checkUpvoteDownvote(
+      userId,
+      questionId
+    );
+
+    return res.status(HttpStatusCode.OK).json(status);
+  }
+);
+
+// Put request - upvote a question
+router.put(
   "/:id/upvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-
-    const updatedQuestion: Question = await upvoteQuestion(userId, questionId);
+    const { command } = req.body as UpvoteQuestionRequestBody;
+    const incObject = await handleQuestionVote(
+      userId,
+      questionId,
+      command,
+      VoteType.UPVOTE
+    );
+    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+      userId,
+      questionId,
+      incObject
+    );
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
 
-// POST request - downvote a question
-router.post(
+// Put request - downvote a question
+router.put(
   "/:id/downvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-
-    const updatedQuestion: Question = await downvoteQuestion(
+    const { command } = req.body as UpvoteQuestionRequestBody;
+    const incObject = await handleQuestionVote(
       userId,
-      questionId
+      questionId,
+      command,
+      VoteType.DOWNVOTE
+    );
+    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+      userId,
+      questionId,
+      incObject
     );
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getUsersCollection } from "src/services/database";
+import { getUsersCollection } from "../services/database";
 
 import { User } from "../models";
 import { getAuth } from "../services/authentication";
