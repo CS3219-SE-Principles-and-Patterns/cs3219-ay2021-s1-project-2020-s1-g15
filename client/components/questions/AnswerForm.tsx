@@ -1,6 +1,7 @@
 import React, { FC, useState, ReactNode } from "react";
 import { Row, Form, Input, Button, notification, Space, Tabs } from "antd";
 
+import styles from "./index.module.css";
 import { Answer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 
@@ -36,7 +37,12 @@ const AnswerForm: FC = (): JSX.Element => {
 
   return (
     <Space style={{ width: "100%" }} direction="vertical">
-      <Tabs type="card" size="large" onChange={onTabChange}>
+      <Tabs
+        className={styles.minHeight300}
+        type="card"
+        size="large"
+        onChange={onTabChange}
+      >
         <TabPane tab="Write" key="write">
           <Form form={form} onFinish={onFormFinish}>
             {/* MARKDOWN CONTENT */}

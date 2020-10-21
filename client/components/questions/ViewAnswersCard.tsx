@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from "react";
 import { List, Card, Space, Divider, Typography } from "antd";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 
+import styles from "./index.module.css";
 import { Answer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
@@ -52,7 +53,10 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
               />,
             ]}
           >
-            <AnswerPreview answer={answer} />
+            <AnswerPreview
+              className={`${styles.mt8} ${styles.mb16}`}
+              answer={answer}
+            />
           </List.Item>
         )}
       />
