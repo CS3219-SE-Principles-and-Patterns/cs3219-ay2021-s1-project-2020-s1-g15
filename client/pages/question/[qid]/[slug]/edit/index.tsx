@@ -3,13 +3,20 @@ import { useRouter } from "next/router";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, PageTitle, Question } from "utils/index";
+import { NavMenuKey, PageTitle, Question, Route } from "utils/index";
 import { QuestionForm } from "components/questions";
 import { getSingleQuestion } from "utils/api";
+import { useAuth } from "components/authentication";
 
 const QuestionEditPage = (): JSX.Element => {
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
+
   const [question, setQuestion] = useState<Question | undefined>(undefined);
+  // redirect if on client side
+  if (typeof window !== "undefined" && !isAuthenticated) {
+    router.push(Route.LOGIN);
+  }
 
   useEffect(() => {
     const qid = router.query.qid as string | undefined;
@@ -20,7 +27,7 @@ const QuestionEditPage = (): JSX.Element => {
     }
 
     getSingleQuestion(qid).then((question) => setQuestion(question));
-  }, [router.query.qid]);
+  }, [isAuthenticated, router, router.query.qid]);
 
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
