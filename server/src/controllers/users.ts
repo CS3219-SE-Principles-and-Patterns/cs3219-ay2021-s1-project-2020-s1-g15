@@ -1,7 +1,7 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, OrderedBulkOperation } from "mongodb";
 
 import { getUsersCollection } from "../services/database";
-import { User } from "../models";
+import { Answer, User } from "../models";
 import { getAuth } from "../services/authentication";
 import {
   HttpStatusCode,
@@ -196,6 +196,24 @@ async function removeAnswerFromUser(
   return updatedUser;
 }
 
+async function removeAllAnswersFromUsers(answers: Answer[]): Promise<boolean> {
+  const bulk: OrderedBulkOperation = getUsersCollection().initializeOrderedBulkOp();
+
+  for (const answer of answers) {
+    const userId: ObjectId = answer.userId;
+    const answerId: ObjectId = answer._id;
+
+    bulk.find({ _id: userId }).updateOne({
+      $pull: {
+        answerIds: answerId,
+      },
+    });
+  }
+
+  const status: boolean = (await bulk.execute()).ok;
+  return status;
+}
+
 export {
   registerAndCreateUser,
   addQuestionToUser,
@@ -203,4 +221,5 @@ export {
   getUserById,
   addAnswerToUser,
   removeAnswerFromUser,
+  removeAllAnswersFromUsers,
 };

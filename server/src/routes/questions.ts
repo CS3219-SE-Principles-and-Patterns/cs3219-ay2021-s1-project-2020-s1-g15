@@ -10,13 +10,17 @@ import {
 } from "../controllers/questions";
 import {
   addQuestionToUser,
+  removeAllAnswersFromUsers,
   removeQuestionFromUser,
 } from "../controllers/users";
-import { Question } from "../models";
+import { Answer, Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { QuestionRequestBody, HttpStatusCode } from "../utils";
 import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
-import { deleteAllAnswersFromQuestion } from "../controllers/answers";
+import {
+  deleteAllAnswersFromQuestion,
+  getAnswersByQuestionId,
+} from "../controllers/answers";
 
 const router: Router = Router();
 
@@ -84,12 +88,16 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
 
+  const answers: Answer[] = await getAnswersByQuestionId(questionId);
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),
     deleteAllAnswersFromQuestion(questionId),
-    // removeAllAnswersFromUsers()
   ]);
+
+  if (answers.length != 0) {
+    await removeAllAnswersFromUsers(answers);
+  }
 
   return res.status(HttpStatusCode.NO_CONTENT).send();
 });
