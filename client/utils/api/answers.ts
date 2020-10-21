@@ -44,4 +44,20 @@ async function createAnswer(req: CreateAnswerReq): Promise<Answer> {
   return res.json() as Promise<Answer>;
 }
 
-export { getAnswersOfQuestion, createAnswer };
+async function deleteSingleAnswer(answerId: string): Promise<void> {
+  const userIdToken: string = await getIdToken();
+
+  const res = await fetch(`${ANSWERS_API_URL}/${answerId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(userIdToken),
+    },
+  });
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+}
+
+export { getAnswersOfQuestion, createAnswer, deleteSingleAnswer };
