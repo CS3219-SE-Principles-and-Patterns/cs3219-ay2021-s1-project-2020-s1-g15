@@ -1,5 +1,15 @@
-import { Answer, GetAnswersOfQuestionReq } from "utils/index";
-import { ANSWERS_API_URL, throwApiError, createUrlParamString } from "./util";
+import {
+  Answer,
+  GetAnswersOfQuestionReq,
+  CreateAnswerReq,
+  getIdToken,
+} from "utils/index";
+import {
+  ANSWERS_API_URL,
+  throwApiError,
+  createUrlParamString,
+  getAuthorizationString,
+} from "./util";
 
 async function getAnswersOfQuestion(
   req: GetAnswersOfQuestionReq
@@ -12,7 +22,26 @@ async function getAnswersOfQuestion(
     return throwApiError(res);
   }
 
-  return res.json();
+  return res.json() as Promise<Answer[]>;
 }
 
-export { getAnswersOfQuestion };
+async function createAnswer(req: CreateAnswerReq): Promise<Answer> {
+  const userIdToken: string = await getIdToken();
+
+  const res = await fetch(ANSWERS_API_URL, {
+    method: "POST",
+    body: JSON.stringify(req),
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(userIdToken),
+    },
+  });
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json() as Promise<Answer>;
+}
+
+export { getAnswersOfQuestion, createAnswer };

@@ -23,6 +23,11 @@ export type GetAnswersOfQuestionReq = {
   questionId: string;
 };
 
+export type CreateAnswerReq = {
+  questionId: string;
+  markdown: string;
+};
+
 export type ApiErrorRes = {
   status: string;
   message: string;
