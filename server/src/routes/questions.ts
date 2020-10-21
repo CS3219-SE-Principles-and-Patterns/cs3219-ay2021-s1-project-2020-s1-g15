@@ -20,8 +20,8 @@ import {
   GetPaginatedQuestionRequestQuery,
   GetQuestionRequestResponse,
   UpvoteQuestionRequestBody,
-} from "src/utils/types/GetQuestionRequestResponse";
-import { handleQuestionVote } from "src/controllers/votes";
+} from "../utils/types/GetQuestionRequestResponse";
+import { handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 

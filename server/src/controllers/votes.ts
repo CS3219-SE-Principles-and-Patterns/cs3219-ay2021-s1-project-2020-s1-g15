@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
-import { Vote } from "src/models";
-import { getVotesCollection } from "src/services/database";
-import { VoteType, toValidObjectId, VOTE_CMD } from "src/utils";
-import { UpvoteDownvoteIncObject } from "src/utils/types/GetQuestionRequestResponse";
+import { Vote } from "../models";
+import { getVotesCollection } from "../services/database";
+import { VoteType, toValidObjectId, VOTE_CMD } from "../utils";
+import { UpvoteDownvoteIncObject } from "../utils/types/GetQuestionRequestResponse";
 
 async function handleQuestionVote(
   userId: string | ObjectId,

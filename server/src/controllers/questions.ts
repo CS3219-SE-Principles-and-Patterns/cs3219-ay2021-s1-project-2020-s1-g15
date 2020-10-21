@@ -13,7 +13,7 @@ import {
 import {
   GetQuestionRequestResponse,
   UpvoteDownvoteIncObject,
-} from "src/utils/types/GetQuestionRequestResponse";
+} from "../utils/types/GetQuestionRequestResponse";
 
 // TODO: add search/filter in the future
 async function getQuestions(
