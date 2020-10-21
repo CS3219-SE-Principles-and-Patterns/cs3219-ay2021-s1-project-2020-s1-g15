@@ -11,9 +11,12 @@ async function logout() {
 }
 
 async function getCurrentFirebaseUser(): Promise<firebase.User | null> {
-  return new Promise((resolve) =>
-    auth.onAuthStateChanged((user) => resolve(user))
-  );
+  return new Promise((resolve) => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      unsubscribe();
+      resolve(authUser);
+    });
+  });
 }
 
 async function getIdToken(): Promise<string> {
