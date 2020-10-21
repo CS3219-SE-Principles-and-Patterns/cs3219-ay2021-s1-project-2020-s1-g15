@@ -19,6 +19,10 @@ export type CreateQuestionReq = {
 
 export type EditQuestionReq = CreateQuestionReq;
 
+export type GetAnswersOfQuestionReq = {
+  questionId: string;
+};
+
 export type ApiErrorRes = {
   status: string;
   message: string;
