@@ -1,7 +1,12 @@
 import { ObjectId } from "mongodb";
 import { Vote } from "../models";
 import { getVotesCollection } from "../services/database";
-import { VoteType, toValidObjectId, VOTE_CMD } from "../utils";
+import {
+  VoteType,
+  toValidObjectId,
+  VOTE_CMD,
+  UpvoteDownvoteStatus,
+} from "../utils";
 import { UpvoteDownvoteIncObject } from "../utils/types/GetQuestionRequestResponse";
 
 async function handleQuestionVote(
@@ -81,6 +86,29 @@ async function handleQuestionVote(
   return incObject;
 }
 
+async function checkUpvoteDownvote(
+  userId: string | ObjectId,
+  questionId: string | ObjectId
+): Promise<UpvoteDownvoteStatus> {
+  const vote: Vote | null = await getQuestionVoteByUser(userId, questionId);
+  const status: UpvoteDownvoteStatus = { isUpvote: false, isDownvote: false };
+  if (!vote) {
+    return status;
+  } else {
+    if (vote.type == VoteType.UPVOTE) {
+      status.isUpvote = true;
+      return status;
+    } else {
+      status.isDownvote = true;
+      return status;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Helper functions
+// -----------------------------------------------------------------------------
+
 async function getQuestionVoteByUser(
   userId: string | ObjectId,
   questionId: string | ObjectId
@@ -94,4 +122,4 @@ async function getQuestionVoteByUser(
   });
 }
 
-export { handleQuestionVote };
+export { handleQuestionVote, checkUpvoteDownvote };

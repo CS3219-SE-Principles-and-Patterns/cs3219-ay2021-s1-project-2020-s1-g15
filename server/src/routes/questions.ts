@@ -15,13 +15,18 @@ import {
 } from "../controllers/users";
 import { Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { QuestionRequestBody, HttpStatusCode, VoteType } from "../utils";
+import {
+  QuestionRequestBody,
+  HttpStatusCode,
+  VoteType,
+  UpvoteDownvoteStatus,
+} from "../utils";
 import {
   GetPaginatedQuestionRequestQuery,
   GetQuestionRequestResponse,
   UpvoteQuestionRequestBody,
 } from "../utils/types/GetQuestionRequestResponse";
-import { handleQuestionVote } from "../controllers/votes";
+import { checkUpvoteDownvote, handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 
@@ -64,6 +69,22 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
+
+// GET request - check if  user has voted for question
+router.put(
+  "/:id/vote-status",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const questionId: string = req.params.id;
+    const status: UpvoteDownvoteStatus = await checkUpvoteDownvote(
+      userId,
+      questionId
+    );
+
+    return res.status(HttpStatusCode.OK).json(status);
+  }
+);
 
 // Put request - upvote a question
 router.put(

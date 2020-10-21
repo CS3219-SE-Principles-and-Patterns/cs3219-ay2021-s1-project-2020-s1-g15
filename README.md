@@ -372,6 +372,14 @@ OR
 - Status: `404 NOT FOUND`
 - Content: description of error
 
+#### check a question vote status
+
+- Method: `GET`
+- URL: `/api/questions/:id/vote-status`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+
+
 #### Upvote a question
 
 - Method: `PUT`
