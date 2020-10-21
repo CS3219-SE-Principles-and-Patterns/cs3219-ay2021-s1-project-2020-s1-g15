@@ -4,7 +4,7 @@ import { grey } from "@ant-design/colors";
 
 import { Answer, markdownToReactNode, toRelativeTimeAgo } from "utils/index";
 
-const { Paragraph, Text } = Typography;
+const { Paragraph } = Typography;
 
 type AnswerPreviewProps = {
   answer: Partial<Answer> & Pick<Answer, "markdown">;

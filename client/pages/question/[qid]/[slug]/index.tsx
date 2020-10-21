@@ -27,7 +27,7 @@ const QuestionPage: FC<QuestionPageProps> = ({
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">
             <ViewQuestionCard question={question} />
-            <ViewAnswersCard answers={answers} />
+            <ViewAnswersCard answers={answers} questionId={question._id} />
           </Space>
         </Col>
       </Row>

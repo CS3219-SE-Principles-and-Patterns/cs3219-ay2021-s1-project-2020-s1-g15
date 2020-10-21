@@ -1,9 +1,9 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useState } from "react";
 import { List, Card, Space, Divider, Typography } from "antd";
 import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
 
 import styles from "./index.module.css";
-import { Answer } from "utils/index";
+import { Answer, getAnswersOfQuestion } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
 
@@ -11,6 +11,7 @@ const { Text } = Typography;
 
 type ViewAnswersCardProp = {
   answers: Answer[];
+  questionId: string;
 };
 
 type IconTextProp = {
@@ -25,7 +26,17 @@ const IconText: FC<IconTextProp> = ({ icon, text }): JSX.Element => (
   </Space>
 );
 
-const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
+const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
+  answers: initialAnswers,
+  questionId,
+}): JSX.Element => {
+  const [answers, setAnswers] = useState<Answer[]>(initialAnswers);
+
+  const refreshAnswers = async (): Promise<void> => {
+    const answers: Answer[] = await getAnswersOfQuestion({ questionId });
+    setAnswers(answers);
+  };
+
   return (
     <Card>
       {/* ANSWERS LIST */}
@@ -68,7 +79,7 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
         <Text style={{ fontSize: "1.2rem" }} type="secondary">
           Your Answer
         </Text>
-        <AnswerForm />
+        <AnswerForm questionId={questionId} refreshAnswers={refreshAnswers} />
       </Space>
     </Card>
   );

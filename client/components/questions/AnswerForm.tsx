@@ -1,12 +1,17 @@
-import React, { FC, useState, ReactNode } from "react";
+import React, { FC, useState } from "react";
 import { Row, Form, Input, Button, notification, Space, Tabs } from "antd";
 
 import styles from "./index.module.css";
-import { Answer } from "utils/index";
+import { Answer, createAnswer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
+
+type AnswerFormProp = {
+  questionId: string;
+  refreshAnswers: () => Promise<void>;
+};
 
 // config values for the form
 const Config = Object.freeze({
@@ -17,13 +22,31 @@ const Config = Object.freeze({
   }),
 });
 
-const AnswerForm: FC = (): JSX.Element => {
-  const [answerPreviewNode, setAnswerPreviewNode] = useState<ReactNode>();
+const AnswerForm: FC<AnswerFormProp> = ({
+  questionId,
+  refreshAnswers,
+}): JSX.Element => {
+  const [previewMarkdown, setPreviewMarkdown] = useState<string>("");
   const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const resetForm = (): void => {
+    form.resetFields();
+    setPreviewMarkdown("");
+  };
 
   const onFormFinish = async ({ markdown }: Pick<Answer, "markdown">) => {
     // validation will throw error and stop execution if it fails
     await form.validateFields();
+
+    setIsLoading(true);
+    await createAnswer({ markdown, questionId });
+    await refreshAnswers();
+    resetForm();
+    notification.success({
+      message: "Answer succesfully submitted",
+    });
+    setIsLoading(false);
   };
 
   const onTabChange = (key: string) => {
@@ -31,8 +54,8 @@ const AnswerForm: FC = (): JSX.Element => {
       return;
     }
 
-    const answer: Pick<Answer, "markdown"> = form.getFieldsValue();
-    setAnswerPreviewNode(<AnswerPreview answer={answer} />);
+    const { markdown }: Pick<Answer, "markdown"> = form.getFieldsValue();
+    setPreviewMarkdown(markdown);
   };
 
   return (
@@ -61,13 +84,13 @@ const AnswerForm: FC = (): JSX.Element => {
         </TabPane>
 
         <TabPane tab="Preview" key="preview">
-          {answerPreviewNode}
+          <AnswerPreview answer={{ markdown: previewMarkdown }} />
         </TabPane>
       </Tabs>
 
       {/* FORM BUTTONS */}
       <Row justify="end">
-        <Button onClick={form.submit} type="primary">
+        <Button loading={isLoading} onClick={form.submit} type="primary">
           Submit Answer
         </Button>
       </Row>
