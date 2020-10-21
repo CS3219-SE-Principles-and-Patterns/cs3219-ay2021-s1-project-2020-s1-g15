@@ -1,25 +1,24 @@
-import FluidPage from "../../components/layout";
+import router from "next/router";
+import Link from "next/link";
 import { Card, Form, Input, Checkbox, Button, Divider } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import styles from "./login.module.css";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { menuKeys, routesObject } from "../../util";
-import Link from "next/link";
-import { pageTitles } from "../../util";
+import { NavMenuKey, Route, PageTitle } from "../../utils";
 import { useAuth } from "../../components/authentication";
-import router from "next/router";
+import FluidPage from "../../components/layout";
 
-const Login = (): JSX.Element => {
+const LoginPage = (): JSX.Element => {
   const { login } = useAuth();
   const onFinish = async ({ username, password }) => {
     if (login) {
       await login(username, password);
-      router.push(`${routesObject.home}`);
+      router.push(Route.HOME);
     } // undefined fails silently for now
   };
 
   return (
-    <FluidPage title={pageTitles.login} selectedkey={menuKeys.login}>
+    <FluidPage title={PageTitle.LOGIN} selectedkey={NavMenuKey.LOGIN}>
       <div className={styles.center}>
         <Card className={styles.card}>
           <h1>Login to AnswerLeh</h1>
@@ -67,7 +66,7 @@ const Login = (): JSX.Element => {
               >
                 Login
               </Button>
-              Or <Link href={routesObject.register}>register now!</Link>
+              Or <Link href={Route.REGISTER}>register now!</Link>
             </Form.Item>
           </Form>
           <Divider />
@@ -80,4 +79,4 @@ const Login = (): JSX.Element => {
   );
 };
 
-export default Login;
+export default LoginPage;

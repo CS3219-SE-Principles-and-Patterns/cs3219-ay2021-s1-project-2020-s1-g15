@@ -28,6 +28,8 @@
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
     - [Get a specific question](#get-a-specific-question)
+    - [Upvote a question](#upvote-a-question)
+    - [Downvote a question](#downvote-a-question)
     - [Update a question](#update-a-question)
     - [Delete a question](#delete-a-question)
   - [Answers](#answers)
@@ -307,23 +309,23 @@ OR
   {
     "questions" :
       [
-                    // ...
-                    {
-                      "_id": "5f7d327766aa52759df235ff",
-                      "createdAt": "2020-10-07T03:13:59.223Z",
-                      "updatedAt": "2020-10-07T03:13:59.223Z",
-                      "title": "How do I do this?",
-                      "slug": "how-do-i-do-this",
-                      "markdown": "hello",
-                      "userId": "5f7d327766aa52759df235fe",
-                      "answerIds": [],
-                      "level": "primary",
-                      "subject": "mathematics",
-                      "upvotes": 0,
-                      "downvotes": 0
-                    },
-                    // ...
-        ],
+        // ...
+        {
+          "_id": "5f7d327766aa52759df235ff",
+          "createdAt": "2020-10-07T03:13:59.223Z",
+          "updatedAt": "2020-10-07T03:13:59.223Z",
+          "title": "How do I do this?",
+          "slug": "how-do-i-do-this",
+          "markdown": "hello",
+          "userId": "5f7d327766aa52759df235fe",
+          "answerIds": [],
+          "level": "primary",
+          "subject": "mathematics",
+          "upvotes": 0,
+          "downvotes": 0
+        },
+        // ...
+      ],
     "total": 15
   }
   ```
@@ -369,6 +371,39 @@ OR
 - Condition: if question does not exist
 - Status: `404 NOT FOUND`
 - Content: description of error
+
+#### check a question vote status
+
+- Method: `GET`
+- URL: `/api/questions/:id/vote-status`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+
+
+#### Upvote a question
+
+- Method: `PUT`
+- URL: `/api/questions/:id/upvote`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
+#### Downvote a question
+
+- Method: `PUT`
+- URL: `/api/questions/:id/downvote`
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
 
 #### Update a question
 

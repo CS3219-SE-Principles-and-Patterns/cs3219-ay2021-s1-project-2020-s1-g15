@@ -10,7 +10,10 @@ import {
   titleToSlug,
   toValidObjectId,
 } from "../utils";
-import { GetQuestionRequestResponse } from "src/utils/types/GetQuestionRequestResponse";
+import {
+  GetQuestionRequestResponse,
+  UpvoteDownvoteIncObject,
+} from "../utils/types/GetQuestionRequestResponse";
 
 // TODO: add search/filter in the future
 async function getQuestions(
@@ -147,6 +150,39 @@ async function updateQuestion(
   return updatedQuestion;
 }
 
+async function editUpvoteDownvoteQuestion(
+  userId: string | ObjectId,
+  questionId: string | ObjectId,
+  incObject: UpvoteDownvoteIncObject
+): Promise<Question> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+
+  const result = await getQuestionsCollection().findOneAndUpdate(
+    {
+      _id: questionObjectId,
+      userId: userObjectId, // make sure user can only update his own question
+    },
+    {
+      $inc: {
+        upvotes: incObject.upvotes,
+        downvotes: incObject.downvotes,
+      },
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedQuestion: Question | undefined = result.value;
+  if (updatedQuestion == null) {
+    //TODO: remove vote created if not found
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Question.NOT_FOUND
+    );
+  }
+  return updatedQuestion;
+}
+
 async function deleteQuestion(
   userId: string | ObjectId,
   questionId: string | ObjectId
@@ -230,6 +266,7 @@ export {
   getQuestionById,
   createQuestion,
   updateQuestion,
+  editUpvoteDownvoteQuestion,
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,

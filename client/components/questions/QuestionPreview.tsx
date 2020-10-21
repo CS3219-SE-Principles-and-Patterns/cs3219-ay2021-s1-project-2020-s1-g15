@@ -3,23 +3,21 @@ import { Typography, Space, Tag, Row, Divider } from "antd";
 import { grey } from "@ant-design/colors";
 
 import {
-  QuestionParam,
+  CreateQuestionReq,
   toRelativeTimeAgo,
   markdownToReactNode,
-} from "util/index";
+} from "utils/index";
 
 const { Title } = Typography;
 
 type ViewQuestionProp = {
-  question: QuestionParam & {
+  question: CreateQuestionReq & {
     userId?: string | undefined;
     createdAt?: Date | string | undefined;
   };
 };
 
-const ViewQuestionPreview: FC<ViewQuestionProp> = ({
-  question,
-}): JSX.Element => {
+const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   const { title, userId, createdAt, level, subject, markdown } = question;
 
   return (
@@ -52,4 +50,4 @@ const ViewQuestionPreview: FC<ViewQuestionProp> = ({
   );
 };
 
-export default ViewQuestionPreview;
+export default QuestionPreview;

@@ -4,9 +4,10 @@ import {
   initDb,
   closeDb,
   getDb,
-  getQuestionsCollection,
   getAnswersCollection,
+  getQuestionsCollection,
   getUsersCollection,
+  getVotesCollection,
 } from "../../src/services/database";
 
 describe("Initialise database", () => {
@@ -113,7 +114,7 @@ describe("Get answers collection", () => {
   it("should throw error if database is not yet initialised", async () => {
     await closeDb();
 
-    expect(getAnswersCollection).toThrowError();
+    expect(getUsersCollection).toThrowError();
   });
 });
 
@@ -137,5 +138,28 @@ describe("Get users collection", () => {
     await closeDb();
 
     expect(getUsersCollection).toThrowError();
+  });
+});
+
+describe("Get users collection", () => {
+  beforeAll(async (done) => {
+    await initDb();
+    done();
+  });
+
+  afterAll(async (done) => {
+    await closeDb();
+    done();
+  });
+
+  it("should return users collection", async () => {
+    const votesCollection = getVotesCollection();
+    expect(votesCollection.collectionName).toBe("votes");
+  });
+
+  it("should throw error if database is not yet initialised", async () => {
+    await closeDb();
+
+    expect(getVotesCollection).toThrowError();
   });
 });

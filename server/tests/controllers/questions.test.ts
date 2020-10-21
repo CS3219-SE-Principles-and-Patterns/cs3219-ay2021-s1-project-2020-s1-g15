@@ -8,14 +8,12 @@ import {
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,
+  editUpvoteDownvoteQuestion,
 } from "src/controllers/questions";
-import {
-  initDb,
-  closeDb,
-  getQuestionsCollection,
-  getAnswersCollection,
-} from "src/services/database";
+import { Question } from "src/models";
+import { initDb, closeDb, getAnswersCollection } from "src/services/database";
 import { QuestionRequestBody, Level, Subject } from "src/utils";
+import { getQuestionsCollection } from "src/services/database";
 
 const MISSING_REQUEST_DATA = {};
 const INVALID_REQUEST_DATA: QuestionRequestBody = {
@@ -221,5 +219,47 @@ describe("Remove an answer reference to a question", () => {
     const updatedQuestion = await removeAnswerFromQuestion(VALID_ANSWER_ID);
 
     expect(updatedQuestion).toStrictEqual(createdQuestion);
+  });
+});
+
+describe("Upvote a question", () => {
+  it("should update question upvote value", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await editUpvoteDownvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      {
+        upvotes: 1,
+        downvotes: 0,
+      }
+    );
+
+    expect(question.upvotes).toStrictEqual(1);
+  });
+});
+
+describe("Downvote a question", () => {
+  it("should update question downvote value", async () => {
+    // create a question:
+    const createdQuestion = await createQuestion(
+      VALID_USER_ID,
+      VALID_REQUEST_DATA
+    );
+
+    const question: Question = await editUpvoteDownvoteQuestion(
+      VALID_USER_ID,
+      createdQuestion._id,
+      {
+        upvotes: 0,
+        downvotes: 1,
+      }
+    );
+
+    expect(question.downvotes).toStrictEqual(1);
   });
 });

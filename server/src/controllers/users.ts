@@ -1,7 +1,8 @@
 import { ObjectId, OrderedBulkOperation } from "mongodb";
 
-import { getUsersCollection } from "../services/database";
 import { Answer, User } from "../models";
+import { getUsersCollection } from "../services/database";
+
 import { getAuth } from "../services/authentication";
 import {
   HttpStatusCode,

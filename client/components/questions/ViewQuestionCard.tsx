@@ -3,24 +3,25 @@ import { useRouter } from "next/router";
 import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import { Question, routesObject } from "util/index";
-import { deleteSingleQuestion } from "components/api";
+import { Question, Route, deleteSingleQuestion } from "utils/index";
 import { useAuth } from "components/authentication";
-import ViewQuestionPreview from "./view-question-preview";
+import QuestionPreview from "./QuestionPreview";
 
 const { confirm } = Modal;
 
-type ViewQuestionProp = {
+type ViewQuestionCardProp = {
   question: Question;
 };
 
-const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
+const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
+  question,
+}): JSX.Element => {
   const { user, getIdToken } = useAuth();
   const router = useRouter();
   const belongsToUser: boolean = !!user && user._id === question.userId;
 
   const onEditClick = () => {
-    router.push(routesObject.editQuestion(question._id, question.slug));
+    router.push(Route.QUESTION_EDIT(question._id, question.slug));
   };
 
   const onDeleteClick = () => {
@@ -36,14 +37,14 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
         notification.success({
           message: "Question succesfully deleted",
         });
-        router.push(routesObject.forum);
+        router.push(Route.FORUM);
       },
     });
   };
 
   return (
     <Card>
-      <ViewQuestionPreview question={question} />
+      <QuestionPreview question={question} />
 
       {belongsToUser ? (
         <>
@@ -65,4 +66,4 @@ const ViewQuestion: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   );
 };
 
-export { ViewQuestion };
+export { ViewQuestionCard };

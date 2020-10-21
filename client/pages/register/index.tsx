@@ -1,19 +1,15 @@
-import FluidPage from "../../components/layout";
-import { Card, Form, Input, Button, Spin, notification } from "antd";
-
-import styles from "../login/login.module.css";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { RegisterUserParam, routesObject, UserApi } from "../../util";
+import React, { useState } from "react";
 import Link from "next/link";
-import { pageTitles } from "../../util";
-import { useForm } from "antd/lib/form/Form";
-import { useState } from "react";
-import { registerUser } from "../../components/api";
-import router from "next/router";
+import { Card, Form, Input, Button, Spin, notification } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
+import FluidPage from "../../components/layout";
+import styles from "../login/login.module.css";
+import { PageTitle, RegisterUserReq, Route, registerUser } from "../../utils";
 import { useAuth } from "../../components/authentication";
 
-const Register = (): JSX.Element => {
-  const [form] = useForm();
+const RegisterPage = (): JSX.Element => {
+  const [form] = Form.useForm();
   const { login } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -21,7 +17,7 @@ const Register = (): JSX.Element => {
     setLoading(() => true);
     console.log(loading);
     form.validateFields().then(async ({ email, password }) => {
-      const createUserArgs: RegisterUserParam = {
+      const createUserArgs: RegisterUserReq = {
         email,
         password,
       };
@@ -34,7 +30,6 @@ const Register = (): JSX.Element => {
         if (login) {
           await login(email, password);
         }
-        //router.push(`${routesObject.login}`);
       } catch (err) {
         notification.error({
           message: err.message,
@@ -47,7 +42,7 @@ const Register = (): JSX.Element => {
 
   const layout = {};
   return (
-    <FluidPage title={pageTitles.register}>
+    <FluidPage title={PageTitle.REGSITER}>
       <div className={styles.center}>
         <Spin spinning={loading} tip="Loading...">
           <Card className={styles.card}>
@@ -90,7 +85,7 @@ const Register = (): JSX.Element => {
                 >
                   Sign Up
                 </Button>
-                Or <Link href={routesObject.login}>login!</Link>
+                Or <Link href={Route.LOGIN}>login!</Link>
               </Form.Item>
             </Form>
           </Card>
@@ -100,4 +95,4 @@ const Register = (): JSX.Element => {
   );
 };
 
-export default Register;
+export default RegisterPage;

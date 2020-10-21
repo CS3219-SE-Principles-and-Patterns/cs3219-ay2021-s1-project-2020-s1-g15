@@ -1,12 +1,13 @@
 import React, { FC } from "react";
-import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
-import styles from "./Layout.module.css";
-import Link from "next/link";
-import { routesObject, menuKeys } from "../../util";
-import Head from "next/head";
-import { useAuth } from "../authentication";
-import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
 import router from "next/router";
+import Link from "next/link";
+import Head from "next/head";
+import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
+import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
+
+import styles from "./Layout.module.css";
+import { useAuth } from "../authentication";
+import { Route, NavMenuKey } from "utils/index";
 
 const { Header, Footer, Content } = Layout;
 
@@ -24,18 +25,18 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
     e.preventDefault();
     if (logout) {
       await logout();
-      router.push(`${routesObject.home}`);
+      router.push(`${Route.HOME}`);
     }
   };
 
   const userMenu = (
     <Menu mode="vertical" className={styles.dropdownMenu}>
-      <Menu.Item key={menuKeys.user}>
-        <Link href={routesObject.user + `${firebaseUser?.uid}`}>
+      <Menu.Item key={NavMenuKey.USER}>
+        <Link href={Route.USER + `${firebaseUser?.uid}`}>
           <Button type="primary">My Page</Button>
         </Link>
       </Menu.Item>
-      <Menu.Item key={menuKeys.logout}>
+      <Menu.Item key={NavMenuKey.LOGOUT}>
         <Button icon={<CloseCircleFilled />} onClick={logoutApplication}>
           Log Out
         </Button>
@@ -58,16 +59,16 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
             mode="horizontal"
             selectedKeys={[selectedkey ?? ""]}
           >
-            <Menu.Item key={menuKeys.home}>
-              <Link href={routesObject.home}>Home</Link>
+            <Menu.Item key={NavMenuKey.HOME}>
+              <Link href={Route.HOME}>Home</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.forum}>
-              <Link href={routesObject.forum}>Forum</Link>
+            <Menu.Item key={NavMenuKey.FORUM}>
+              <Link href={Route.FORUM}>Forum</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.user}>
-              <Link href={routesObject.user}>User</Link>
+            <Menu.Item key={NavMenuKey.USER}>
+              <Link href={Route.USER}>User</Link>
             </Menu.Item>
-            <Menu.Item key={menuKeys.login} className={styles.userProfile}>
+            <Menu.Item key={NavMenuKey.LOGIN} className={styles.userProfile}>
               {isAuthenticated ? (
                 <Dropdown overlay={userMenu} placement="bottomCenter">
                   <a
@@ -78,7 +79,7 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
                   </a>
                 </Dropdown>
               ) : (
-                <Link href={routesObject.login}>Login</Link>
+                <Link href={Route.LOGIN}>Login</Link>
               )}
             </Menu.Item>
           </Menu>

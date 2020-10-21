@@ -2,24 +2,32 @@ import React, { FC } from "react";
 import { GetServerSideProps } from "next";
 import { Space, Row, Col } from "antd";
 
-import { getSingleQuestion } from "components/api";
 import FluidPage from "components/layout";
-import { Question, Answer, listOfAnswersMock, menuKeys } from "util/index";
-import { ViewQuestion, ViewAnswers } from "components/questions";
+import {
+  NavMenuKey,
+  Question,
+  Answer,
+  listOfAnswersMock,
+  getSingleQuestion,
+} from "utils/index";
+import { ViewQuestionCard, ViewAnswersCard } from "components/questions";
 
-type QuestionsProps = {
+type QuestionPageProps = {
   question: Question;
   answers: Answer[];
 };
 
-const Questions: FC<QuestionsProps> = ({ question, answers }): JSX.Element => {
+const QuestionPage: FC<QuestionPageProps> = ({
+  question,
+  answers,
+}): JSX.Element => {
   return (
-    <FluidPage title={question.title} selectedkey={menuKeys.forum}>
+    <FluidPage title={question.title} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">
-            <ViewQuestion question={question} />
-            <ViewAnswers answers={answers} />
+            <ViewQuestionCard question={question} />
+            <ViewAnswersCard answers={answers} />
           </Space>
         </Col>
       </Row>
@@ -55,4 +63,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default Questions;
+export default QuestionPage;

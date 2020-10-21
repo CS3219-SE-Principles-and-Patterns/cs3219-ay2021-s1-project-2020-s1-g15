@@ -5,88 +5,57 @@ import React, {
   useEffect,
   FC,
 } from "react";
-
 import { Spin } from "antd";
-import { User } from "../../util";
-import { getSingleUser } from "../api";
-type props = {
-  auth: firebase.auth.Auth;
+
+import {
+  User,
+  getSingleUser,
+  login,
+  logout,
+  getIdToken,
+  useFirebaseAuthentication,
+} from "utils/index";
+
+type AuthProviderProps = {
   children: React.ReactNode;
 };
 
 type AuthContextType = {
-  firebaseUser?: firebase.User;
-  user?: User;
-  isAuthenticated?: boolean;
-  loading?: boolean;
-  login?: (
-    email: string,
-    password: string
-  ) => Promise<firebase.auth.UserCredential>;
-  logout?: () => Promise<void>;
-  getIdToken: () => Promise<string>;
+  firebaseUser: firebase.User | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: typeof login;
+  logout: typeof logout;
+  getIdToken: typeof getIdToken;
 };
 
 const AuthContext = createContext<AuthContextType>({
-  firebaseUser: undefined,
-  user: undefined,
-  isAuthenticated: true,
-  loading: false,
-  getIdToken: () => new Promise(() => console.log("test")),
+  firebaseUser: null,
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+  login,
+  logout,
+  getIdToken,
 });
 
-export const AuthProvider: FC<props> = ({ auth, children }) => {
-  const [firebaseUser, setFirebaseUser] = useState<firebase.User | undefined>(
-    undefined
-  );
-  const [user, setUser] = useState<User | undefined>(undefined);
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+  const firebaseUser: firebase.User | null = useFirebaseAuthentication();
+  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const onAuthStateChange = (
-      callback: React.Dispatch<React.SetStateAction<boolean>>
-    ) => {
-      setLoading(true);
-      return auth.onAuthStateChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          const user: User = await getSingleUser(firebaseUser.uid);
-          setUser(user);
-          setFirebaseUser(firebaseUser);
-          callback(true);
-        } else {
-          callback(false);
-        }
-        setLoading(false);
-      });
-    };
-    const unsubscribe = onAuthStateChange(setIsAuthenticated);
-    return () => {
-      unsubscribe();
-    };
-  }, [auth]);
-
-  const login = async (email: string, password: string) => {
-    const credential = await auth.signInWithEmailAndPassword(email, password);
-    setIsAuthenticated(true);
-    return credential;
-  };
-
-  const logout = async () => {
-    await auth.signOut();
-    setUser(undefined);
-    setIsAuthenticated(false);
-  };
-
-  const getIdToken = async () => {
-    const userInstance: firebase.User | null = await auth.currentUser;
-    if (userInstance != null) {
-      const idToken = userInstance.getIdToken(/* forceRefresh */ true);
-      return idToken;
-    } else {
-      return "NULL";
-    }
-  };
+    setIsLoading(true);
+    (async () => {
+      const user: User | null =
+        firebaseUser !== null ? await getSingleUser(firebaseUser.uid) : null;
+      setUser(user);
+      setIsAuthenticated(user !== null);
+      setIsLoading(false);
+    })();
+  }, [firebaseUser]);
 
   return (
     <AuthContext.Provider
@@ -94,21 +63,19 @@ export const AuthProvider: FC<props> = ({ auth, children }) => {
         isAuthenticated,
         firebaseUser,
         user,
-        loading,
+        isLoading,
         login,
         logout,
         getIdToken,
       }}
     >
-      <Spin spinning={loading}>{children}</Spin>
+      <Spin spinning={isLoading}>{children}</Spin>
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-
-  return context;
+  return useContext<AuthContextType>(AuthContext);
 };
 /*
 https://medium.com/@tafka_labs/auth-redirect-in-nextjs-3a3a524c0a06
