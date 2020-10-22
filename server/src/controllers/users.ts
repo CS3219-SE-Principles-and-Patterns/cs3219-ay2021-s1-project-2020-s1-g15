@@ -215,7 +215,7 @@ async function removeAllAnswersFromUsers(answers: Answer[]): Promise<void> {
     });
   }
 
-  bulk.execute();
+  await bulk.execute();
   return;
 }
 
