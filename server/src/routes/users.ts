@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import { Answer, Question, User } from "../models";
+import { User } from "../models";
 import { HttpStatusCode, UserRequestBody } from "../utils";
 import { getUserById, registerAndCreateUser } from "../controllers/users";
 import { getQuestionsByUserId } from "../controllers/questions";
@@ -21,7 +21,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/:id/questions", async (req: Request, res: Response) => {
   const userId: string = req.params.id;
 
-  const questions: Question[] = await getQuestionsByUserId(userId);
+  const [questions] = await Promise.all([
+    getQuestionsByUserId(userId),
+    getUserById(userId), // throws error if user not found
+  ]);
   return res.status(HttpStatusCode.OK).json(questions);
 });
 
@@ -29,7 +32,10 @@ router.get("/:id/questions", async (req: Request, res: Response) => {
 router.get("/:id/answers", async (req: Request, res: Response) => {
   const userId: string = req.params.id;
 
-  const answers: Answer[] = await getAnswersByUserId(userId);
+  const [answers] = await Promise.all([
+    getAnswersByUserId(userId),
+    getUserById(userId), // throws error if user not found
+  ]);
   return res.status(HttpStatusCode.OK).json(answers);
 });
 
