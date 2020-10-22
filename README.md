@@ -24,10 +24,13 @@
   - [Authenticated routes](#authenticated-routes)
   - [Users](#users)
     - [Register and create a user](#register-and-create-a-user)
+    - [Get all questions created by a user](#get-all-questions-created-by-a-user)
+    - [Get all answers created by a user](#get-all-answers-created-by-a-user)
   - [Questions](#questions)
     - [Create a question](#create-a-question)
     - [Get all questions](#get-all-questions)
     - [Get a specific question](#get-a-specific-question)
+    - [check a question vote status](#check-a-question-vote-status)
     - [Upvote a question](#upvote-a-question)
     - [Downvote a question](#downvote-a-question)
     - [Update a question](#update-a-question)
@@ -233,6 +236,94 @@ Authorization: Bearer <FIREBASE_TOKEN>
 
 - Condition: if any required fields are missing or invalid
 - Status: `400 BAD REQUEST`
+- Content: description of error
+
+#### Get all questions created by a user
+
+- Method: `GET`
+- URL: `/api/users/:id/questions`
+- URL parameters:
+  - `id`: the `ObjectId` of the user
+- Auth required: NO
+
+**Success response**:
+
+- Condition: if user exists
+- Code: `200 OK`
+- Content (example):
+  ```js
+  [ 
+    //...
+    {
+      "_id": "5f7d327766aa52759df235ff",
+      "createdAt": "2020-10-07T03:13:59.223Z",
+      "updatedAt": "2020-10-07T03:13:59.223Z",
+      "title": "How do I do this?",
+      "slug": "how-do-i-do-this",
+      "markdown": "hello",
+      "userId": "5f7d327766aa52759df235fe",
+      "answerIds": [],
+      "level": "primary",
+      "subject": "mathematics",
+      "upvotes": 0,
+      "downvotes": 0
+    }
+    //...
+  ]
+  ```
+
+**Error response**:
+
+- Condition: if `id` is not a valid `ObjectId`
+- Status: `400 BAD REQUEST`
+- Content: description of error
+
+OR
+
+- Condition: if user does not exist
+- Status: `404 NOT FOUND`
+- Content: description of error
+
+#### Get all answers created by a user
+
+- Method: `GET`
+- URL: `/api/users/:id/answers`
+- URL parameters:
+  - `id`: the `ObjectId` of the user
+- Auth required: NO
+
+**Success response**:
+
+- Condition: if user exists
+- Code: `200 OK`
+- Content (example):
+  ```js
+  [
+    // ...
+    {
+      "_id": "5f570273a83adf5417b48028",
+      "markdown": "hello",
+      "questionId": "5f570273a83adf5417b48026",
+      "createdAt": "2020-09-08T04:02:59.081Z",
+      "updatedAt": "2020-09-08T04:02:59.081Z",
+      "userId": "5f82feda42ace23941434007",
+      "upvotes": 0,
+      "downvotes": 0
+    },
+    // ...
+  ]
+  ```
+
+**Error response**:
+
+- Condition: if `id` is not a valid `ObjectId`
+- Status: `400 BAD REQUEST`
+- Content: description of error
+
+OR
+
+- Condition: if user does not exist
+- Status: `404 NOT FOUND`
 - Content: description of error
 
 ### Questions

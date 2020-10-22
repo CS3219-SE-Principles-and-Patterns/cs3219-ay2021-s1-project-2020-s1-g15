@@ -36,6 +36,20 @@ async function getAnswersByQuestionId(
   return answers;
 }
 
+async function getAnswersByUserId(
+  userId: string | ObjectId
+): Promise<Answer[]> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
+  const answers: Answer[] = await getAnswersCollection()
+    .find({
+      userId: userObjectId,
+    })
+    .toArray();
+
+  return answers;
+}
+
 async function createAnswer(
   userId: string | ObjectId,
   data: AnswerRequestBody
@@ -163,6 +177,7 @@ async function deleteAllAnswersByQuestionId(
 export {
   createAnswer,
   getAnswersByQuestionId,
+  getAnswersByUserId,
   deleteAnswer,
   updateAnswer,
   deleteAllAnswersByQuestionId,

@@ -53,6 +53,20 @@ async function getQuestionById(id: string | ObjectId): Promise<Question> {
   return question;
 }
 
+async function getQuestionsByUserId(
+  userId: string | ObjectId
+): Promise<Question[]> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+
+  const questions: Question[] = await getQuestionsCollection()
+    .find({
+      userId: userObjectId,
+    })
+    .toArray();
+
+  return questions;
+}
+
 async function createQuestion(
   userId: string | ObjectId,
   data: QuestionRequestBody
@@ -264,6 +278,7 @@ async function removeAnswerFromQuestion(
 export {
   getQuestions,
   getQuestionById,
+  getQuestionsByUserId,
   createQuestion,
   updateQuestion,
   editUpvoteDownvoteQuestion,
