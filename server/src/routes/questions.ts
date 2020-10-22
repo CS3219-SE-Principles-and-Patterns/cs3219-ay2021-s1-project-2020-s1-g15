@@ -98,7 +98,6 @@ router.put(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    console.log(questionId);
     const { command } = req.body as UpvoteQuestionRequestBody;
     const incObject = await handleQuestionVote(
       userId,

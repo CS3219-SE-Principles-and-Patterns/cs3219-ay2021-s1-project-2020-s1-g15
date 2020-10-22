@@ -231,7 +231,6 @@ describe("Upvote a question", () => {
     );
 
     const question: Question = await editUpvoteDownvoteQuestion(
-      VALID_USER_ID,
       createdQuestion._id,
       {
         upvotes: 1,
@@ -252,7 +251,6 @@ describe("Downvote a question", () => {
     );
 
     const question: Question = await editUpvoteDownvoteQuestion(
-      VALID_USER_ID,
       createdQuestion._id,
       {
         upvotes: 0,
