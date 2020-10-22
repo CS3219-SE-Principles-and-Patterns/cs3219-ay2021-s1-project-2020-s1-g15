@@ -1,4 +1,11 @@
-.my16 {
-  margin-top: 16px;
+.mt8 {
+  margin-top: 8px;
+}
+
+.mb16 {
   margin-bottom: 16px;
+}
+
+.minHeight300 {
+  min-height: 300px;
 }

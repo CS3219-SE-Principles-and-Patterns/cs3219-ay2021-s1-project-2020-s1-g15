@@ -26,6 +26,7 @@ export type Answer = Util & {
   userId: string; // id of the user who created this question
   upvotes: number;
   downvotes: number;
+  questionId: string;
 };
 
 export enum Level {

@@ -1,53 +1,57 @@
-import React, { FC, ReactNode } from "react";
-import { List, Card, Space } from "antd";
-import { LikeOutlined, DislikeOutlined } from "@ant-design/icons";
+import React, { FC, useState } from "react";
+import { List, Card, Space, Typography } from "antd";
 
-import { Answer } from "utils/index";
-import { AnswerPreview } from "./AnswerPreview";
+import { Answer, getAnswersOfQuestion } from "utils/index";
+import { AnswerForm } from "./AnswerForm";
+import { ViewAnswersCardListItem } from "./ViewAnswersCardListItem";
+
+const { Text } = Typography;
 
 type ViewAnswersCardProp = {
   answers: Answer[];
+  questionId: string;
 };
 
-type IconTextProp = {
-  icon: ReactNode;
-  text: number;
-};
+const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
+  answers: initialAnswers,
+  questionId,
+}): JSX.Element => {
+  const [answers, setAnswers] = useState<Answer[]>(initialAnswers);
 
-const IconText: FC<IconTextProp> = ({ icon, text }): JSX.Element => (
-  <Space>
-    {icon}
-    {text}
-  </Space>
-);
+  const refreshAnswers = async (): Promise<void> => {
+    const answers: Answer[] = await getAnswersOfQuestion({ questionId });
+    setAnswers(answers);
+  };
 
-const ViewAnswersCard: FC<ViewAnswersCardProp> = ({ answers }): JSX.Element => {
   return (
     <Card>
+      {/* ANSWERS LIST */}
       <List
-        header={`${answers.length} answers`}
+        header={
+          <Text style={{ fontSize: "1.2rem" }} type="secondary">
+            {answers.length} Answers
+          </Text>
+        }
+        footer=" " // hack for last item to have border as well
         itemLayout="vertical"
         dataSource={answers}
-        renderItem={(answer) => (
-          <List.Item
+      >
+        {answers.map((answer) => (
+          <ViewAnswersCardListItem
             key={answer._id}
-            actions={[
-              <IconText
-                key="like"
-                icon={<LikeOutlined />}
-                text={answer.upvotes}
-              />,
-              <IconText
-                key="dislike"
-                icon={<DislikeOutlined />}
-                text={answer.downvotes}
-              />,
-            ]}
-          >
-            <AnswerPreview answer={answer} />
-          </List.Item>
-        )}
-      />
+            answer={answer}
+            refreshAnswers={refreshAnswers}
+          />
+        ))}
+      </List>
+
+      {/* CREATE ANSWER FORM */}
+      <Space style={{ width: "100%" }} direction="vertical" size="middle">
+        <Text style={{ fontSize: "1.2rem" }} type="secondary">
+          Your Answer
+        </Text>
+        <AnswerForm questionId={questionId} refreshAnswers={refreshAnswers} />
+      </Space>
     </Card>
   );
 };

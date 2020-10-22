@@ -7,8 +7,8 @@ import {
   NavMenuKey,
   Question,
   Answer,
-  listOfAnswersMock,
   getSingleQuestion,
+  getAnswersOfQuestion,
 } from "utils/index";
 import { ViewQuestionCard, ViewAnswersCard } from "components/questions";
 
@@ -27,7 +27,7 @@ const QuestionPage: FC<QuestionPageProps> = ({
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">
             <ViewQuestionCard question={question} />
-            <ViewAnswersCard answers={answers} />
+            <ViewAnswersCard answers={answers} questionId={question._id} />
           </Space>
         </Col>
       </Row>
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { props: {} }; // needed to stop execution of code after
   }
 
-  const answers = JSON.parse(JSON.stringify(listOfAnswersMock)); // TODO: get actual answers
+  const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
 
   return {
     props: {

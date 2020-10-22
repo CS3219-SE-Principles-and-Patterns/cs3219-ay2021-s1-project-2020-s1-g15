@@ -19,6 +19,17 @@ export type CreateQuestionReq = {
 
 export type EditQuestionReq = CreateQuestionReq;
 
+export type GetAnswersOfQuestionReq = {
+  questionId: string;
+};
+
+export type CreateAnswerReq = {
+  questionId: string;
+  markdown: string;
+};
+
+export type EditAnswerReq = Pick<CreateAnswerReq, "markdown">;
+
 export type ApiErrorRes = {
   status: string;
   message: string;
