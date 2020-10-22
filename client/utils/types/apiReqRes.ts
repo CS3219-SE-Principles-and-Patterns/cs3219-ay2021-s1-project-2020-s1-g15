@@ -28,6 +28,8 @@ export type CreateAnswerReq = {
   markdown: string;
 };
 
+export type EditAnswerReq = Pick<CreateAnswerReq, "markdown">;
+
 export type ApiErrorRes = {
   status: string;
   message: string;

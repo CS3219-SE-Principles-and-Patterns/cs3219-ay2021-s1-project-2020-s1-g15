@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { Row, Form, Input, Button, notification, Space, Tabs } from "antd";
 
 import styles from "./index.module.css";
-import { Answer, createAnswer } from "utils/index";
+import { Answer, createAnswer, editAnswer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 
 const { TextArea } = Input;
@@ -46,17 +46,44 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
     setPreviewMarkdown("");
   };
 
-  const onFormFinish = async ({ markdown }: Pick<Answer, "markdown">) => {
+  const handleCreate = async ({
+    markdown,
+  }: Pick<Answer, "markdown">): Promise<void> => {
+    await createAnswer({ markdown, questionId });
+    await refreshAnswers();
+    resetForm();
+    notification.success({
+      message: "Answer succesfully submitted",
+    });
+  };
+
+  const handleEdit = async ({
+    markdown,
+  }: Pick<Answer, "markdown">): Promise<void> => {
+    if (!props.isEdit) {
+      return;
+    }
+
+    if (props.answer.markdown === markdown.trim()) {
+      // only send the request if there is a change in the content
+      props.onCancelEdit();
+      return;
+    }
+
+    await editAnswer({ markdown }, props.answer._id);
+    await refreshAnswers();
+    props.onCancelEdit();
+    notification.success({
+      message: "Answer succesfully edited",
+    });
+  };
+
+  const onFormFinish = async (answer: Pick<Answer, "markdown">) => {
     // validation will throw error and stop execution if it fails
     await form.validateFields();
 
     setIsLoading(true);
-    props.isEdit ? null : await createAnswer({ markdown, questionId });
-    await refreshAnswers();
-    resetForm();
-    notification.success({
-      message: `Answer succesfully ${props.isEdit ? "edited" : "submitted"}`,
-    });
+    props.isEdit ? await handleEdit(answer) : await handleCreate(answer);
     setIsLoading(false);
   };
 

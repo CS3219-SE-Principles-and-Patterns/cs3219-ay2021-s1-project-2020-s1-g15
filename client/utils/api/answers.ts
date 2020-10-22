@@ -3,6 +3,7 @@ import {
   GetAnswersOfQuestionReq,
   CreateAnswerReq,
   getIdToken,
+  EditAnswerReq,
 } from "utils/index";
 import {
   ANSWERS_API_URL,
@@ -44,6 +45,28 @@ async function createAnswer(req: CreateAnswerReq): Promise<Answer> {
   return res.json() as Promise<Answer>;
 }
 
+async function editAnswer(
+  req: EditAnswerReq,
+  answerId: string
+): Promise<Answer> {
+  const userIdToken: string = await getIdToken();
+
+  const res = await fetch(`${ANSWERS_API_URL}/${answerId}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(userIdToken),
+    },
+  });
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
 async function deleteSingleAnswer(answerId: string): Promise<void> {
   const userIdToken: string = await getIdToken();
 
@@ -60,4 +83,4 @@ async function deleteSingleAnswer(answerId: string): Promise<void> {
   }
 }
 
-export { getAnswersOfQuestion, createAnswer, deleteSingleAnswer };
+export { getAnswersOfQuestion, createAnswer, editAnswer, deleteSingleAnswer };
