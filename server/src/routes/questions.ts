@@ -23,7 +23,7 @@ import {
 import {
   HttpStatusCode,
   VoteType,
-  UpvoteDownvoteStatus,
+  GetVoteStatusResponse,
   GetPaginatedQuestionsRequest,
   GetPaginatedQuestionsResponse,
   CreateQuestionRequest,
@@ -80,7 +80,7 @@ router.put(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const status: UpvoteDownvoteStatus = await checkUpvoteDownvote(
+    const status: GetVoteStatusResponse = await checkUpvoteDownvote(
       userId,
       questionId
     );

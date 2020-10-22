@@ -1,6 +1,6 @@
 // API REQUEST RESPONSE //
 
-export interface ResisterUserRequest {
+export type ResisterUserRequest = {
   email?: string | undefined;
   password?: string | undefined;
-}
+};
