@@ -12,7 +12,7 @@ import {
   GetPaginatedQuestionsRequest,
   CreateQuestionRequest,
   UpdateQuestionRequest,
-  UpvoteDownvoteIncObject,
+  VoteIncrementObject,
 } from "../utils";
 
 // TODO: add search/filter in the future
@@ -175,7 +175,7 @@ async function updateQuestion(
 async function editUpvoteDownvoteQuestion(
   userId: string | ObjectId,
   questionId: string | ObjectId,
-  incObject: UpvoteDownvoteIncObject
+  incObject: VoteIncrementObject
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);

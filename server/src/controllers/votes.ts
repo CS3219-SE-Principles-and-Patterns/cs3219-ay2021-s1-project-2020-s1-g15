@@ -4,28 +4,38 @@ import { getVotesCollection } from "../services/database";
 import {
   VoteType,
   toValidObjectId,
-  VOTE_CMD,
+  VoteCommand,
   GetVoteStatusResponse,
-  UpvoteDownvoteIncObject,
+  VoteIncrementObject,
+  ApiError,
+  HttpStatusCode,
+  ApiErrorMessage,
 } from "../utils";
 
 async function handleQuestionVote(
   userId: string | ObjectId,
   questionId: string | ObjectId,
-  command: VOTE_CMD,
+  voteCommand: VoteCommand | undefined,
   type: VoteType
-): Promise<UpvoteDownvoteIncObject> {
+): Promise<VoteIncrementObject> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
 
-  const incObject: UpvoteDownvoteIncObject = { upvotes: 0, downvotes: 0 };
+  if (voteCommand === undefined) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Vote.INVALID_VOTE_COMMAND
+    );
+  }
+
+  const voteIncrementObject: VoteIncrementObject = { upvotes: 0, downvotes: 0 };
   const currentVote: Vote | null = await getQuestionVoteByUser(
     userObjectId,
     questionObjectId
   );
 
   // if vote is not persent and then we insert
-  if (!currentVote && command === VOTE_CMD.insert) {
+  if (!currentVote && voteCommand === VoteCommand.INSERT) {
     const doc: Vote = {
       _id: new ObjectId(),
       createdAt: new Date(),
@@ -36,15 +46,15 @@ async function handleQuestionVote(
     };
     await getVotesCollection().insertOne(doc);
     if (type == VoteType.UPVOTE) {
-      incObject.upvotes = 1;
+      voteIncrementObject.upvotes = 1;
     } else {
-      incObject.downvotes = 1;
+      voteIncrementObject.downvotes = 1;
     }
-    return incObject;
+    return voteIncrementObject;
   }
 
   // if vote present and type is different swap
-  if (currentVote?.type != type && command == VOTE_CMD.insert) {
+  if (currentVote?.type != type && voteCommand == VoteCommand.INSERT) {
     await getVotesCollection().deleteOne({
       userId: userObjectId,
       questionId: questionObjectId,
@@ -60,30 +70,30 @@ async function handleQuestionVote(
     await getVotesCollection().insertOne(doc);
     if (type == VoteType.UPVOTE) {
       // if we swap in upvote, then is upvote increase, downvote decrease
-      incObject.downvotes = -1;
-      incObject.upvotes = 1;
+      voteIncrementObject.downvotes = -1;
+      voteIncrementObject.upvotes = 1;
     } else {
       // if we swap in downvote mode, then is upvote decrease,  downvote increase
-      incObject.downvotes = 1;
-      incObject.upvotes = -1;
+      voteIncrementObject.downvotes = 1;
+      voteIncrementObject.upvotes = -1;
     }
-    return incObject;
-  } else if (currentVote?.type == type && command == VOTE_CMD.remove) {
+    return voteIncrementObject;
+  } else if (currentVote?.type == type && voteCommand == VoteCommand.REMOVE) {
     await getVotesCollection().deleteOne({
       userId: userObjectId,
       questionId: questionObjectId,
     });
     if (type == VoteType.UPVOTE) {
-      incObject.upvotes = -1;
+      voteIncrementObject.upvotes = -1;
     } else {
-      incObject.downvotes = -1;
+      voteIncrementObject.downvotes = -1;
     }
-    return incObject;
+    return voteIncrementObject;
   }
   // if vote already present and type is correct
   // if vote not present and type is remove
   // we dont increment or decrement
-  return incObject;
+  return voteIncrementObject;
 }
 
 async function getVoteStatus(

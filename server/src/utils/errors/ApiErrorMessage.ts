@@ -20,8 +20,13 @@ enum User {
   INVALID_FIELDS = "Email or password is invalid",
 }
 
+enum Vote {
+  INVALID_VOTE_COMMAND = "Email or password is invalid",
+}
+
 export class ApiErrorMessage {
   public static readonly Question = Question;
   public static readonly Answer = Answer;
   public static readonly User = User;
+  public static readonly Vote = Vote;
 }

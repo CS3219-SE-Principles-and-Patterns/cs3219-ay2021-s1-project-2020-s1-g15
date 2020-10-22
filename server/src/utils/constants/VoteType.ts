@@ -3,7 +3,7 @@ export enum VoteType {
   DOWNVOTE = -1,
 }
 
-export enum VOTE_CMD {
-  insert = "insert",
-  remove = "remove",
+export enum VoteCommand {
+  INSERT = "insert",
+  REMOVE = "remove",
 }

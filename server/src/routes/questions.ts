@@ -30,6 +30,7 @@ import {
   UpvoteQuestionRequest,
   DownvoteQuestionRequest,
   UpdateQuestionRequest,
+  VoteIncrementObject,
 } from "../utils";
 import { getVoteStatus, handleQuestionVote } from "../controllers/votes";
 
@@ -90,30 +91,32 @@ router.get(
   }
 );
 
-// Put request - upvote a question
+// PUT request - upvote a question
 router.put(
   "/:id/upvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const { command } = req.body as UpvoteQuestionRequest;
-    const incObject = await handleQuestionVote(
+    const { command: voteCommand } = req.body as UpvoteQuestionRequest;
+
+    const voteIncrementObject: VoteIncrementObject = await handleQuestionVote(
       userId,
       questionId,
-      command,
+      voteCommand,
       VoteType.UPVOTE
     );
     const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
       userId,
       questionId,
-      incObject
+      voteIncrementObject
     );
+
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
 
-// Put request - downvote a question
+// PUT request - downvote a question
 router.put(
   "/:id/downvote",
   verifyUserAuth,

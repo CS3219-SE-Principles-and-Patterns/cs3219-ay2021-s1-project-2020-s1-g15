@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { handleQuestionVote } from "src/controllers/votes";
 import { closeDb, getVotesCollection, initDb } from "src/services/database";
-import { VOTE_CMD, VoteType } from "src/utils";
+import { VoteCommand, VoteType } from "src/utils";
 
 const VALID_USER_ID = new ObjectId();
 const VALID_QUESTION_ID = new ObjectId();
@@ -29,7 +29,7 @@ describe("Vote Creation", () => {
     const res = await handleQuestionVote(
       VALID_USER_ID,
       VALID_QUESTION_ID,
-      VOTE_CMD.insert,
+      VoteCommand.INSERT,
       VoteType.UPVOTE
     );
 

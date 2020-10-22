@@ -23,7 +23,7 @@ import {
   Subject,
   CreateQuestionRequest,
   TestConfig,
-  VOTE_CMD,
+  VoteCommand,
 } from "src/utils";
 import { initAuth } from "src/services/authentication";
 import { User } from "src/models";
@@ -134,7 +134,7 @@ describe("POST request - upvote a single question", () => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
       .send({
-        command: VOTE_CMD.insert,
+        command: VoteCommand.INSERT,
       });
 
     expect(res.status).toBe(HttpStatusCode.OK);
@@ -152,13 +152,13 @@ describe("POST request - user undo his upvote", () => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
       .send({
-        command: VOTE_CMD.insert,
+        command: VoteCommand.INSERT,
       });
 
     const res2 = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${UPVOTE}`)
       .send({
-        command: VOTE_CMD.remove,
+        command: VoteCommand.REMOVE,
       });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.upvotes).toStrictEqual(1);
@@ -178,7 +178,7 @@ describe("POST request - downvote a single question", () => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
       .send({
-        command: VOTE_CMD.insert,
+        command: VoteCommand.INSERT,
       });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.downvotes).toStrictEqual(1);
@@ -196,13 +196,13 @@ describe("PUT request - user undo his downvote", () => {
     const res = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
       .send({
-        command: VOTE_CMD.insert,
+        command: VoteCommand.INSERT,
       });
 
     const res2 = await request(server)
       .put(`${API_ENDPOINT}/${createdQuestion._id}/${DOWNVOTE}`)
       .send({
-        command: VOTE_CMD.remove,
+        command: VoteCommand.REMOVE,
       });
     expect(res.status).toBe(HttpStatusCode.OK);
     expect(res.body.downvotes).toStrictEqual(1);
