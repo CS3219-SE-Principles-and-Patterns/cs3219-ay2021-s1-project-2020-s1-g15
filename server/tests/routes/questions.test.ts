@@ -21,7 +21,7 @@ import {
   HttpStatusCode,
   Level,
   Subject,
-  QuestionRequestBody,
+  CreateQuestionRequest,
   TestConfig,
   VOTE_CMD,
 } from "src/utils";
@@ -32,13 +32,13 @@ const API_ENDPOINT = "/api/questions";
 const UPVOTE = "upvote";
 const DOWNVOTE = "downvote";
 
-const VALID_REQUEST_DATA_1: QuestionRequestBody = {
+const VALID_REQUEST_DATA_1: CreateQuestionRequest = {
   title: "This is the title!",
   markdown: "hello",
   level: Level.DEFAULT,
   subject: Subject.GENERAL,
 };
-const VALID_REQUEST_DATA_2: QuestionRequestBody = {
+const VALID_REQUEST_DATA_2: CreateQuestionRequest = {
   title: "This is the changed title now =D",
   markdown: "hola",
   level: Level.DEFAULT,

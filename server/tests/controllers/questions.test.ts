@@ -12,23 +12,23 @@ import {
 } from "src/controllers/questions";
 import { Question } from "src/models";
 import { initDb, closeDb, getAnswersCollection } from "src/services/database";
-import { QuestionRequestBody, Level, Subject } from "src/utils";
+import { CreateQuestionRequest, Level, Subject } from "src/utils";
 import { getQuestionsCollection } from "src/services/database";
 
 const MISSING_REQUEST_DATA = {};
-const INVALID_REQUEST_DATA: QuestionRequestBody = {
+const INVALID_REQUEST_DATA: CreateQuestionRequest = {
   title: "    ", // this is invalid
   markdown: "hello",
   level: Level.DEFAULT,
   subject: Subject.GENERAL,
 };
-const VALID_REQUEST_DATA: QuestionRequestBody = {
+const VALID_REQUEST_DATA: CreateQuestionRequest = {
   title: "This is the title!",
   markdown: "hello",
   level: Level.DEFAULT,
   subject: Subject.GENERAL,
 };
-const VALID_REQUEST_DATA_CHANGED: QuestionRequestBody = {
+const VALID_REQUEST_DATA_CHANGED: CreateQuestionRequest = {
   title: "Now, title has changed",
   markdown: "markdown changed as well!!",
   level: Level.DEFAULT,
@@ -81,7 +81,7 @@ describe("Create a question", () => {
 
 describe("Get all questions", () => {
   it("should return an array", async () => {
-    const { questions } = await getQuestions(1, 10);
+    const { questions } = await getQuestions({ page: "1", pageSize: "10" });
     expect(Array.isArray(questions)).toBe(true);
   });
 });

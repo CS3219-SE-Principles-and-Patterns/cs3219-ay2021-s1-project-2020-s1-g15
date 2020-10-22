@@ -6,8 +6,8 @@ import {
   toValidObjectId,
   VOTE_CMD,
   UpvoteDownvoteStatus,
+  UpvoteDownvoteIncObject,
 } from "../utils";
-import { UpvoteDownvoteIncObject } from "../utils/types/GetQuestionRequestResponse";
 
 async function handleQuestionVote(
   userId: string | ObjectId,

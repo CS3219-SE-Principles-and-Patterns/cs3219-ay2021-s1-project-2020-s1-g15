@@ -6,20 +6,22 @@ import {
   HttpStatusCode,
   ApiError,
   ApiErrorMessage,
-  QuestionRequestBody,
   titleToSlug,
   toValidObjectId,
-} from "../utils";
-import {
-  GetQuestionRequestResponse,
+  GetPaginatedQuestionsResponse,
+  GetPaginatedQuestionsRequest,
+  CreateQuestionRequest,
+  UpdateQuestionRequest,
   UpvoteDownvoteIncObject,
-} from "../utils/types/GetQuestionRequestResponse";
+} from "../utils";
 
 // TODO: add search/filter in the future
 async function getQuestions(
-  page: number,
-  pageSize: number
-): Promise<GetQuestionRequestResponse> {
+  req: GetPaginatedQuestionsRequest
+): Promise<GetPaginatedQuestionsResponse> {
+  const page = parseInt(req.page || "0");
+  const pageSize = parseInt(req.pageSize || "0");
+
   if (!page || !pageSize) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
@@ -27,12 +29,18 @@ async function getQuestions(
     );
   }
 
-  const questions: Question[] = await getQuestionsCollection()
+  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
     .find()
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
-  const total = await getQuestionsCollection().countDocuments();
+  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
+
+  const [questions, total] = await Promise.all([
+    getPaginatedQuestions,
+    getQuestionsCollectionSize,
+  ]);
+
   return { questions, total };
 }
 
@@ -69,10 +77,10 @@ async function getQuestionsByUserId(
 
 async function createQuestion(
   userId: string | ObjectId,
-  data: QuestionRequestBody
+  data: CreateQuestionRequest
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
-  const { title, markdown, level, subject }: QuestionRequestBody = data;
+  const { title, markdown, level, subject }: CreateQuestionRequest = data;
 
   if (!title || !markdown || !level || !subject) {
     throw new ApiError(
@@ -113,11 +121,11 @@ async function createQuestion(
 async function updateQuestion(
   userId: string | ObjectId,
   questionId: string | ObjectId,
-  data: QuestionRequestBody
+  data: UpdateQuestionRequest
 ): Promise<Question> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  const { title, markdown, level, subject }: QuestionRequestBody = data;
+  const { title, markdown, level, subject }: UpdateQuestionRequest = data;
 
   if (!title || !markdown || !level || !subject) {
     throw new ApiError(
