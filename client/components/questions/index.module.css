@@ -9,3 +9,7 @@
 .minHeight300 {
   min-height: 300px;
 }
+
+.iconOffset {
+  margin-bottom: 16px;
+}

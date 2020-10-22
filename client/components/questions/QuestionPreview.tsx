@@ -3,9 +3,9 @@ import { Typography, Space, Tag, Row, Divider } from "antd";
 import { grey } from "@ant-design/colors";
 
 import {
-  CreateQuestionReq,
   toRelativeTimeAgo,
   markdownToReactNode,
+  CreateQuestionReq,
 } from "utils/index";
 
 const { Title } = Typography;

@@ -76,7 +76,7 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 });
 
 // GET request - check if  user has voted for question
-router.put(
+router.get(
   "/:id/vote-status",
   verifyUserAuth,
   async (req: Request, res: Response) => {
@@ -98,6 +98,7 @@ router.put(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
+    console.log(questionId);
     const { command } = req.body as UpvoteQuestionRequestBody;
     const incObject = await handleQuestionVote(
       userId,
@@ -106,7 +107,6 @@ router.put(
       VoteType.UPVOTE
     );
     const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
-      userId,
       questionId,
       incObject
     );
@@ -129,7 +129,6 @@ router.put(
       VoteType.DOWNVOTE
     );
     const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
-      userId,
       questionId,
       incObject
     );

@@ -1,8 +1,12 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Level, User } from "../../utils";
 import {
   AlertOutlined,
+  DislikeFilled,
+  DislikeOutlined,
   LeftOutlined,
+  LikeFilled,
+  LikeOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import {
@@ -15,9 +19,12 @@ import {
   List,
   Typography,
   Tag,
+  Button,
+  Col,
 } from "antd";
 
 import styles from "./user.module.css";
+import { useRouter } from "next/router";
 
 const { TabPane } = Tabs;
 

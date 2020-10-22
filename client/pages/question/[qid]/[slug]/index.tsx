@@ -3,15 +3,12 @@ import { GetServerSideProps } from "next";
 import { Space, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
+import { NavMenuKey, Question, Answer, getSingleQuestion } from "utils/index";
 import {
-  NavMenuKey,
-  Question,
-  Answer,
-  getSingleQuestion,
-  getAnswersOfQuestion,
-} from "utils/index";
-import { ViewQuestionCard, ViewAnswersCard } from "components/questions";
-
+  ViewQuestionCard,
+  ViewAnswersCard,
+  QuestionUpvoteDownvote,
+} from "components/questions";
 type QuestionPageProps = {
   question: Question;
   answers: Answer[];
@@ -26,6 +23,12 @@ const QuestionPage: FC<QuestionPageProps> = ({
       <Row justify="center">
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">
+            <QuestionUpvoteDownvote
+              qid={question._id}
+              title={question.slug}
+              upvotes={question.upvotes}
+              downvotes={question.downvotes}
+            />
             <ViewQuestionCard question={question} />
             <ViewAnswersCard answers={answers} questionId={question._id} />
           </Space>
@@ -53,12 +56,12 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { props: {} }; // needed to stop execution of code after
   }
 
-  const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
+  //const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
 
   return {
     props: {
       question: question,
-      answers: answers,
+      answers: [],
     },
   };
 };
