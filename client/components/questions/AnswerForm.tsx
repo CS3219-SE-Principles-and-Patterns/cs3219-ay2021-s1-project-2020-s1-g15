@@ -8,9 +8,19 @@ import { AnswerPreview } from "./AnswerPreview";
 const { TextArea } = Input;
 const { TabPane } = Tabs;
 
-type AnswerFormProp = {
+type CommonAnswerFormProp = {
   questionId: string;
   refreshAnswers: () => Promise<void>;
+};
+
+type CreateAnswerFormProp = CommonAnswerFormProp & {
+  isEdit?: false | undefined | null;
+};
+
+type EditAnswerFormProp = CommonAnswerFormProp & {
+  isEdit: true;
+  answer: Answer;
+  onCancelEdit: () => void;
 };
 
 // config values for the form
@@ -22,9 +32,10 @@ const Config = Object.freeze({
   }),
 });
 
-const AnswerForm: FC<AnswerFormProp> = ({
+const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
   questionId,
   refreshAnswers,
+  ...props
 }): JSX.Element => {
   const [previewMarkdown, setPreviewMarkdown] = useState<string>("");
   const [form] = Form.useForm();
@@ -40,11 +51,11 @@ const AnswerForm: FC<AnswerFormProp> = ({
     await form.validateFields();
 
     setIsLoading(true);
-    await createAnswer({ markdown, questionId });
+    props.isEdit ? null : await createAnswer({ markdown, questionId });
     await refreshAnswers();
     resetForm();
     notification.success({
-      message: "Answer succesfully submitted",
+      message: `Answer succesfully ${props.isEdit ? "edited" : "submitted"}`,
     });
     setIsLoading(false);
   };
@@ -67,7 +78,11 @@ const AnswerForm: FC<AnswerFormProp> = ({
         onChange={onTabChange}
       >
         <TabPane tab="Write" key="write">
-          <Form form={form} onFinish={onFormFinish}>
+          <Form
+            form={form}
+            initialValues={props.isEdit ? props.answer : {}}
+            onFinish={onFormFinish}
+          >
             {/* MARKDOWN CONTENT */}
             <Form.Item
               name={Config.Markdown.NAME}
@@ -90,9 +105,14 @@ const AnswerForm: FC<AnswerFormProp> = ({
 
       {/* FORM BUTTONS */}
       <Row justify="end">
-        <Button loading={isLoading} onClick={form.submit} type="primary">
-          Submit Answer
-        </Button>
+        <Space>
+          {props.isEdit ? (
+            <Button onClick={props.onCancelEdit}>Cancel</Button>
+          ) : null}
+          <Button loading={isLoading} onClick={form.submit} type="primary">
+            {props.isEdit ? "Edit Answer" : "Submit Answer"}
+          </Button>
+        </Space>
       </Row>
     </Space>
   );
