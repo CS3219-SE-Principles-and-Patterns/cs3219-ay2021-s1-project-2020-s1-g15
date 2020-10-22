@@ -64,8 +64,10 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
       }
       setIdToken(userIdToken);
     };
-    runChecks();
-  }, [getIdToken, qid]);
+    if (isAuthenticated) {
+      runChecks();
+    }
+  }, [getIdToken, isAuthenticated, qid]);
 
   const upvote = async () => {
     if (hasUpVoted && idToken) {
