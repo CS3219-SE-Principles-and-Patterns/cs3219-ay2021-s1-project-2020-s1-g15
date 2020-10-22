@@ -10,8 +10,11 @@ import {
   getSingleQuestion,
   getAnswersOfQuestion,
 } from "utils/index";
-import { ViewQuestionCard, ViewAnswersCard } from "components/questions";
-
+import {
+  ViewQuestionCard,
+  ViewAnswersCard,
+  QuestionUpvoteDownvote,
+} from "components/questions";
 type QuestionPageProps = {
   question: Question;
   answers: Answer[];
@@ -26,6 +29,12 @@ const QuestionPage: FC<QuestionPageProps> = ({
       <Row justify="center">
         <Col flex="750px">
           <Space style={{ width: "100%" }} direction="vertical" size="large">
+            <QuestionUpvoteDownvote
+              qid={question._id}
+              title={question.slug}
+              upvotes={question.upvotes}
+              downvotes={question.downvotes}
+            />
             <ViewQuestionCard question={question} />
             <ViewAnswersCard answers={answers} questionId={question._id} />
           </Space>
