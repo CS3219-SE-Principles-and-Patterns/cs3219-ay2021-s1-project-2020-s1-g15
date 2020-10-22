@@ -23,6 +23,7 @@ import {
 } from "utils/index";
 import { useAuth } from "components/authentication";
 import QuestionPreview from "./QuestionPreview";
+import Link from "next/link";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -79,7 +80,7 @@ const Config = Object.freeze({
 
 const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   const isEditing: boolean = question !== undefined;
-  const { getIdToken } = useAuth();
+  const { getIdToken, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState<boolean>(isEditing); // set to true if editing to fetch question
   const [questionPreviewNode, setQuestionPreviewNode] = useState<ReactNode>();
   const [form] = Form.useForm();
@@ -205,9 +206,15 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
 
       {/* FORM BUTTONS */}
       <Row justify="end">
-        <Button loading={loading} onClick={form.submit} type="primary">
-          Submit
-        </Button>
+        {isAuthenticated ? (
+          <Button loading={loading} onClick={form.submit} type="primary">
+            Submit
+          </Button>
+        ) : (
+          <Link href={Route.LOGIN}>
+            You are not logged in. Log in to ask a question!
+          </Link>
+        )}
       </Row>
     </Space>
   );
