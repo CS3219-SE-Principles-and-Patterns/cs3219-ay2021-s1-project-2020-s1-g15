@@ -544,14 +544,10 @@ OR
 #### Get all answers by question ID
 
 - Method: `GET`
-- URL: `/api/answers`
+- URL: `/api/answers?questionId=[qid]`
+- URL query
+  - `qid`: the `ObjectId` of the question
 - Auth required: NO
-- Body data (example):
-  ```js
-  {
-    "questionId": "5f570273a83adf5417b48026" // ObjectId of question; required!
-  }
-  ```
 
 **Success response**:
 
