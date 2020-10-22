@@ -11,10 +11,15 @@ import {
 } from "../controllers/questions";
 import {
   addQuestionToUser,
+  removeAllAnswersFromUsers,
   removeQuestionFromUser,
 } from "../controllers/users";
-import { Question } from "../models";
+import { Answer, Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import {
+  deleteAllAnswersByQuestionId,
+  getAnswersByQuestionId,
+} from "../controllers/answers";
 import {
   QuestionRequestBody,
   HttpStatusCode,
@@ -157,9 +162,12 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
 
+  const answers: Answer[] = await getAnswersByQuestionId(questionId);
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),
+    deleteAllAnswersByQuestionId(questionId),
+    removeAllAnswersFromUsers(answers),
   ]);
 
   return res.status(HttpStatusCode.NO_CONTENT).send();

@@ -148,4 +148,22 @@ async function deleteAnswer(
   return isSuccessful;
 }
 
-export { createAnswer, getAnswersByQuestionId, deleteAnswer, updateAnswer };
+async function deleteAllAnswersByQuestionId(
+  questionId: string | ObjectId
+): Promise<void> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+
+  await getAnswersCollection().deleteMany({
+    questionId: questionObjectId,
+  });
+
+  return;
+}
+
+export {
+  createAnswer,
+  getAnswersByQuestionId,
+  deleteAnswer,
+  updateAnswer,
+  deleteAllAnswersByQuestionId,
+};
