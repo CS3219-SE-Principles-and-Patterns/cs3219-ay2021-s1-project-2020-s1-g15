@@ -7,13 +7,10 @@ import {
 } from "@ant-design/icons";
 
 import styles from "./index.module.css";
-import {
-  Answer,
-  deleteSingleAnswer,
-  useFirebaseAuthentication,
-} from "utils/index";
+import { Answer, deleteSingleAnswer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
+import { useAuth } from "components/authentication";
 
 const { confirm } = Modal;
 
@@ -26,9 +23,8 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
   answer,
   refreshAnswers,
 }): JSX.Element => {
-  const firebaseUser = useFirebaseAuthentication();
-  const isAnswerOwner: boolean =
-    firebaseUser !== null && firebaseUser.uid === answer.userId;
+  const { firebaseUser } = useAuth();
+  const isAnswerOwner: boolean = firebaseUser?.uid === answer.userId;
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const onDeleteClick = (answerId: string): void => {
