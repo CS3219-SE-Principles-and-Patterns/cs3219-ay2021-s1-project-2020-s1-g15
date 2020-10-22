@@ -3,7 +3,13 @@ import { GetServerSideProps } from "next";
 import { Space, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, Question, Answer, getSingleQuestion } from "utils/index";
+import {
+  NavMenuKey,
+  Question,
+  Answer,
+  getSingleQuestion,
+  getAnswersOfQuestion,
+} from "utils/index";
 import {
   ViewQuestionCard,
   ViewAnswersCard,
@@ -56,12 +62,12 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { props: {} }; // needed to stop execution of code after
   }
 
-  //const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
+  const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
 
   return {
     props: {
       question: question,
-      answers: [],
+      answers: answers,
     },
   };
 };
