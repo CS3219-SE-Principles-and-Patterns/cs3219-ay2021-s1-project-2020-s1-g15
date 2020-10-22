@@ -4,6 +4,7 @@ import { List, Card, Space, Typography } from "antd";
 import { Answer, getAnswersOfQuestion } from "utils/index";
 import { AnswerForm } from "./AnswerForm";
 import { ViewAnswersCardListItem } from "./ViewAnswersCardListItem";
+import { useAuth } from "components/authentication";
 
 const { Text } = Typography;
 
@@ -16,6 +17,7 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
   answers: initialAnswers,
   questionId,
 }): JSX.Element => {
+  const { isAuthenticated } = useAuth();
   const [answers, setAnswers] = useState<Answer[]>(initialAnswers);
 
   const refreshAnswers = async (): Promise<void> => {
@@ -46,12 +48,14 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
       </List>
 
       {/* CREATE ANSWER FORM */}
-      <Space style={{ width: "100%" }} direction="vertical" size="middle">
-        <Text style={{ fontSize: "1.2rem" }} type="secondary">
-          Your Answer
-        </Text>
-        <AnswerForm questionId={questionId} refreshAnswers={refreshAnswers} />
-      </Space>
+      {isAuthenticated ? (
+        <Space style={{ width: "100%" }} direction="vertical" size="middle">
+          <Text style={{ fontSize: "1.2rem" }} type="secondary">
+            Your Answer
+          </Text>
+          <AnswerForm questionId={questionId} refreshAnswers={refreshAnswers} />
+        </Space>
+      ) : null}
     </Card>
   );
 };
