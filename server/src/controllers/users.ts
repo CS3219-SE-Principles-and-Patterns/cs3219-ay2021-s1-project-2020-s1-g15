@@ -8,7 +8,7 @@ import {
   HttpStatusCode,
   ApiError,
   ApiErrorMessage,
-  UserRequestBody,
+  ResisterUserRequest,
   toValidObjectId,
 } from "../utils";
 
@@ -37,8 +37,8 @@ async function getUserById(id: string | ObjectId): Promise<User> {
  *
  * @param data the UserRequestBody with email and password keys
  */
-async function registerAndCreateUser(data: UserRequestBody): Promise<User> {
-  const { email, password }: UserRequestBody = data;
+async function registerAndCreateUser(data: ResisterUserRequest): Promise<User> {
+  const { email, password }: ResisterUserRequest = data;
 
   if (!email || !password) {
     throw new ApiError(

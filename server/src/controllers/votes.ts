@@ -5,9 +5,9 @@ import {
   VoteType,
   toValidObjectId,
   VOTE_CMD,
-  UpvoteDownvoteStatus,
+  GetVoteStatusResponse,
+  UpvoteDownvoteIncObject,
 } from "../utils";
-import { UpvoteDownvoteIncObject } from "../utils/types/GetQuestionRequestResponse";
 
 async function handleQuestionVote(
   userId: string | ObjectId,
@@ -89,9 +89,9 @@ async function handleQuestionVote(
 async function checkUpvoteDownvote(
   userId: string | ObjectId,
   questionId: string | ObjectId
-): Promise<UpvoteDownvoteStatus> {
+): Promise<GetVoteStatusResponse> {
   const vote: Vote | null = await getQuestionVoteByUser(userId, questionId);
-  const status: UpvoteDownvoteStatus = { isUpvote: false, isDownvote: false };
+  const status: GetVoteStatusResponse = { isUpvote: false, isDownvote: false };
   if (!vote) {
     return status;
   } else {

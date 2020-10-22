@@ -12,7 +12,11 @@ import {
   removeAnswerFromQuestion,
 } from "../controllers/questions";
 import { Answer } from "../models";
-import { HttpStatusCode, AnswerRequestBody } from "../utils";
+import {
+  HttpStatusCode,
+  CreateAnswerRequest,
+  EditAnswerRequest,
+} from "../utils";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import { ObjectId } from "mongodb";
 import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
@@ -32,7 +36,7 @@ router.get("/", async (req: Request, res: Response) => {
 // POST request - create an answer
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
-  const data: AnswerRequestBody = {
+  const data: CreateAnswerRequest = {
     questionId: req.body.questionId,
     markdown: req.body.markdown,
   };
@@ -56,7 +60,7 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
 router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const answerId: string = req.params.id;
-  const data: AnswerRequestBody = {
+  const data: EditAnswerRequest = {
     markdown: req.body.markdown,
   };
   const updatedAnswer: Answer = await updateAnswer(userId, answerId, data);

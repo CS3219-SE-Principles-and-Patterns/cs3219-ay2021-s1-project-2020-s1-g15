@@ -9,7 +9,8 @@ import {
   ApiError,
   ApiErrorMessage,
   toValidObjectId,
-  AnswerRequestBody,
+  CreateAnswerRequest,
+  EditAnswerRequest,
 } from "../utils";
 
 async function getAnswersByQuestionId(
@@ -52,10 +53,10 @@ async function getAnswersByUserId(
 
 async function createAnswer(
   userId: string | ObjectId,
-  data: AnswerRequestBody
+  data: CreateAnswerRequest
 ): Promise<Answer> {
   const userObjectId: ObjectId = toValidObjectId(userId);
-  const { questionId, markdown }: AnswerRequestBody = data;
+  const { questionId, markdown }: CreateAnswerRequest = data;
 
   if (!markdown || !questionId) {
     throw new ApiError(
@@ -92,11 +93,11 @@ async function createAnswer(
 async function updateAnswer(
   userId: string | ObjectId,
   answerId: string | ObjectId,
-  data: AnswerRequestBody
+  data: EditAnswerRequest
 ): Promise<Answer> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectId: ObjectId = toValidObjectId(answerId);
-  const { markdown }: AnswerRequestBody = data;
+  const { markdown }: EditAnswerRequest = data;
 
   if (!markdown) {
     throw new ApiError(

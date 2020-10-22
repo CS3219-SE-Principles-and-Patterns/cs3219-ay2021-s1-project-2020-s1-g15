@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import { User } from "../models";
-import { HttpStatusCode, UserRequestBody } from "../utils";
+import { HttpStatusCode, ResisterUserRequest } from "../utils";
 import { getUserById, registerAndCreateUser } from "../controllers/users";
 import { getQuestionsByUserId } from "../controllers/questions";
 import { getAnswersByUserId } from "../controllers/answers";
@@ -41,7 +41,7 @@ router.get("/:id/answers", async (req: Request, res: Response) => {
 
 // POST request - create a single User
 router.post("/", async (req: Request, res: Response) => {
-  const data: UserRequestBody = {
+  const data: ResisterUserRequest = {
     email: req.body.email,
     password: req.body.password,
   };
