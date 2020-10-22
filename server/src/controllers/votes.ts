@@ -86,23 +86,24 @@ async function handleQuestionVote(
   return incObject;
 }
 
-async function checkUpvoteDownvote(
+async function getVoteStatus(
   userId: string | ObjectId,
   questionId: string | ObjectId
 ): Promise<GetVoteStatusResponse> {
   const vote: Vote | null = await getQuestionVoteByUser(userId, questionId);
   const status: GetVoteStatusResponse = { isUpvote: false, isDownvote: false };
-  if (!vote) {
+
+  if (vote === null) {
     return status;
-  } else {
-    if (vote.type == VoteType.UPVOTE) {
-      status.isUpvote = true;
-      return status;
-    } else {
-      status.isDownvote = true;
-      return status;
-    }
   }
+
+  if (vote.type === VoteType.UPVOTE) {
+    status.isUpvote = true;
+  } else {
+    status.isDownvote = true;
+  }
+
+  return status;
 }
 
 // -----------------------------------------------------------------------------
@@ -122,4 +123,4 @@ async function getQuestionVoteByUser(
   });
 }
 
-export { handleQuestionVote, checkUpvoteDownvote };
+export { handleQuestionVote, getVoteStatus };

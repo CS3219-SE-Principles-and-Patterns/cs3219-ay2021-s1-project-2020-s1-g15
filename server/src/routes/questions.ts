@@ -31,7 +31,7 @@ import {
   DownvoteQuestionRequest,
   UpdateQuestionRequest,
 } from "../utils";
-import { checkUpvoteDownvote, handleQuestionVote } from "../controllers/votes";
+import { getVoteStatus, handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 
@@ -73,14 +73,15 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
 
-// GET request - check if  user has voted for question
-router.put(
+// GET request - get user's vote status for a question
+router.get(
   "/:id/vote-status",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const status: GetVoteStatusResponse = await checkUpvoteDownvote(
+
+    const status: GetVoteStatusResponse = await getVoteStatus(
       userId,
       questionId
     );
