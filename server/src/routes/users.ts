@@ -1,9 +1,10 @@
 import { Router, Request, Response } from "express";
 
-import { Question, User } from "../models";
+import { Answer, Question, User } from "../models";
 import { HttpStatusCode, UserRequestBody } from "../utils";
 import { getUserById, registerAndCreateUser } from "../controllers/users";
 import { getQuestionsByUserId } from "../controllers/questions";
+import { getAnswersByUserId } from "../controllers/answers";
 
 const router: Router = Router();
 
@@ -22,6 +23,14 @@ router.get("/:id/questions", async (req: Request, res: Response) => {
 
   const questions: Question[] = await getQuestionsByUserId(userId);
   return res.status(HttpStatusCode.OK).json(questions);
+});
+
+// GET request - get all answers created by a single User
+router.get("/:id/answers", async (req: Request, res: Response) => {
+  const userId: string = req.params.id;
+
+  const answers: Answer[] = await getAnswersByUserId(userId);
+  return res.status(HttpStatusCode.OK).json(answers);
 });
 
 // POST request - create a single User
