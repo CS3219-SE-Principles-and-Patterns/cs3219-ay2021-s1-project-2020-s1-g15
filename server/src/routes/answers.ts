@@ -8,6 +8,7 @@ import {
   getAnswersByQuestionId,
   deleteAnswer,
   updateAnswer,
+  updateAnswerVotes,
 } from "../controllers/answers";
 import {
   addAnswerToQuestion,
@@ -15,12 +16,16 @@ import {
   removeAnswerFromQuestion,
 } from "../controllers/questions";
 import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
-import { getAnswersVoteStatus } from "../controllers/votes";
+import { getAnswersVoteStatus, handleAnswerVote } from "../controllers/votes";
 import {
   HttpStatusCode,
   CreateAnswerRequest,
   EditAnswerRequest,
   GetAnswersVoteStatusResponse,
+  UpvoteQuestionRequest,
+  VoteIncrementObject,
+  VoteType,
+  DownvoteQuestionRequest,
 } from "../utils";
 
 const router: Router = Router();
@@ -87,6 +92,54 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
+
+// PUT request - upvote an answer
+router.put(
+  "/:id/upvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerId: string = req.params.id;
+    const { command: voteCommand } = req.body as UpvoteQuestionRequest;
+
+    const voteIncrementObject: VoteIncrementObject = await handleAnswerVote(
+      userId,
+      answerId,
+      voteCommand,
+      VoteType.UPVOTE
+    );
+    const updatedAnswer: Answer = await updateAnswerVotes(
+      answerId,
+      voteIncrementObject
+    );
+
+    return res.status(HttpStatusCode.OK).json(updatedAnswer);
+  }
+);
+
+// PUT request - downvote an answer
+router.put(
+  "/:id/downvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerId: string = req.params.id;
+    const { command: voteCommand } = req.body as DownvoteQuestionRequest;
+
+    const voteIncrementObject = await handleAnswerVote(
+      userId,
+      answerId,
+      voteCommand,
+      VoteType.DOWNVOTE
+    );
+    const updatedAnswer: Answer = await updateAnswerVotes(
+      answerId,
+      voteIncrementObject
+    );
+
+    return res.status(HttpStatusCode.OK).json(updatedAnswer);
+  }
+);
 
 // DELETE request - delete an answer
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {

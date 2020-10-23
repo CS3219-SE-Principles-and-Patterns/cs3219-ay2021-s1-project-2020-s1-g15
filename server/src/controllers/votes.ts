@@ -1,4 +1,4 @@
-import { ObjectId, FilterQuery } from "mongodb";
+import { ObjectId } from "mongodb";
 
 import { Vote } from "../models";
 import { getVotesCollection } from "../services/database";
@@ -17,32 +17,61 @@ import {
 async function handleQuestionVote(
   userId: string | ObjectId,
   questionId: string | ObjectId,
-  voteCommand: VoteCommand | undefined,
+  voteCommand: VoteCommand | null | undefined,
   voteType: VoteType.DOWNVOTE | VoteType.UPVOTE
 ): Promise<VoteIncrementObject> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const validVoteCommand: VoteCommand = verifyVoteCommand(voteCommand);
 
-  if (voteCommand === undefined) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Vote.MISSING_VOTE_COMMAND
+  if (validVoteCommand === VoteCommand.INSERT) {
+    // upsert new vote and return previous vote if it exists:
+    const previousVote: Vote | null = await upsertQuestionVote(
+      userObjectId,
+      questionObjectId,
+      voteType
     );
-  }
-
-  if (
-    voteCommand !== VoteCommand.INSERT &&
-    voteCommand !== VoteCommand.REMOVE
-  ) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Vote.INVALID_VOTE_COMMAND
+    // calculate the VoteIncrementObject:
+    return getInsertOpVoteIncrementObject(voteType, previousVote);
+  } else {
+    // delete vote and return deleted vote if it exists:
+    const deletedVote: Vote | null = await deleteQuestionVote(
+      userObjectId,
+      questionObjectId
     );
+    // calculate the VoteIncrementObject:
+    return getRemoveOpVoteIncrementObject(voteType, deletedVote);
   }
+}
 
-  return voteCommand === VoteCommand.INSERT
-    ? handleInsertQuestionVote(userObjectId, questionObjectId, voteType)
-    : handleRemoveQuestionVote(userObjectId, questionObjectId, voteType);
+async function handleAnswerVote(
+  userId: string | ObjectId,
+  answerId: string | ObjectId,
+  voteCommand: VoteCommand | null | undefined,
+  voteType: VoteType.DOWNVOTE | VoteType.UPVOTE
+): Promise<VoteIncrementObject> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+  const validVoteCommand: VoteCommand = verifyVoteCommand(voteCommand);
+
+  if (validVoteCommand === VoteCommand.INSERT) {
+    // upsert new vote and return previous vote if it exists:
+    const previousVote: Vote | null = await upsertAnswerVote(
+      userObjectId,
+      answerObjectId,
+      voteType
+    );
+    // calculate the VoteIncrementObject:
+    return getInsertOpVoteIncrementObject(voteType, previousVote);
+  } else {
+    // delete vote and return deleted vote if it exists:
+    const deletedVote: Vote | null = await deleteAnswerVote(
+      userObjectId,
+      answerObjectId
+    );
+    // calculate the VoteIncrementObject:
+    return getRemoveOpVoteIncrementObject(voteType, deletedVote);
+  }
 }
 
 async function getQuestionVoteStatus(
@@ -82,7 +111,7 @@ async function getAnswersVoteStatus(
   const answerIds: string[] = Array.isArray(answerIdQuery)
     ? answerIdQuery
     : [answerIdQuery];
-  const answerVotes: Vote[] = await getAnswersVoteByUser(userId, answerIds);
+  const answerVotes: Vote[] = await getAnswerVotesByUser(userId, answerIds);
 
   const status: GetAnswersVoteStatusResponse = {};
   // initialise status first:
@@ -103,6 +132,29 @@ async function getAnswersVoteStatus(
 // Helper functions
 // -----------------------------------------------------------------------------
 
+function verifyVoteCommand(
+  voteCommand: VoteCommand | undefined | null
+): VoteCommand {
+  if (voteCommand == null) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Vote.MISSING_VOTE_COMMAND
+    );
+  }
+
+  if (
+    voteCommand !== VoteCommand.INSERT &&
+    voteCommand !== VoteCommand.REMOVE
+  ) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Vote.INVALID_VOTE_COMMAND
+    );
+  }
+
+  return voteCommand;
+}
+
 async function getQuestionVoteByUser(
   userId: string | ObjectId,
   questionId: string | ObjectId
@@ -116,7 +168,7 @@ async function getQuestionVoteByUser(
   });
 }
 
-async function getAnswersVoteByUser(
+async function getAnswerVotesByUser(
   userId: string | ObjectId,
   answerIds: string[]
 ): Promise<Vote[]> {
@@ -135,68 +187,15 @@ async function getAnswersVoteByUser(
     .toArray();
 }
 
-async function upsertQuestionVoteByUser(
-  userObjectId: ObjectId,
-  questionObjectId: ObjectId,
-  voteType: VoteType
-): Promise<Vote | undefined> {
-  // a user can only have a single vote on a question,
-  // filter by userId and questionId should be unique:
-  const filter: FilterQuery<Vote> = {
-    userId: userObjectId,
-    questionId: questionObjectId,
-  };
-  const doc: Vote = {
-    _id: new ObjectId(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    userId: userObjectId,
-    questionId: questionObjectId,
-    type: voteType,
-  };
-  const result = await getVotesCollection().findOneAndUpdate(
-    filter,
-    { $set: doc },
-    {
-      upsert: true,
-      returnOriginal: true,
-    }
-  );
-
-  const oldVote: Vote | undefined = result.value;
-
-  return oldVote;
-}
-
-async function removeQuestionVoteByUser(
-  userObjectId: ObjectId,
-  questionObjectId: ObjectId
-): Promise<Vote | undefined> {
-  const result = await getVotesCollection().findOneAndDelete({
-    userId: userObjectId,
-    questionId: questionObjectId,
-  });
-
-  const deletedVote: Vote | undefined = result.value;
-
-  return deletedVote;
-}
-
-async function handleInsertQuestionVote(
-  userObjectId: ObjectId,
-  questionObjectId: ObjectId,
-  voteType: VoteType.UPVOTE | VoteType.DOWNVOTE
-): Promise<VoteIncrementObject> {
-  const previousVote: Vote | undefined = await upsertQuestionVoteByUser(
-    userObjectId,
-    questionObjectId,
-    voteType
-  );
-
+function getInsertOpVoteIncrementObject(
+  voteType: VoteType,
+  previousVote: Vote | null
+): VoteIncrementObject {
   const isUpvote: boolean = voteType === VoteType.UPVOTE;
   const isDownvote: boolean = voteType === VoteType.DOWNVOTE;
-  const isNewVote: boolean = previousVote === undefined;
-  const isSwapVote: boolean = previousVote?.type !== voteType;
+  const isNewVote: boolean = previousVote === null;
+  const isSwapVote: boolean =
+    previousVote !== null && previousVote.type !== voteType;
 
   const shouldIncrementUpvote: boolean = isUpvote && (isNewVote || isSwapVote);
   const shouldDecrementUpvote: boolean = isDownvote && isSwapVote;
@@ -210,22 +209,16 @@ async function handleInsertQuestionVote(
   };
 }
 
-async function handleRemoveQuestionVote(
-  userObjectId: ObjectId,
-  questionObjectId: ObjectId,
-  voteType: VoteType.UPVOTE | VoteType.DOWNVOTE
-): Promise<VoteIncrementObject> {
-  const deletedVote: Vote | undefined = await removeQuestionVoteByUser(
-    userObjectId,
-    questionObjectId
-  );
-
+function getRemoveOpVoteIncrementObject(
+  voteType: VoteType,
+  deletedVote: Vote | null
+): VoteIncrementObject {
   const isUpvote: boolean = voteType === VoteType.UPVOTE;
   const isDownvote: boolean = voteType === VoteType.DOWNVOTE;
-  const isExistingVote: boolean = deletedVote !== undefined;
+  const isSameVoteType: boolean = deletedVote?.type === voteType;
 
-  const shouldDecrementUpvote: boolean = isUpvote && isExistingVote;
-  const shouldDecrementDownvote: boolean = isDownvote && isExistingVote;
+  const shouldDecrementUpvote: boolean = isUpvote && isSameVoteType;
+  const shouldDecrementDownvote: boolean = isDownvote && isSameVoteType;
 
   return {
     upvotes: shouldDecrementUpvote ? -1 : 0,
@@ -233,4 +226,99 @@ async function handleRemoveQuestionVote(
   };
 }
 
-export { handleQuestionVote, getQuestionVoteStatus, getAnswersVoteStatus };
+async function upsertQuestionVote(
+  userObjectId: ObjectId,
+  questionObjectId: ObjectId,
+  voteType: VoteType.UPVOTE | VoteType.DOWNVOTE
+): Promise<Vote | null> {
+  const doc: Partial<Vote> = {
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: userObjectId,
+    questionId: questionObjectId,
+    type: voteType,
+  };
+  const result = await getVotesCollection().findOneAndUpdate(
+    // a user can only have a single vote on a question,
+    // filter by userId and questionId should be unique:
+    {
+      userId: userObjectId,
+      questionId: questionObjectId,
+    },
+    { $set: doc },
+    {
+      upsert: true,
+      returnOriginal: true,
+    }
+  );
+
+  const previousVote = result.value as Vote | null;
+
+  return previousVote;
+}
+
+async function deleteQuestionVote(
+  userObjectId: ObjectId,
+  questionObjectId: ObjectId
+): Promise<Vote | null> {
+  const result = await getVotesCollection().findOneAndDelete({
+    userId: userObjectId,
+    questionId: questionObjectId,
+  });
+
+  const deletedVote = result.value as Vote | null;
+
+  return deletedVote;
+}
+
+async function upsertAnswerVote(
+  userObjectId: ObjectId,
+  answerObjectId: ObjectId,
+  voteType: VoteType.UPVOTE | VoteType.DOWNVOTE
+): Promise<Vote | null> {
+  const doc: Partial<Vote> = {
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    userId: userObjectId,
+    answerId: answerObjectId,
+    type: voteType,
+  };
+  const result = await getVotesCollection().findOneAndUpdate(
+    // a user can only have a single vote on a question,
+    // filter by userId and questionId should be unique:
+    {
+      userId: userObjectId,
+      answerId: answerObjectId,
+    },
+    { $set: doc },
+    {
+      upsert: true,
+      returnOriginal: true,
+    }
+  );
+
+  const previousVote = result.value as Vote | null;
+
+  return previousVote;
+}
+
+async function deleteAnswerVote(
+  userObjectId: ObjectId,
+  answerObjectId: ObjectId
+): Promise<Vote | null> {
+  const result = await getVotesCollection().findOneAndDelete({
+    userId: userObjectId,
+    answerId: answerObjectId,
+  });
+
+  const deletedVote = result.value as Vote | null;
+
+  return deletedVote;
+}
+
+export {
+  handleQuestionVote,
+  handleAnswerVote,
+  getQuestionVoteStatus,
+  getAnswersVoteStatus,
+};

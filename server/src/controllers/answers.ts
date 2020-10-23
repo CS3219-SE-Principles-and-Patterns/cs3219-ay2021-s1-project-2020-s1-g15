@@ -12,6 +12,7 @@ import {
   toValidObjectId,
   CreateAnswerRequest,
   EditAnswerRequest,
+  VoteIncrementObject,
 } from "../utils";
 
 async function getAnswersByQuestionId(
@@ -140,6 +141,34 @@ async function updateAnswer(
   return updatedAnswer;
 }
 
+async function updateAnswerVotes(
+  answerId: string | ObjectId,
+  voteIncrementObject: VoteIncrementObject
+): Promise<Answer> {
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+
+  const result = await getAnswersCollection().findOneAndUpdate(
+    {
+      _id: answerObjectId,
+    },
+    {
+      $inc: voteIncrementObject,
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedAnswer: Answer | undefined = result.value;
+  if (updatedAnswer == null) {
+    //TODO: remove vote created if not found
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.Answer.NOT_FOUND
+    );
+  }
+
+  return updatedAnswer;
+}
+
 async function deleteAnswer(
   userId: string | ObjectId,
   id: string | ObjectId
@@ -182,5 +211,6 @@ export {
   getAnswersByUserId,
   deleteAnswer,
   updateAnswer,
+  updateAnswerVotes,
   deleteAllAnswersByQuestionId,
 };
