@@ -8,7 +8,7 @@ import {
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,
-  editUpvoteDownvoteQuestion,
+  updateQuestionVotes,
 } from "src/controllers/questions";
 import { Question } from "src/models";
 import { initDb, closeDb, getAnswersCollection } from "src/services/database";
@@ -230,13 +230,10 @@ describe("Upvote a question", () => {
       VALID_REQUEST_DATA
     );
 
-    const question: Question = await editUpvoteDownvoteQuestion(
-      createdQuestion._id,
-      {
-        upvotes: 1,
-        downvotes: 0,
-      }
-    );
+    const question: Question = await updateQuestionVotes(createdQuestion._id, {
+      upvotes: 1,
+      downvotes: 0,
+    });
 
     expect(question.upvotes).toStrictEqual(1);
   });
@@ -250,13 +247,10 @@ describe("Downvote a question", () => {
       VALID_REQUEST_DATA
     );
 
-    const question: Question = await editUpvoteDownvoteQuestion(
-      createdQuestion._id,
-      {
-        upvotes: 0,
-        downvotes: 1,
-      }
-    );
+    const question: Question = await updateQuestionVotes(createdQuestion._id, {
+      upvotes: 0,
+      downvotes: 1,
+    });
 
     expect(question.downvotes).toStrictEqual(1);
   });

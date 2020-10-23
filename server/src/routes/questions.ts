@@ -7,7 +7,7 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  editUpvoteDownvoteQuestion,
+  updateQuestionVotes,
 } from "../controllers/questions";
 import {
   addQuestionToUser,
@@ -106,7 +106,7 @@ router.put(
       voteCommand,
       VoteType.UPVOTE
     );
-    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+    const updatedQuestion: Question = await updateQuestionVotes(
       questionId,
       voteIncrementObject
     );
@@ -122,17 +122,19 @@ router.put(
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const { command } = req.body as DownvoteQuestionRequest;
-    const incObject = await handleQuestionVote(
+    const { command: voteCommand } = req.body as DownvoteQuestionRequest;
+
+    const voteIncrementObject = await handleQuestionVote(
       userId,
       questionId,
-      command,
+      voteCommand,
       VoteType.DOWNVOTE
     );
-    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+    const updatedQuestion: Question = await updateQuestionVotes(
       questionId,
-      incObject
+      voteIncrementObject
     );
+
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
