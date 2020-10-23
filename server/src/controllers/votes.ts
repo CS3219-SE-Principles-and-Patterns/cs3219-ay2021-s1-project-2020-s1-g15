@@ -37,7 +37,8 @@ async function handleQuestionVote(
     // delete vote and return deleted vote if it exists:
     const deletedVote: Vote | null = await deleteQuestionVote(
       userObjectId,
-      questionObjectId
+      questionObjectId,
+      voteType
     );
     // calculate the VoteIncrementObject:
     return getRemoveOpVoteIncrementObject(voteType, deletedVote);
@@ -67,7 +68,8 @@ async function handleAnswerVote(
     // delete vote and return deleted vote if it exists:
     const deletedVote: Vote | null = await deleteAnswerVote(
       userObjectId,
-      answerObjectId
+      answerObjectId,
+      voteType
     );
     // calculate the VoteIncrementObject:
     return getRemoveOpVoteIncrementObject(voteType, deletedVote);
@@ -215,10 +217,10 @@ function getRemoveOpVoteIncrementObject(
 ): VoteIncrementObject {
   const isUpvote: boolean = voteType === VoteType.UPVOTE;
   const isDownvote: boolean = voteType === VoteType.DOWNVOTE;
-  const isSameVoteType: boolean = deletedVote?.type === voteType;
+  const isExisitingVote: boolean = deletedVote !== null;
 
-  const shouldDecrementUpvote: boolean = isUpvote && isSameVoteType;
-  const shouldDecrementDownvote: boolean = isDownvote && isSameVoteType;
+  const shouldDecrementUpvote: boolean = isExisitingVote && isUpvote;
+  const shouldDecrementDownvote: boolean = isExisitingVote && isDownvote;
 
   return {
     upvotes: shouldDecrementUpvote ? -1 : 0,
@@ -252,21 +254,23 @@ async function upsertQuestionVote(
     }
   );
 
-  const previousVote = result.value as Vote | null;
+  const previousVote: Vote | null = result.value ?? null;
 
   return previousVote;
 }
 
 async function deleteQuestionVote(
   userObjectId: ObjectId,
-  questionObjectId: ObjectId
+  questionObjectId: ObjectId,
+  voteType: VoteType
 ): Promise<Vote | null> {
   const result = await getVotesCollection().findOneAndDelete({
     userId: userObjectId,
     questionId: questionObjectId,
+    type: voteType,
   });
 
-  const deletedVote = result.value as Vote | null;
+  const deletedVote: Vote | null = result.value ?? null;
 
   return deletedVote;
 }
@@ -297,21 +301,23 @@ async function upsertAnswerVote(
     }
   );
 
-  const previousVote = result.value as Vote | null;
+  const previousVote: Vote | null = result.value ?? null;
 
   return previousVote;
 }
 
 async function deleteAnswerVote(
   userObjectId: ObjectId,
-  answerObjectId: ObjectId
+  answerObjectId: ObjectId,
+  voteType: VoteType
 ): Promise<Vote | null> {
   const result = await getVotesCollection().findOneAndDelete({
     userId: userObjectId,
     answerId: answerObjectId,
+    type: voteType,
   });
 
-  const deletedVote = result.value as Vote | null;
+  const deletedVote: Vote | null = result.value ?? null;
 
   return deletedVote;
 }
