@@ -1,3 +1,4 @@
+import { UpvoteDownvoteStatus, VOTE_CMD } from "utils/constants";
 import {
   Question,
   GetPaginatedQuestionRes,
@@ -95,6 +96,86 @@ async function deleteSingleQuestion(
     return throwApiError(res);
   }
 }
+const QUESTION_UPVOTE = (qid: string): string => `${qid}/upvote`;
+
+const QUESTION_DOWNVOTE = (qid: string): string => `${qid}/downvote`;
+
+const QUESTION_VOTE_STATUS = (qid: string): string => `${qid}/vote-status`;
+
+async function checkVoteQuestion(
+  userIdToken: string,
+  questionId: string
+): Promise<UpvoteDownvoteStatus> {
+  const res = await fetch(
+    `${QUESTIONS_API_URL}/${QUESTION_VOTE_STATUS(questionId)}`,
+    {
+      method: "GET",
+
+      headers: {
+        "Content-Type": "application/json",
+        authorization: getAuthorizationString(userIdToken),
+      },
+    }
+  );
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
+async function upvoteQuestion(
+  userIdToken: string,
+  questionId: string,
+  voteCmd: VOTE_CMD
+): Promise<Question> {
+  const res = await fetch(
+    `${QUESTIONS_API_URL}/${QUESTION_UPVOTE(questionId)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({
+        command: voteCmd,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: getAuthorizationString(userIdToken),
+      },
+    }
+  );
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
+async function downvoteQuestion(
+  userIdToken: string,
+  questionId: string,
+  voteCmd: VOTE_CMD
+): Promise<Question> {
+  const res = await fetch(
+    `${QUESTIONS_API_URL}/${QUESTION_DOWNVOTE(questionId)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({
+        command: voteCmd,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: getAuthorizationString(userIdToken),
+      },
+    }
+  );
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
 
 export {
   getPaginatedQuestions,
@@ -102,4 +183,7 @@ export {
   createQuestion,
   editQuestion,
   deleteSingleQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
+  checkVoteQuestion,
 };

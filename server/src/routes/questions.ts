@@ -74,7 +74,7 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
 
-// GET request - get user's vote status for a question
+// GET request - check user's vote status for a question
 router.get(
   "/:id/vote-status",
   verifyUserAuth,
@@ -107,7 +107,6 @@ router.put(
       VoteType.UPVOTE
     );
     const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
-      userId,
       questionId,
       voteIncrementObject
     );
@@ -131,7 +130,6 @@ router.put(
       VoteType.DOWNVOTE
     );
     const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
-      userId,
       questionId,
       incObject
     );

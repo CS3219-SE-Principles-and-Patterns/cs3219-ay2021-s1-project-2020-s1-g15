@@ -173,17 +173,14 @@ async function updateQuestion(
 }
 
 async function editUpvoteDownvoteQuestion(
-  userId: string | ObjectId,
   questionId: string | ObjectId,
   incObject: VoteIncrementObject
 ): Promise<Question> {
-  const userObjectId: ObjectId = toValidObjectId(userId);
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-
+  console.log(questionObjectId);
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
-      userId: userObjectId, // make sure user can only update his own question
     },
     {
       $inc: {
