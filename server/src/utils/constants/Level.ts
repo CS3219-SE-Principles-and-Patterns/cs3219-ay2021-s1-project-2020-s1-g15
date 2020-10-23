@@ -1,9 +1,9 @@
 export enum Level {
   //ranked in increasing age
   PRIMARY = "Primary",
-  SECONDARYEXPRESS = "Secondary Express",
-  SECONDARYNA = "Secondary Normal Academic",
-  SECONDARYNT = "Secondary Normal Technical",
+  SECONDARY_EXPRESS = "Secondary Express",
+  SECONDARY_NA = "Secondary Normal Academic",
+  SECONDARY_NT = "Secondary Normal Technical",
   JUNIOR_COLLEGE = "Junior College",
   IB = "International Baccalaureate",
   POLYTECHNIC = "Polytechnic",
