@@ -16,7 +16,10 @@ import {
   removeAllAnswersFromUsers,
   removeQuestionFromUser,
 } from "../controllers/users";
-import { getVoteStatus, handleQuestionVote } from "../controllers/votes";
+import {
+  getQuestionVoteStatus,
+  handleQuestionVote,
+} from "../controllers/votes";
 import {
   deleteAllAnswersByQuestionId,
   getAnswersByQuestionId,
@@ -24,7 +27,7 @@ import {
 import {
   HttpStatusCode,
   VoteType,
-  GetVoteStatusResponse,
+  GetQuestionVoteStatusResponse,
   GetPaginatedQuestionsRequest,
   GetPaginatedQuestionsResponse,
   CreateQuestionRequest,
@@ -82,7 +85,7 @@ router.get(
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
 
-    const status: GetVoteStatusResponse = await getVoteStatus(
+    const status: GetQuestionVoteStatusResponse = await getQuestionVoteStatus(
       userId,
       questionId
     );

@@ -6,7 +6,7 @@ import {
   VoteType,
   toValidObjectId,
   VoteCommand,
-  GetVoteStatusResponse,
+  GetQuestionVoteStatusResponse,
   VoteIncrementObject,
   ApiError,
   HttpStatusCode,
@@ -44,12 +44,15 @@ async function handleQuestionVote(
     : handleRemoveQuestionVote(userObjectId, questionObjectId, voteType);
 }
 
-async function getVoteStatus(
+async function getQuestionVoteStatus(
   userId: string | ObjectId,
   questionId: string | ObjectId
-): Promise<GetVoteStatusResponse> {
+): Promise<GetQuestionVoteStatusResponse> {
   const vote: Vote | null = await getQuestionVoteByUser(userId, questionId);
-  const status: GetVoteStatusResponse = { isUpvote: false, isDownvote: false };
+  const status: GetQuestionVoteStatusResponse = {
+    isUpvote: false,
+    isDownvote: false,
+  };
 
   if (vote === null) {
     return status;
@@ -179,4 +182,4 @@ async function handleRemoveQuestionVote(
   };
 }
 
-export { handleQuestionVote, getVoteStatus };
+export { handleQuestionVote, getQuestionVoteStatus };
