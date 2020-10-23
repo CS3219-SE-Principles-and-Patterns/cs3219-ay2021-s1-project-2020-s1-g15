@@ -1,5 +1,8 @@
+import { ObjectId } from "mongodb";
 import { Router, Request, Response } from "express";
 
+import { Answer } from "../models";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   createAnswer,
   getAnswersByQuestionId,
@@ -11,15 +14,12 @@ import {
   getQuestionById,
   removeAnswerFromQuestion,
 } from "../controllers/questions";
-import { Answer } from "../models";
+import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
 import {
   HttpStatusCode,
   CreateAnswerRequest,
   EditAnswerRequest,
 } from "../utils";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { ObjectId } from "mongodb";
-import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
 
 const router: Router = Router();
 

@@ -1,4 +1,5 @@
 import { ObjectId, FilterQuery } from "mongodb";
+
 import { Vote } from "../models";
 import { getVotesCollection } from "../services/database";
 import {

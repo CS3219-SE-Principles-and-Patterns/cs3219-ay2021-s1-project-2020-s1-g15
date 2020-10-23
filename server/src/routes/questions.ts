@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 
+import { Answer, Question } from "../models";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   getQuestions,
   getQuestionById,
@@ -14,8 +16,7 @@ import {
   removeAllAnswersFromUsers,
   removeQuestionFromUser,
 } from "../controllers/users";
-import { Answer, Question } from "../models";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import { getVoteStatus, handleQuestionVote } from "../controllers/votes";
 import {
   deleteAllAnswersByQuestionId,
   getAnswersByQuestionId,
@@ -32,7 +33,6 @@ import {
   UpdateQuestionRequest,
   VoteIncrementObject,
 } from "../utils";
-import { getVoteStatus, handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 

@@ -1,5 +1,6 @@
 import assert from "assert";
 import MongoClient, { Collection } from "mongodb";
+
 import { Question, Answer, User, Vote } from "../models";
 import { getMongoDbName, getMongoDbUrl } from "../utils";
 
