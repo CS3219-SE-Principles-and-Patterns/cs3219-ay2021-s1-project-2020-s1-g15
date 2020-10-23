@@ -41,7 +41,7 @@ router.get(
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
-    const answerIdQuery = req.query.id as undefined | string | string[];
+    const answerIdQuery = req.query.answerIds as undefined | string | string[];
 
     // TODO: throw error if answer not found
     const status: GetAnswersVoteStatusResponse = await getAnswersVoteStatus(
