@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { Vote } from "../models";
+import { Vote, AnswerVote } from "../models";
 import { getVotesCollection } from "../services/database";
 import {
   VoteType,
@@ -113,7 +113,10 @@ async function getAnswersVoteStatus(
   const answerIds: string[] = Array.isArray(answerIdQuery)
     ? answerIdQuery
     : [answerIdQuery];
-  const answerVotes: Vote[] = await getAnswerVotesByUser(userId, answerIds);
+  const answerVotes: AnswerVote[] = await getAnswerVotesByUser(
+    userId,
+    answerIds
+  );
 
   const status: GetAnswersVoteStatusResponse = {};
   // initialise status first:
@@ -121,10 +124,10 @@ async function getAnswersVoteStatus(
     status[id] = { isUpvote: false, isDownvote: false };
   });
   // populate the status from resulting query:
-  answerVotes.forEach(({ _id, type }: Vote) =>
+  answerVotes.forEach(({ answerId, type }: AnswerVote) =>
     type === VoteType.UPVOTE
-      ? (status[_id.toHexString()].isUpvote = true)
-      : (status[_id.toHexString()].isDownvote = true)
+      ? (status[answerId.toHexString()].isUpvote = true)
+      : (status[answerId.toHexString()].isDownvote = true)
   );
 
   return status;
@@ -173,7 +176,7 @@ async function getQuestionVoteByUser(
 async function getAnswerVotesByUser(
   userId: string | ObjectId,
   answerIds: string[]
-): Promise<Vote[]> {
+): Promise<AnswerVote[]> {
   const userObjectId: ObjectId = toValidObjectId(userId);
   const answerObjectIds: ObjectId[] = answerIds.map((id) =>
     toValidObjectId(id)
@@ -186,7 +189,7 @@ async function getAnswerVotesByUser(
         $in: answerObjectIds,
       },
     })
-    .toArray();
+    .toArray() as Promise<AnswerVote[]>;
 }
 
 function getInsertOpVoteIncrementObject(

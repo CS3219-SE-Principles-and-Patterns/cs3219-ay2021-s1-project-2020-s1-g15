@@ -52,8 +52,10 @@ afterAll(async (done) => {
 
 beforeEach(async (done) => {
   // clear all docs from all collections before each test suite to prevent runs from interfering with one another
-  await getAnswersCollection().deleteMany({});
-  await getQuestionsCollection().deleteMany({});
+  await Promise.all([
+    getAnswersCollection().deleteMany({}),
+    getQuestionsCollection().deleteMany({}),
+  ]);
   done();
 });
 
