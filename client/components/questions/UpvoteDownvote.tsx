@@ -8,13 +8,9 @@ import {
 import { Button, PageHeader, Row, Col, Statistic, Layout } from "antd";
 import { useAuth } from "components/authentication";
 import { useRouter } from "next/router";
-import React, { FC, useEffect, useState } from "react";
-import {
-  checkVoteQuestion,
-  downvoteQuestion,
-  upvoteQuestion,
-  VOTE_CMD,
-} from "utils";
+import React, { FC } from "react";
+import { checkVoteQuestion, downvoteQuestion, upvoteQuestion } from "utils";
+import { useUpvoteDownvote } from "utils/hooks";
 import styles from "./index.module.css";
 
 const { Content } = Layout;
@@ -31,14 +27,23 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
   upvotes,
   downvotes,
 }) => {
-  const { isAuthenticated, getIdToken } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const [upvotesLocal, setUpvotes] = useState<number>(upvotes);
-  const [idToken, setIdToken] = useState<string | undefined>(undefined);
-  const [downvotesLocal, setDownvotes] = useState<number>(downvotes);
-  const [hasUpVoted, setHasUpVoted] = useState<boolean>(false);
-  const [hasDownVoted, setHasDownVoted] = useState<boolean>(false);
+  const {
+    upvotesLocal,
+    downvotesLocal,
+    upvoteOnClick,
+    downvoteOnClick,
+  } = useUpvoteDownvote({
+    upvotes,
+    downvotes,
+    qid,
+    checkVoteStatus: checkVoteQuestion,
+    upvoteAPIRequest: upvoteQuestion,
+    downvoteAPIRequest: downvoteQuestion,
+  });
+
   const onBack = () => {
     if (typeof window !== "undefined") {
       return window.history.back();
@@ -47,58 +52,8 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
     }
   };
 
-  useEffect(() => {
-    const runChecks = async () => {
-      const userIdToken = await getIdToken();
-
-      const { isUpvote, isDownvote } = await checkVoteQuestion(
-        userIdToken,
-        qid
-      );
-      if (isUpvote) {
-        setHasUpVoted(true);
-      }
-
-      if (isDownvote) {
-        setHasDownVoted(true);
-      }
-      setIdToken(userIdToken);
-    };
-    if (isAuthenticated) {
-      runChecks();
-    }
-  }, [getIdToken, isAuthenticated, qid]);
-
-  const upvote = async () => {
-    if (hasUpVoted && idToken) {
-      const question = await upvoteQuestion(idToken, qid, VOTE_CMD.remove);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(false);
-    } else if (idToken) {
-      const question = await upvoteQuestion(idToken, qid, VOTE_CMD.insert);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpVoted(true);
-      setHasDownVoted(false);
-    }
-  };
-  const downvote = async () => {
-    if (hasDownVoted && idToken) {
-      const question = await downvoteQuestion(idToken, qid, VOTE_CMD.remove);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(false);
-    } else if (idToken) {
-      const question = await downvoteQuestion(idToken, qid, VOTE_CMD.insert);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(true);
-    }
-  };
+  const upvote = async () => await downvoteOnClick();
+  const downvote = async () => await upvoteOnClick();
 
   const action = [
     <Button icon={<LikeFilled />} key="1" onClick={upvote}>
