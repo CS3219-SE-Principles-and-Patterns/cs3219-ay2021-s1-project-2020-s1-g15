@@ -38,6 +38,7 @@
   - [Answers](#answers)
     - [Create an answer](#create-an-answer)
     - [Get all answers by question ID](#get-all-answers-by-question-id)
+    - [Check answers vote status](#check-answers-vote-status)
     - [Update an answer](#update-an-answer)
     - [Delete an answer](#delete-an-answer)
 
@@ -470,7 +471,6 @@ OR
 - Auth required: YES
 - Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 
-
 #### Upvote a question
 
 - Method: `PUT`
@@ -635,9 +635,9 @@ OR
 #### Get all answers by question ID
 
 - Method: `GET`
-- URL: `/api/answers?questionId=[qid]`
+- URL: `/api/answers?questionId=<qid>`
 - URL query
-  - `qid`: the `ObjectId` of the question
+  - `<qid>`: the `ObjectId` of the question
 - Auth required: NO
 
 **Success response**:
@@ -667,6 +667,33 @@ OR
 - Condition: if question (`questionId`) is not found
 - Status: `404 NOT FOUND`
 - Content: description of error
+
+#### Check answers vote status
+
+- Method: `GET`
+- URL: `/api/answers/vote-status?answerIds=<aid>&answerIds=<aid>&...`
+- URL query
+  - `<aid>`: the `ObjectId` of the answer
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+
+**Success response**:
+
+- Condition: if everything is OK
+- Code: `200 OK`
+- Content (example):
+  ```js
+  {
+    "5f7d327766aa52759df235ff": {
+        "isUpvote": true,
+        "isDownvote": false
+    },
+    "5f7d327766aa52759df235f1": {
+        "isUpvote": false,
+        "isDownvote": true
+    }
+  }
+  ```
 
 #### Update an answer
 
