@@ -21,7 +21,8 @@ enum User {
 }
 
 enum Vote {
-  INVALID_VOTE_COMMAND = "Email or password is invalid",
+  MISSING_VOTE_COMMAND = "Missing vote command",
+  INVALID_VOTE_COMMAND = "Invalid vote command",
 }
 
 export class ApiErrorMessage {
