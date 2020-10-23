@@ -15,10 +15,12 @@ import {
   removeAnswerFromQuestion,
 } from "../controllers/questions";
 import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
+import { getAnswersVoteStatus } from "../controllers/votes";
 import {
   HttpStatusCode,
   CreateAnswerRequest,
   EditAnswerRequest,
+  GetAnswersVoteStatusResponse,
 } from "../utils";
 
 const router: Router = Router();
@@ -32,6 +34,24 @@ router.get("/", async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.OK).json(answers);
 });
+
+// GET request - check user's vote status for answers of a question
+router.get(
+  "/vote-status",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerIdQuery = req.query.id as undefined | string | string[];
+
+    // TODO: throw error if answer not found
+    const status: GetAnswersVoteStatusResponse = await getAnswersVoteStatus(
+      userId,
+      answerIdQuery
+    );
+
+    return res.status(HttpStatusCode.OK).json(status);
+  }
+);
 
 // POST request - create an answer
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {

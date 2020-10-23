@@ -8,6 +8,7 @@ enum Question {
 
 enum Answer {
   NOT_FOUND = "Answer not found",
+  MISSING_ID = "Answer ID is missing",
   INVALID_ID = "Answer ID is invalid",
   MISSING_REQUIRED_FIELDS = "Required fields are missing",
   INVALID_FIELDS = "Required fields are invalid",

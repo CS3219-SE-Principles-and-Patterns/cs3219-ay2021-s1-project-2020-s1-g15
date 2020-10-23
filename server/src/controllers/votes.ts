@@ -11,6 +11,7 @@ import {
   ApiError,
   HttpStatusCode,
   ApiErrorMessage,
+  GetAnswersVoteStatusResponse,
 } from "../utils";
 
 async function handleQuestionVote(
@@ -67,6 +68,37 @@ async function getQuestionVoteStatus(
   return status;
 }
 
+async function getAnswersVoteStatus(
+  userId: string | ObjectId,
+  answerIdQuery: undefined | string | string[]
+): Promise<GetAnswersVoteStatusResponse> {
+  if (answerIdQuery === undefined) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Answer.MISSING_ID
+    );
+  }
+
+  const answerIds: string[] = Array.isArray(answerIdQuery)
+    ? answerIdQuery
+    : [answerIdQuery];
+  const answerVotes: Vote[] = await getAnswersVoteByUser(userId, answerIds);
+
+  const status: GetAnswersVoteStatusResponse = {};
+  // initialise status first:
+  answerIds.forEach((id: string) => {
+    status[id] = { isUpvote: false, isDownvote: false };
+  });
+  // populate the status from resulting query:
+  answerVotes.forEach(({ _id, type }: Vote) =>
+    type === VoteType.UPVOTE
+      ? (status[_id.toHexString()].isUpvote = true)
+      : (status[_id.toHexString()].isDownvote = true)
+  );
+
+  return status;
+}
+
 // -----------------------------------------------------------------------------
 // Helper functions
 // -----------------------------------------------------------------------------
@@ -82,6 +114,25 @@ async function getQuestionVoteByUser(
     userId: userObjectId,
     questionId: questionObjectId,
   });
+}
+
+async function getAnswersVoteByUser(
+  userId: string | ObjectId,
+  answerIds: string[]
+): Promise<Vote[]> {
+  const userObjectId: ObjectId = toValidObjectId(userId);
+  const answerObjectIds: ObjectId[] = answerIds.map((id) =>
+    toValidObjectId(id)
+  );
+
+  return getVotesCollection()
+    .find({
+      userId: userObjectId,
+      answerId: {
+        $in: answerObjectIds,
+      },
+    })
+    .toArray();
 }
 
 async function upsertQuestionVoteByUser(
@@ -182,4 +233,4 @@ async function handleRemoveQuestionVote(
   };
 }
 
-export { handleQuestionVote, getQuestionVoteStatus };
+export { handleQuestionVote, getQuestionVoteStatus, getAnswersVoteStatus };
