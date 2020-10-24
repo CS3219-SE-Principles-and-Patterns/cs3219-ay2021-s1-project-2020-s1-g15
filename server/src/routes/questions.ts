@@ -5,6 +5,8 @@ import { Answer, Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   getQuestions,
+  //getQuestionsSearchedArray,
+  getSearchedQuestions,
   getQuestionById,
   createQuestion,
   updateQuestion,
@@ -49,6 +51,57 @@ router.get("/", async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.OK).json(questionsRes);
 });
+
+// GET request - list all searched questions
+router.get("/", async (req: Request, res: Response) => {
+  const paginatedReq = req.query as GetPaginatedQuestionsRequest;
+  const searchString: string = req.params.searchString;
+  //tried both params and body
+  const questionsRes: GetPaginatedQuestionsResponse = await getSearchedQuestions(
+    paginatedReq,
+    searchString
+  );
+
+  return res.status(HttpStatusCode.OK).json(questionsRes);
+});
+
+// TRYING Fuzzy Search
+/*
+router.get("/", async function (req, res) {
+  if (req.query.search) {
+    const question: Question[] = await getQuestionsArray();
+    // error here, find function not working as expected
+    question.find({ $text: { $search: req.query.search } });
+    
+    //ignore from here onwards
+    question.find({ title: req.query.search }, function (err, foundjobs) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("jobs/index", { jobs: foundjobs });
+      }
+    });
+  }
+
+  Jobs.find({}, function (err, allJobs) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("jobs/index", { jobs: allJobs });
+    }
+  });
+});
+*/
+
+//GET SEARCHED QUESTIONS
+/*
+Error - page?
+router.get("/", async (req: Request, res: Response) => {
+  const searchString: string = req.params.searchString;
+  const question: Question[] = await getQuestionsSearchedArray(searchString);
+  return res.status(HttpStatusCode.OK).json(question);
+});
+*/
 
 // GET request - get a single question by its ID
 router.get("/:id", async (req: Request, res: Response) => {

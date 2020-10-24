@@ -44,6 +44,48 @@ async function getQuestions(
   return { questions, total };
 }
 
+//GET SEARCHED QUESTIONS BY ARRAY
+/*
+async function getQuestionsSearchedArray(
+  searchString: string
+): Promise<Question[]> {
+  const questions: Question[] = await getQuestionsCollection()
+    .find({ $text: { $search: searchString } })
+    .toArray();
+
+  return questions;
+}
+*/
+
+async function getSearchedQuestions(
+  req: GetPaginatedQuestionsRequest,
+  searchString: string
+): Promise<GetPaginatedQuestionsResponse> {
+  const page = parseInt(req.page || "0");
+  const pageSize = parseInt(req.pageSize || "0");
+
+  if (!page || !pageSize) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
+    );
+  }
+
+  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
+    .find({ $text: { $search: searchString } })
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
+    .toArray();
+  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
+
+  const [questions, total] = await Promise.all([
+    getPaginatedQuestions,
+    getQuestionsCollectionSize,
+  ]);
+
+  return { questions, total };
+}
+
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
   const questionObjectId: ObjectId = toValidObjectId(id);
 
@@ -280,6 +322,8 @@ async function removeAnswerFromQuestion(
 
 export {
   getQuestions,
+  //getQuestionsSearchedArray,
+  getSearchedQuestions,
   getQuestionById,
   getQuestionsByUserId,
   createQuestion,
