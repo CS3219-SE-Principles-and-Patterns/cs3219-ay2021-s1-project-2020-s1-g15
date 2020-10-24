@@ -177,7 +177,6 @@ async function editUpvoteDownvoteQuestion(
   incObject: UpvoteDownvoteIncObject
 ): Promise<Question> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
-  console.log(questionObjectId);
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
