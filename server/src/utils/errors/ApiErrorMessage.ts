@@ -8,6 +8,7 @@ enum Question {
 
 enum Answer {
   NOT_FOUND = "Answer not found",
+  MISSING_ID = "Answer ID is missing",
   INVALID_ID = "Answer ID is invalid",
   MISSING_REQUIRED_FIELDS = "Required fields are missing",
   INVALID_FIELDS = "Required fields are invalid",
@@ -20,8 +21,14 @@ enum User {
   INVALID_FIELDS = "Email or password is invalid",
 }
 
+enum Vote {
+  MISSING_VOTE_COMMAND = "Missing vote command",
+  INVALID_VOTE_COMMAND = "Invalid vote command",
+}
+
 export class ApiErrorMessage {
   public static readonly Question = Question;
   public static readonly Answer = Answer;
   public static readonly User = User;
+  public static readonly Vote = Vote;
 }

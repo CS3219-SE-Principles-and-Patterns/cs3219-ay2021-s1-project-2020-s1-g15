@@ -1,25 +1,32 @@
+import { ObjectId } from "mongodb";
 import { Router, Request, Response } from "express";
 
+import { Answer } from "../models";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   createAnswer,
   getAnswersByQuestionId,
   deleteAnswer,
   updateAnswer,
+  updateAnswerVotes,
 } from "../controllers/answers";
 import {
   addAnswerToQuestion,
   getQuestionById,
   removeAnswerFromQuestion,
 } from "../controllers/questions";
-import { Answer } from "../models";
+import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
+import { getAnswersVoteStatus, handleAnswerVote } from "../controllers/votes";
 import {
   HttpStatusCode,
   CreateAnswerRequest,
   EditAnswerRequest,
+  GetAnswersVoteStatusResponse,
+  UpvoteQuestionRequest,
+  VoteIncrementObject,
+  VoteType,
+  DownvoteQuestionRequest,
 } from "../utils";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
-import { ObjectId } from "mongodb";
-import { addAnswerToUser, removeAnswerFromUser } from "../controllers/users";
 
 const router: Router = Router();
 
@@ -32,6 +39,24 @@ router.get("/", async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.OK).json(answers);
 });
+
+// GET request - check user's vote status for answers of a question
+router.get(
+  "/vote-status",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerIdQuery = req.query.answerIds as undefined | string | string[];
+
+    // TODO: throw error if answer not found
+    const status: GetAnswersVoteStatusResponse = await getAnswersVoteStatus(
+      userId,
+      answerIdQuery
+    );
+
+    return res.status(HttpStatusCode.OK).json(status);
+  }
+);
 
 // POST request - create an answer
 router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
@@ -67,6 +92,54 @@ router.put("/:id", verifyUserAuth, async (req: Request, res: Response) => {
 
   return res.status(HttpStatusCode.OK).json(updatedAnswer);
 });
+
+// PUT request - upvote an answer
+router.put(
+  "/:id/upvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerId: string = req.params.id;
+    const { command: voteCommand } = req.body as UpvoteQuestionRequest;
+
+    const voteIncrementObject: VoteIncrementObject = await handleAnswerVote(
+      userId,
+      answerId,
+      voteCommand,
+      VoteType.UPVOTE
+    );
+    const updatedAnswer: Answer = await updateAnswerVotes(
+      answerId,
+      voteIncrementObject
+    );
+
+    return res.status(HttpStatusCode.OK).json(updatedAnswer);
+  }
+);
+
+// PUT request - downvote an answer
+router.put(
+  "/:id/downvote",
+  verifyUserAuth,
+  async (req: Request, res: Response) => {
+    const userId: ObjectId = res.locals.uid;
+    const answerId: string = req.params.id;
+    const { command: voteCommand } = req.body as DownvoteQuestionRequest;
+
+    const voteIncrementObject = await handleAnswerVote(
+      userId,
+      answerId,
+      voteCommand,
+      VoteType.DOWNVOTE
+    );
+    const updatedAnswer: Answer = await updateAnswerVotes(
+      answerId,
+      voteIncrementObject
+    );
+
+    return res.status(HttpStatusCode.OK).json(updatedAnswer);
+  }
+);
 
 // DELETE request - delete an answer
 router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {

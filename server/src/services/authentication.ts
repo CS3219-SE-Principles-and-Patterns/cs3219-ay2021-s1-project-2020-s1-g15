@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as admin from "firebase-admin";
 import assert from "assert";
+
 import { isDevEnv } from "../utils";
 
 /**

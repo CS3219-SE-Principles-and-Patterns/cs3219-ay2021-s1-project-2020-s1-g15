@@ -12,7 +12,7 @@ import {
   GetPaginatedQuestionsRequest,
   CreateQuestionRequest,
   UpdateQuestionRequest,
-  UpvoteDownvoteIncObject,
+  VoteIncrementObject,
 } from "../utils";
 
 // TODO: add search/filter in the future
@@ -172,20 +172,18 @@ async function updateQuestion(
   return updatedQuestion;
 }
 
-async function editUpvoteDownvoteQuestion(
+async function updateQuestionVotes(
   questionId: string | ObjectId,
-  incObject: UpvoteDownvoteIncObject
+  voteIncrementObject: VoteIncrementObject
 ): Promise<Question> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
+
   const result = await getQuestionsCollection().findOneAndUpdate(
     {
       _id: questionObjectId,
     },
     {
-      $inc: {
-        upvotes: incObject.upvotes,
-        downvotes: incObject.downvotes,
-      },
+      $inc: voteIncrementObject,
     },
     { returnOriginal: false }
   );
@@ -198,6 +196,7 @@ async function editUpvoteDownvoteQuestion(
       ApiErrorMessage.Question.NOT_FOUND
     );
   }
+
   return updatedQuestion;
 }
 
@@ -285,7 +284,7 @@ export {
   getQuestionsByUserId,
   createQuestion,
   updateQuestion,
-  editUpvoteDownvoteQuestion,
+  updateQuestionVotes,
   deleteQuestion,
   addAnswerToQuestion,
   removeAnswerFromQuestion,

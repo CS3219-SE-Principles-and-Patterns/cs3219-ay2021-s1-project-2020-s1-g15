@@ -1,5 +1,5 @@
 import { Question } from "src/models";
-import { VOTE_CMD, Level, Subject } from "src/utils";
+import { VoteCommand, Level, Subject } from "src/utils";
 
 // API REQUEST RESPONSE //
 
@@ -23,16 +23,7 @@ export type CreateQuestionRequest = {
 export type UpdateQuestionRequest = CreateQuestionRequest;
 
 export type UpvoteQuestionRequest = {
-  command: VOTE_CMD;
+  command?: VoteCommand.INSERT | VoteCommand.REMOVE;
 };
 
-export type DownvoteQuestionRequest = {
-  command: VOTE_CMD;
-};
-
-// UTILS //
-
-export type UpvoteDownvoteIncObject = {
-  upvotes: number;
-  downvotes: number;
-};
+export type DownvoteQuestionRequest = UpvoteQuestionRequest;

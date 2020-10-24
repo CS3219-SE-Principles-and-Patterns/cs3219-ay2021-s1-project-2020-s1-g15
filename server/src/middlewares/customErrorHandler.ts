@@ -10,6 +10,8 @@ export default async function customErrorHandler(
   res: Response,
   next: NextFunction
 ): Promise<unknown> {
+  console.error(err);
+
   if (err instanceof ApiError) {
     return res.status(err.status).json({
       status: err.status,

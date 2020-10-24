@@ -38,6 +38,9 @@
   - [Answers](#answers)
     - [Create an answer](#create-an-answer)
     - [Get all answers by question ID](#get-all-answers-by-question-id)
+    - [Check answers vote status](#check-answers-vote-status)
+    - [Upvote an answer](#upvote-an-answer)
+    - [Downvote an answer](#downvote-an-answer)
     - [Update an answer](#update-an-answer)
     - [Delete an answer](#delete-an-answer)
 
@@ -470,7 +473,6 @@ OR
 - Auth required: YES
 - Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
 
-
 #### Upvote a question
 
 - Method: `PUT`
@@ -483,6 +485,7 @@ OR
     command: "insert" | "remove" // string | required
   }
   ```
+
 #### Downvote a question
 
 - Method: `PUT`
@@ -635,9 +638,9 @@ OR
 #### Get all answers by question ID
 
 - Method: `GET`
-- URL: `/api/answers?questionId=[qid]`
+- URL: `/api/answers?questionId=<qid>`
 - URL query
-  - `qid`: the `ObjectId` of the question
+  - `<qid>`: the `ObjectId` of the question
 - Auth required: NO
 
 **Success response**:
@@ -667,6 +670,78 @@ OR
 - Condition: if question (`questionId`) is not found
 - Status: `404 NOT FOUND`
 - Content: description of error
+
+#### Check answers vote status
+
+- Method: `GET`
+- URL: `/api/answers/vote-status?answerIds=<aid>&answerIds=<aid>&...`
+- URL query
+  - `<aid>`: the `ObjectId` of the answer
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+
+**Properties**:
+
+- Will not throw `404 NOT FOUND` errors since this does **not check if answers actually exists** (yet)
+- The resulting JSON will guarantee to have the `key` of the `ObjectId` of the answer(s) being requested
+
+**Success response**:
+
+- Condition: if everything is OK
+- Code: `200 OK`
+- Content (example): JSON object, where the `key` is the `ObjectId` of the answer
+  ```js
+  {
+    "5f7d327766aa52759df235ff": {
+        "isUpvote": true,
+        "isDownvote": false
+    },
+    "5f7d327766aa52759df235f1": {
+        "isUpvote": false,
+        "isDownvote": true
+    }
+  }
+  ```
+
+#### Upvote an answer
+
+- Method: `PUT`
+- URL: `/api/answers/:id/upvote`
+- URL parameters
+  - `id`: the `ObjectId` of the answer
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
+
+**Properties**:
+
+- Use `insert` to add an upvote, and `remove` to remove the upvote
+- All calls are idempotent; calling `insert` multiple times will only insert a single vote document
+
+#### Downvote an answer
+
+- Method: `PUT`
+- URL: `/api/answers/:id/downvote`
+- URL parameters
+  - `id`: the `ObjectId` of the answer
+- Auth required: YES
+- Headers: `Authorization: Bearer <FIREBASE_TOKEN>`
+- Content (example):
+  ```js
+  {
+    command: "insert" | "remove" // string | required
+  }
+  ```
+
+**Properties**:
+
+- Use `insert` to add an upvote, and `remove` to remove the upvote
+- All calls are idempotent; calling `insert` multiple times will only insert a single vote document
 
 #### Update an answer
 

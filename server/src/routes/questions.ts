@@ -1,21 +1,25 @@
 import { Router, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 
+import { Answer, Question } from "../models";
+import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   getQuestions,
   getQuestionById,
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  editUpvoteDownvoteQuestion,
+  updateQuestionVotes,
 } from "../controllers/questions";
 import {
   addQuestionToUser,
   removeAllAnswersFromUsers,
   removeQuestionFromUser,
 } from "../controllers/users";
-import { Answer, Question } from "../models";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
+import {
+  getQuestionVoteStatus,
+  handleQuestionVote,
+} from "../controllers/votes";
 import {
   deleteAllAnswersByQuestionId,
   getAnswersByQuestionId,
@@ -23,15 +27,15 @@ import {
 import {
   HttpStatusCode,
   VoteType,
-  GetVoteStatusResponse,
+  GetQuestionVoteStatusResponse,
   GetPaginatedQuestionsRequest,
   GetPaginatedQuestionsResponse,
   CreateQuestionRequest,
   UpvoteQuestionRequest,
   DownvoteQuestionRequest,
   UpdateQuestionRequest,
+  VoteIncrementObject,
 } from "../utils";
-import { checkUpvoteDownvote, handleQuestionVote } from "../controllers/votes";
 
 const router: Router = Router();
 
@@ -73,14 +77,15 @@ router.post("/", verifyUserAuth, async (req: Request, res: Response) => {
   return res.status(HttpStatusCode.CREATED).json(createdQuestion);
 });
 
-// GET request - check if  user has voted for question
+// GET request - check user's vote status for a question
 router.get(
   "/:id/vote-status",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const status: GetVoteStatusResponse = await checkUpvoteDownvote(
+
+    const status: GetQuestionVoteStatusResponse = await getQuestionVoteStatus(
       userId,
       questionId
     );
@@ -89,46 +94,50 @@ router.get(
   }
 );
 
-// Put request - upvote a question
+// PUT request - upvote a question
 router.put(
   "/:id/upvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const { command } = req.body as UpvoteQuestionRequest;
-    const incObject = await handleQuestionVote(
+    const { command: voteCommand } = req.body as UpvoteQuestionRequest;
+
+    const voteIncrementObject: VoteIncrementObject = await handleQuestionVote(
       userId,
       questionId,
-      command,
+      voteCommand,
       VoteType.UPVOTE
     );
-    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+    const updatedQuestion: Question = await updateQuestionVotes(
       questionId,
-      incObject
+      voteIncrementObject
     );
+
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
 
-// Put request - downvote a question
+// PUT request - downvote a question
 router.put(
   "/:id/downvote",
   verifyUserAuth,
   async (req: Request, res: Response) => {
     const userId: ObjectId = res.locals.uid;
     const questionId: string = req.params.id;
-    const { command } = req.body as DownvoteQuestionRequest;
-    const incObject = await handleQuestionVote(
+    const { command: voteCommand } = req.body as DownvoteQuestionRequest;
+
+    const voteIncrementObject = await handleQuestionVote(
       userId,
       questionId,
-      command,
+      voteCommand,
       VoteType.DOWNVOTE
     );
-    const updatedQuestion: Question = await editUpvoteDownvoteQuestion(
+    const updatedQuestion: Question = await updateQuestionVotes(
       questionId,
-      incObject
+      voteIncrementObject
     );
+
     return res.status(HttpStatusCode.OK).json(updatedQuestion);
   }
 );
