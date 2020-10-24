@@ -34,8 +34,8 @@ function useUpvoteDownvote({
   const [idToken, setIdToken] = useState<string | undefined>(undefined);
   const [upvotesLocal, setUpvotes] = useState<number>(upvotes);
   const [downvotesLocal, setDownvotes] = useState<number>(downvotes);
-  const [hasUpVoted, setHasUpVoted] = useState<boolean>(false);
-  const [hasDownVoted, setHasDownVoted] = useState<boolean>(false);
+  const [hasUpvoted, setHasUpvoted] = useState<boolean>(false);
+  const [hasDownvoted, setHasDownvoted] = useState<boolean>(false);
 
   useEffect(() => {
     const runChecks = async () => {
@@ -43,11 +43,11 @@ function useUpvoteDownvote({
 
       const { isUpvote, isDownvote } = await checkVoteStatus(userIdToken, qid);
       if (isUpvote) {
-        setHasUpVoted(true);
+        setHasUpvoted(true);
       }
 
       if (isDownvote) {
-        setHasDownVoted(true);
+        setHasDownvoted(true);
       }
       setIdToken(userIdToken);
     };
@@ -57,33 +57,33 @@ function useUpvoteDownvote({
   }, [checkVoteStatus, getIdToken, isAuthenticated, qid]);
 
   const upvoteOnClick = async () => {
-    if (hasUpVoted && idToken) {
+    if (hasUpvoted && idToken) {
       const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(false);
+      setHasUpvoted(false);
+      setHasDownvoted(false);
     } else if (idToken) {
       const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
-      setHasUpVoted(true);
-      setHasDownVoted(false);
+      setHasUpvoted(true);
+      setHasDownvoted(false);
     }
   };
   const downvoteOnClick = async () => {
-    if (hasDownVoted && idToken) {
+    if (hasDownvoted && idToken) {
       const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(false);
+      setHasUpvoted(false);
+      setHasDownvoted(false);
     } else if (idToken) {
       const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
-      setHasUpVoted(false);
-      setHasDownVoted(true);
+      setHasUpvoted(false);
+      setHasDownvoted(true);
     }
   };
   // might not need to import all, but just left it so there is a flexibility
@@ -93,10 +93,10 @@ function useUpvoteDownvote({
     setUpvotes,
     downvotesLocal,
     setDownvotes,
-    hasUpVoted,
-    setHasUpVoted,
-    hasDownVoted,
-    setHasDownVoted,
+    hasUpvoted,
+    setHasUpvoted,
+    hasDownvoted,
+    setHasDownvoted,
     upvoteOnClick,
     downvoteOnClick,
   };
