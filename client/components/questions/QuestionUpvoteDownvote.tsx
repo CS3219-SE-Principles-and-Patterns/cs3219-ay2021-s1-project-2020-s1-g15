@@ -11,12 +11,7 @@ import {
 
 import styles from "./index.module.css";
 import { useAuth } from "components/authentication";
-import {
-  checkVoteQuestion,
-  downvoteQuestion,
-  upvoteQuestion,
-  useUpvoteDownvote,
-} from "utils";
+import { useUpvoteDownvote } from "utils";
 
 const { Content } = Layout;
 
@@ -42,12 +37,10 @@ const QuestionUpvoteDownvote: FC<QuestionUpvoteDownvoteProps> = ({
     upvoteOnClick,
     downvoteOnClick,
   } = useUpvoteDownvote({
+    isQuestionVote: true,
+    questionId: qid,
     upvotes,
     downvotes,
-    qid,
-    checkVoteStatus: checkVoteQuestion,
-    upvoteAPIRequest: upvoteQuestion,
-    downvoteAPIRequest: downvoteQuestion,
   });
 
   const onBack = () => {

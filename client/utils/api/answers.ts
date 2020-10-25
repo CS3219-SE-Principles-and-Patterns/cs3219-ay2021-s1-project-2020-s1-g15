@@ -4,9 +4,14 @@ import {
   CreateAnswerReq,
   getIdToken,
   EditAnswerReq,
+  VoteCommand,
+  VoteStatus,
 } from "utils/index";
 import {
   ANSWERS_API_URL,
+  ANSWERS_VOTE_STATUS_API_URL,
+  ANSWERS_UPVOTE_API_URL,
+  ANSWERS_DOWNVOTE_API_URL,
   throwApiError,
   createUrlParamString,
   getAuthorizationString,
@@ -67,6 +72,78 @@ async function editAnswer(
   return res.json();
 }
 
+async function checkAnswerVoteStatus(answerId: string): Promise<VoteStatus> {
+  const userIdToken: string = await getIdToken();
+
+  const query = {
+    answerId: answerId,
+  };
+  const res = await fetch(
+    `${ANSWERS_VOTE_STATUS_API_URL}/${createUrlParamString(query)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: getAuthorizationString(userIdToken),
+      },
+    }
+  );
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
+async function upvoteAnswer(
+  answerId: string,
+  voteCommand: VoteCommand
+): Promise<Answer> {
+  const userIdToken: string = await getIdToken();
+
+  const res = await fetch(ANSWERS_UPVOTE_API_URL(answerId), {
+    method: "PUT",
+    body: JSON.stringify({
+      command: voteCommand,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(userIdToken),
+    },
+  });
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
+async function downvoteAnswer(
+  answerId: string,
+  voteCommand: VoteCommand
+): Promise<Answer> {
+  const userIdToken: string = await getIdToken();
+
+  const res = await fetch(ANSWERS_DOWNVOTE_API_URL(answerId), {
+    method: "PUT",
+    body: JSON.stringify({
+      command: voteCommand,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      authorization: getAuthorizationString(userIdToken),
+    },
+  });
+
+  if (!res.ok) {
+    return throwApiError(res);
+  }
+
+  return res.json();
+}
+
 async function deleteSingleAnswer(answerId: string): Promise<void> {
   const userIdToken: string = await getIdToken();
 
@@ -83,4 +160,12 @@ async function deleteSingleAnswer(answerId: string): Promise<void> {
   }
 }
 
-export { getAnswersOfQuestion, createAnswer, editAnswer, deleteSingleAnswer };
+export {
+  getAnswersOfQuestion,
+  createAnswer,
+  editAnswer,
+  checkAnswerVoteStatus,
+  upvoteAnswer,
+  downvoteAnswer,
+  deleteSingleAnswer,
+};

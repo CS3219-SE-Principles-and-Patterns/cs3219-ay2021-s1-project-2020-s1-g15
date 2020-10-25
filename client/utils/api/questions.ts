@@ -5,6 +5,7 @@ import {
   GetPaginatedQuestionsReq,
   CreateQuestionReq,
   EditQuestionReq,
+  getIdToken,
 } from "..";
 import {
   QUESTIONS_API_URL,
@@ -102,10 +103,11 @@ const QUESTION_DOWNVOTE = (qid: string): string => `${qid}/downvote`;
 
 const QUESTION_VOTE_STATUS = (qid: string): string => `${qid}/vote-status`;
 
-async function checkVoteQuestion(
-  userIdToken: string,
+async function checkQuestionVoteStatus(
   questionId: string
 ): Promise<VoteStatus> {
+  const userIdToken: string = await getIdToken();
+
   const res = await fetch(
     `${QUESTIONS_API_URL}/${QUESTION_VOTE_STATUS(questionId)}`,
     {
@@ -126,10 +128,11 @@ async function checkVoteQuestion(
 }
 
 async function upvoteQuestion(
-  userIdToken: string,
   questionId: string,
   voteCmd: VoteCommand
 ): Promise<Question> {
+  const userIdToken: string = await getIdToken();
+
   const res = await fetch(
     `${QUESTIONS_API_URL}/${QUESTION_UPVOTE(questionId)}`,
     {
@@ -152,10 +155,11 @@ async function upvoteQuestion(
 }
 
 async function downvoteQuestion(
-  userIdToken: string,
   questionId: string,
   voteCmd: VoteCommand
 ): Promise<Question> {
+  const userIdToken: string = await getIdToken();
+
   const res = await fetch(
     `${QUESTIONS_API_URL}/${QUESTION_DOWNVOTE(questionId)}`,
     {
@@ -185,5 +189,5 @@ export {
   deleteSingleQuestion,
   upvoteQuestion,
   downvoteQuestion,
-  checkVoteQuestion,
+  checkQuestionVoteStatus,
 };
