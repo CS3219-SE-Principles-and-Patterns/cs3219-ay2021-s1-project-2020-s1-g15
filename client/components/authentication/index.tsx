@@ -12,7 +12,6 @@ import {
   getSingleUser,
   login,
   logout,
-  getIdToken,
   useFirebaseAuthentication,
 } from "utils/index";
 
@@ -22,26 +21,27 @@ type AuthProviderProps = {
 
 type AuthContextType = {
   firebaseUser: firebase.User | null;
+  idToken: string;
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: typeof login;
   logout: typeof logout;
-  getIdToken: typeof getIdToken;
 };
 
 const AuthContext = createContext<AuthContextType>({
   firebaseUser: null,
+  idToken: "",
   user: null,
   isAuthenticated: false,
   isLoading: true,
   login,
   logout,
-  getIdToken,
 });
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const firebaseUser: firebase.User | null = useFirebaseAuthentication();
+  const [idToken, setIdToken] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,10 +49,19 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     setIsLoading(true);
     (async () => {
-      const user: User | null =
-        firebaseUser !== null ? await getSingleUser(firebaseUser.uid) : null;
-      setUser(user);
-      setIsAuthenticated(user !== null);
+      if (firebaseUser === null) {
+        setUser(null);
+        setIdToken("");
+      } else {
+        // TODO: may need to setInterval to refresh idToken periodically
+        const [user, idToken] = await Promise.all([
+          getSingleUser(firebaseUser.uid),
+          firebaseUser.getIdToken(),
+        ]);
+        setUser(user);
+        setIdToken(idToken);
+      }
+      setIsAuthenticated(firebaseUser !== null);
       setIsLoading(false);
     })();
   }, [firebaseUser]);
@@ -62,11 +71,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       value={{
         isAuthenticated,
         firebaseUser,
+        idToken,
         user,
         isLoading,
         login,
         logout,
-        getIdToken,
       }}
     >
       <Spin spinning={isLoading}>{children}</Spin>

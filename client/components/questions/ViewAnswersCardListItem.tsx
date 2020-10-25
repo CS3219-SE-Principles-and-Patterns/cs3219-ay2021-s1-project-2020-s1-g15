@@ -23,7 +23,7 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
   answer,
   refreshAnswers,
 }): JSX.Element => {
-  const { firebaseUser } = useAuth();
+  const { firebaseUser, idToken } = useAuth();
   const isAnswerOwner: boolean = firebaseUser?.uid === answer.userId;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const {
@@ -46,7 +46,7 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
       okText: "Delete",
       okType: "danger",
       async onOk() {
-        await deleteSingleAnswer(answerId);
+        await deleteSingleAnswer(idToken, answerId);
         await refreshAnswers();
         notification.success({
           message: "Answer succesfully deleted",

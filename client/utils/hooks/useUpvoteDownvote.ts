@@ -18,19 +18,25 @@ type BaseVoteHookProps = {
 type QuestionVoteHookProps = BaseVoteHookProps & {
   isAnswerVote?: never;
   isQuestionVote: true;
+  answerId?: never;
   questionId: string;
 };
 
 type AnswerVoteHookProps = BaseVoteHookProps & {
   isQuestionVote?: never;
   isAnswerVote: true;
+  questionId?: never;
   answerId: string;
 };
 
-function useUpvoteDownvote(props: QuestionVoteHookProps | AnswerVoteHookProps) {
-  const { upvotes, downvotes } = props;
-
-  const { isAuthenticated, getIdToken } = useAuth();
+function useUpvoteDownvote({
+  upvotes,
+  downvotes,
+  isQuestionVote,
+  questionId,
+  answerId,
+}: QuestionVoteHookProps | AnswerVoteHookProps) {
+  const { isAuthenticated, idToken } = useAuth();
   const [upvotesLocal, setUpvotes] = useState<number>(upvotes);
   const [downvotesLocal, setDownvotes] = useState<number>(downvotes);
   const [hasUpvoted, setHasUpvoted] = useState<boolean>(false);
@@ -38,10 +44,9 @@ function useUpvoteDownvote(props: QuestionVoteHookProps | AnswerVoteHookProps) {
 
   useEffect(() => {
     const runChecks = async () => {
-      const { isUpvote, isDownvote } = props.isQuestionVote
-        ? await checkQuestionVoteStatus(props.questionId)
-        : await checkAnswerVoteStatus(props.answerId);
-
+      const { isUpvote, isDownvote } = isQuestionVote
+        ? await checkQuestionVoteStatus(idToken, questionId as string)
+        : await checkAnswerVoteStatus(idToken, answerId as string);
       setHasUpvoted(isUpvote);
       setHasDownvoted(isDownvote);
     };
@@ -49,7 +54,7 @@ function useUpvoteDownvote(props: QuestionVoteHookProps | AnswerVoteHookProps) {
     if (isAuthenticated) {
       runChecks();
     }
-  }, [getIdToken, isAuthenticated, props]);
+  }, [idToken, isAuthenticated, isQuestionVote, questionId, answerId]);
 
   const upvoteOnClick = async () => {
     if (!isAuthenticated) {
@@ -57,9 +62,9 @@ function useUpvoteDownvote(props: QuestionVoteHookProps | AnswerVoteHookProps) {
     }
 
     const voteCommand = hasUpvoted ? VoteCommand.REMOVE : VoteCommand.INSERT;
-    const doc = props.isQuestionVote
-      ? await upvoteQuestion(props.questionId, voteCommand)
-      : await upvoteAnswer(props.answerId, voteCommand);
+    const doc = isQuestionVote
+      ? await upvoteQuestion(idToken, questionId as string, voteCommand)
+      : await upvoteAnswer(idToken, answerId as string, voteCommand);
     setUpvotes(doc.upvotes);
     setDownvotes(doc.downvotes);
     setHasUpvoted(!hasUpvoted);
@@ -72,9 +77,9 @@ function useUpvoteDownvote(props: QuestionVoteHookProps | AnswerVoteHookProps) {
     }
 
     const voteCommand = hasDownvoted ? VoteCommand.REMOVE : VoteCommand.INSERT;
-    const doc = props.isQuestionVote
-      ? await downvoteQuestion(props.questionId, voteCommand)
-      : await downvoteAnswer(props.answerId, voteCommand);
+    const doc = isQuestionVote
+      ? await downvoteQuestion(idToken, questionId as string, voteCommand)
+      : await downvoteAnswer(idToken, answerId as string, voteCommand);
     setUpvotes(doc.upvotes);
     setDownvotes(doc.downvotes);
     setHasDownvoted(!hasDownvoted);

@@ -4,6 +4,7 @@ import { Row, Form, Input, Button, notification, Space, Tabs } from "antd";
 import styles from "./index.module.css";
 import { Answer, createAnswer, editAnswer } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
+import { useAuth } from "components/authentication";
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -37,6 +38,7 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
   refreshAnswers,
   ...props
 }): JSX.Element => {
+  const { idToken } = useAuth();
   const [previewMarkdown, setPreviewMarkdown] = useState<string>("");
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -49,7 +51,7 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
   const handleCreate = async ({
     markdown,
   }: Pick<Answer, "markdown">): Promise<void> => {
-    await createAnswer({ markdown, questionId });
+    await createAnswer(idToken, { markdown, questionId });
     await refreshAnswers();
     resetForm();
     notification.success({
@@ -70,7 +72,7 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
       return;
     }
 
-    await editAnswer({ markdown }, props.answer._id);
+    await editAnswer(idToken, { markdown }, props.answer._id);
     await refreshAnswers();
     props.onCancelEdit();
     notification.success({

@@ -2,7 +2,6 @@ import {
   Answer,
   GetAnswersOfQuestionReq,
   CreateAnswerReq,
-  getIdToken,
   EditAnswerReq,
   VoteCommand,
   VoteStatus,
@@ -31,9 +30,10 @@ async function getAnswersOfQuestion(
   return res.json() as Promise<Answer[]>;
 }
 
-async function createAnswer(req: CreateAnswerReq): Promise<Answer> {
-  const userIdToken: string = await getIdToken();
-
+async function createAnswer(
+  userIdToken: string,
+  req: CreateAnswerReq
+): Promise<Answer> {
   const res = await fetch(ANSWERS_API_URL, {
     method: "POST",
     body: JSON.stringify(req),
@@ -51,11 +51,10 @@ async function createAnswer(req: CreateAnswerReq): Promise<Answer> {
 }
 
 async function editAnswer(
+  userIdToken: string,
   req: EditAnswerReq,
   answerId: string
 ): Promise<Answer> {
-  const userIdToken: string = await getIdToken();
-
   const res = await fetch(`${ANSWERS_API_URL}/${answerId}`, {
     method: "PUT",
     body: JSON.stringify(req),
@@ -72,9 +71,10 @@ async function editAnswer(
   return res.json();
 }
 
-async function checkAnswerVoteStatus(answerId: string): Promise<VoteStatus> {
-  const userIdToken: string = await getIdToken();
-
+async function checkAnswerVoteStatus(
+  userIdToken: string,
+  answerId: string
+): Promise<VoteStatus> {
   const query = {
     answerIds: answerId,
   };
@@ -99,11 +99,10 @@ async function checkAnswerVoteStatus(answerId: string): Promise<VoteStatus> {
 }
 
 async function upvoteAnswer(
+  userIdToken: string,
   answerId: string,
   voteCommand: VoteCommand
 ): Promise<Answer> {
-  const userIdToken: string = await getIdToken();
-
   const res = await fetch(ANSWERS_UPVOTE_API_URL(answerId), {
     method: "PUT",
     body: JSON.stringify({
@@ -123,11 +122,10 @@ async function upvoteAnswer(
 }
 
 async function downvoteAnswer(
+  userIdToken: string,
   answerId: string,
   voteCommand: VoteCommand
 ): Promise<Answer> {
-  const userIdToken: string = await getIdToken();
-
   const res = await fetch(ANSWERS_DOWNVOTE_API_URL(answerId), {
     method: "PUT",
     body: JSON.stringify({
@@ -146,9 +144,10 @@ async function downvoteAnswer(
   return res.json();
 }
 
-async function deleteSingleAnswer(answerId: string): Promise<void> {
-  const userIdToken: string = await getIdToken();
-
+async function deleteSingleAnswer(
+  userIdToken: string,
+  answerId: string
+): Promise<void> {
   const res = await fetch(`${ANSWERS_API_URL}/${answerId}`, {
     method: "DELETE",
     headers: {
