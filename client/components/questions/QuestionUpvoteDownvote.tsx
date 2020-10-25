@@ -58,14 +58,11 @@ const QuestionUpvoteDownvote: FC<QuestionUpvoteDownvoteProps> = ({
     }
   };
 
-  const upvote = async () => await downvoteOnClick();
-  const downvote = async () => await upvoteOnClick();
-
   const action = [
-    <Button icon={<LikeFilled />} key="1" onClick={upvote}>
+    <Button icon={<LikeFilled />} key="1" onClick={upvoteOnClick}>
       Upvote
     </Button>,
-    <Button icon={<DislikeFilled />} key="2" onClick={downvote}>
+    <Button icon={<DislikeFilled />} key="2" onClick={downvoteOnClick}>
       Downvote
     </Button>,
   ];
