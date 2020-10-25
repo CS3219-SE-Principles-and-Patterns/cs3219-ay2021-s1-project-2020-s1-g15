@@ -76,10 +76,10 @@ async function checkAnswerVoteStatus(answerId: string): Promise<VoteStatus> {
   const userIdToken: string = await getIdToken();
 
   const query = {
-    answerId: answerId,
+    answerIds: answerId,
   };
   const res = await fetch(
-    `${ANSWERS_VOTE_STATUS_API_URL}/${createUrlParamString(query)}`,
+    `${ANSWERS_VOTE_STATUS_API_URL}${createUrlParamString(query)}`,
     {
       method: "GET",
       headers: {
@@ -93,7 +93,9 @@ async function checkAnswerVoteStatus(answerId: string): Promise<VoteStatus> {
     return throwApiError(res);
   }
 
-  return res.json();
+  const answerIdToVoteStatusMap = await res.json();
+
+  return answerIdToVoteStatusMap[Object.keys(answerIdToVoteStatusMap)[0]];
 }
 
 async function upvoteAnswer(

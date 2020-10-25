@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 
 import styles from "./index.module.css";
-import { Answer, deleteSingleAnswer } from "utils/index";
+import { Answer, deleteSingleAnswer, useUpvoteDownvote } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
 import { useAuth } from "components/authentication";
@@ -26,6 +26,17 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
   const { firebaseUser } = useAuth();
   const isAnswerOwner: boolean = firebaseUser?.uid === answer.userId;
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const {
+    upvotesLocal,
+    downvotesLocal,
+    upvoteOnClick,
+    downvoteOnClick,
+  } = useUpvoteDownvote({
+    isAnswerVote: true,
+    answerId: answer._id,
+    upvotes: answer.upvotes,
+    downvotes: answer.downvotes,
+  });
 
   const onDeleteClick = (answerId: string): void => {
     confirm({
@@ -67,11 +78,15 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
         />
         <Row justify="space-between">
           <Space>
-            <Button type="text" icon={<LikeOutlined />}>
-              {answer.upvotes.toString()}
+            <Button onClick={upvoteOnClick} type="text" icon={<LikeOutlined />}>
+              {upvotesLocal.toString()}
             </Button>
-            <Button type="text" icon={<DislikeOutlined />}>
-              {answer.downvotes.toString()}
+            <Button
+              onClick={downvoteOnClick}
+              type="text"
+              icon={<DislikeOutlined />}
+            >
+              {downvotesLocal.toString()}
             </Button>
           </Space>
           {isAnswerOwner ? (
