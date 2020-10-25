@@ -1,3 +1,6 @@
+import React, { FC } from "react";
+import { useRouter } from "next/router";
+import { Button, PageHeader, Row, Col, Statistic, Layout } from "antd";
 import {
   LikeFilled,
   DislikeFilled,
@@ -5,23 +8,26 @@ import {
   LikeOutlined,
   DislikeOutlined,
 } from "@ant-design/icons";
-import { Button, PageHeader, Row, Col, Statistic, Layout } from "antd";
-import { useAuth } from "components/authentication";
-import { useRouter } from "next/router";
-import React, { FC } from "react";
-import { checkVoteQuestion, downvoteQuestion, upvoteQuestion } from "utils";
-import { useUpvoteDownvote } from "utils/hooks";
+
 import styles from "./index.module.css";
+import { useAuth } from "components/authentication";
+import {
+  checkVoteQuestion,
+  downvoteQuestion,
+  upvoteQuestion,
+  useUpvoteDownvote,
+} from "utils";
 
 const { Content } = Layout;
 
-type PageHeaderComponent = {
+type QuestionUpvoteDownvoteProps = {
   qid: string;
   title: string;
   upvotes: number;
   downvotes: number;
 };
-const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
+
+const QuestionUpvoteDownvote: FC<QuestionUpvoteDownvoteProps> = ({
   qid,
   title,
   upvotes,
@@ -94,4 +100,5 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
     </PageHeader>
   );
 };
+
 export { QuestionUpvoteDownvote };
