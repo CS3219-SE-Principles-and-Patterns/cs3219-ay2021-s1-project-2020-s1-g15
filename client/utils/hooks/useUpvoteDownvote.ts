@@ -1,6 +1,6 @@
 import { useAuth } from "components/authentication";
 import { useState, useEffect } from "react";
-import { Question, UpvoteDownvoteStatus, VOTE_CMD } from "utils";
+import { Question, VoteStatus, VoteCommand } from "utils";
 
 type VoteHookProp = {
   upvotes: number;
@@ -9,16 +9,16 @@ type VoteHookProp = {
   checkVoteStatus: (
     userIdToken: string,
     questionId: string
-  ) => Promise<UpvoteDownvoteStatus>;
+  ) => Promise<VoteStatus>;
   upvoteAPIRequest: (
     userIdToken: string,
     questionId: string,
-    voteCmd: VOTE_CMD
+    voteCmd: VoteCommand
   ) => Promise<Question>;
   downvoteAPIRequest: (
     userIdToken: string,
     questionId: string,
-    voteCmd: VOTE_CMD
+    voteCmd: VoteCommand
   ) => Promise<Question>;
 };
 
@@ -58,13 +58,13 @@ function useUpvoteDownvote({
 
   const upvoteOnClick = async () => {
     if (hasUpvoted && idToken) {
-      const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
+      const question = await upvoteAPIRequest(idToken, qid, VoteCommand.REMOVE);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
       setHasUpvoted(false);
       setHasDownvoted(false);
     } else if (idToken) {
-      const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
+      const question = await upvoteAPIRequest(idToken, qid, VoteCommand.INSERT);
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
       setHasUpvoted(true);
@@ -73,13 +73,21 @@ function useUpvoteDownvote({
   };
   const downvoteOnClick = async () => {
     if (hasDownvoted && idToken) {
-      const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
+      const question = await downvoteAPIRequest(
+        idToken,
+        qid,
+        VoteCommand.REMOVE
+      );
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
       setHasUpvoted(false);
       setHasDownvoted(false);
     } else if (idToken) {
-      const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
+      const question = await downvoteAPIRequest(
+        idToken,
+        qid,
+        VoteCommand.INSERT
+      );
       setUpvotes(question.upvotes);
       setDownvotes(question.downvotes);
       setHasUpvoted(false);
