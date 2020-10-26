@@ -1,7 +1,12 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { List, Card, Space, Typography } from "antd";
 
-import { Answer, getAnswersOfQuestion } from "utils/index";
+import {
+  Answer,
+  getAnswersOfQuestion,
+  CheckAnswerVoteStatusRes,
+  checkAnswerVoteStatus,
+} from "utils/index";
 import { AnswerForm } from "./AnswerForm";
 import { ViewAnswersCardListItem } from "./ViewAnswersCardListItem";
 import { useAuth } from "components/authentication";
@@ -17,8 +22,27 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
   answers: initialAnswers,
   questionId,
 }): JSX.Element => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, idToken } = useAuth();
   const [answers, setAnswers] = useState<Answer[]>(initialAnswers);
+  const [answerVoteStatusMap, setAnswerVoteStatusMap] = useState<
+    CheckAnswerVoteStatusRes
+  >({});
+
+  useEffect(() => {
+    (async function () {
+      if (!isAuthenticated || answers.length === 0) {
+        // don't check answer vote status if not auth or no answers present
+        return;
+      }
+
+      const answerIds: string[] = answers.map((answer) => answer._id);
+      const voteStatus: CheckAnswerVoteStatusRes = await checkAnswerVoteStatus(
+        idToken,
+        answerIds
+      );
+      setAnswerVoteStatusMap(voteStatus);
+    })();
+  }, [answers, isAuthenticated, idToken]);
 
   const refreshAnswers = async (): Promise<void> => {
     const answers: Answer[] = await getAnswersOfQuestion({ questionId });
@@ -43,6 +67,7 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
             key={answer._id}
             answer={answer}
             refreshAnswers={refreshAnswers}
+            voteStatus={answerVoteStatusMap[answer._id]}
           />
         ))}
       </List>

@@ -4,7 +4,7 @@ import {
   CreateAnswerReq,
   EditAnswerReq,
   VoteCommand,
-  VoteStatus,
+  CheckAnswerVoteStatusRes,
 } from "utils/index";
 import {
   ANSWERS_API_URL,
@@ -73,10 +73,14 @@ async function editAnswer(
 
 async function checkAnswerVoteStatus(
   userIdToken: string,
-  answerId: string
-): Promise<VoteStatus> {
+  answerIds: string[]
+): Promise<CheckAnswerVoteStatusRes> {
+  if (answerIds.length === 0) {
+    return {};
+  }
+
   const query = {
-    answerIds: answerId,
+    answerIds: answerIds,
   };
   const res = await fetch(
     `${ANSWERS_VOTE_STATUS_API_URL}${createUrlParamString(query)}`,
@@ -93,9 +97,9 @@ async function checkAnswerVoteStatus(
     return throwApiError(res);
   }
 
-  const answerIdToVoteStatusMap = await res.json();
+  const answerIdToVoteStatusMap: CheckAnswerVoteStatusRes = await res.json();
 
-  return answerIdToVoteStatusMap[Object.keys(answerIdToVoteStatusMap)[0]];
+  return answerIdToVoteStatusMap;
 }
 
 async function upvoteAnswer(

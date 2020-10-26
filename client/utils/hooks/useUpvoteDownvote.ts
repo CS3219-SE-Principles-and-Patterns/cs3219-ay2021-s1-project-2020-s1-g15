@@ -6,7 +6,6 @@ import {
   checkQuestionVoteStatus,
   upvoteQuestion,
   downvoteQuestion,
-  checkAnswerVoteStatus,
 } from "utils";
 import { upvoteAnswer, downvoteAnswer } from "utils/api";
 
@@ -44,17 +43,18 @@ function useUpvoteDownvote({
 
   useEffect(() => {
     const runChecks = async () => {
-      const { isUpvote, isDownvote } = isQuestionVote
-        ? await checkQuestionVoteStatus(idToken, questionId as string)
-        : await checkAnswerVoteStatus(idToken, answerId as string);
+      const { isUpvote, isDownvote } = await checkQuestionVoteStatus(
+        idToken,
+        questionId as string
+      );
       setHasUpvoted(isUpvote);
       setHasDownvoted(isDownvote);
     };
 
-    if (isAuthenticated) {
+    if (isQuestionVote && isAuthenticated) {
       runChecks();
     }
-  }, [idToken, isAuthenticated, isQuestionVote, questionId, answerId]);
+  }, [idToken, isAuthenticated, isQuestionVote, questionId]);
 
   const upvoteOnClick = async () => {
     if (!isAuthenticated) {
