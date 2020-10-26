@@ -19,16 +19,6 @@ async function getCurrentFirebaseUser(): Promise<firebase.User | null> {
   });
 }
 
-async function getIdToken(): Promise<string> {
-  const user: firebase.User | null = await getCurrentFirebaseUser();
-
-  if (user == null) {
-    return "user not authenticated";
-  }
-
-  return user.getIdToken(/* forceRefresh */ true);
-}
-
 function useFirebaseAuthentication(): firebase.User | null {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null);
 
@@ -44,10 +34,4 @@ function useFirebaseAuthentication(): firebase.User | null {
   return firebaseUser;
 }
 
-export {
-  login,
-  logout,
-  getCurrentFirebaseUser,
-  getIdToken,
-  useFirebaseAuthentication,
-};
+export { login, logout, getCurrentFirebaseUser, useFirebaseAuthentication };

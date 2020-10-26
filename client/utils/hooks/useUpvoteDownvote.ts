@@ -1,37 +1,41 @@
 import { useAuth } from "components/authentication";
 import { useState, useEffect } from "react";
-import { Question, UpvoteDownvoteStatus, VOTE_CMD } from "utils";
 
-type VoteHookProp = {
+import {
+  VoteCommand,
+  checkQuestionVoteStatus,
+  upvoteQuestion,
+  downvoteQuestion,
+} from "utils";
+import { upvoteAnswer, downvoteAnswer } from "utils/api";
+
+type BaseVoteHookProps = {
   upvotes: number;
   downvotes: number;
-  qid: string;
-  checkVoteStatus: (
-    userIdToken: string,
-    questionId: string
-  ) => Promise<UpvoteDownvoteStatus>;
-  upvoteAPIRequest: (
-    userIdToken: string,
-    questionId: string,
-    voteCmd: VOTE_CMD
-  ) => Promise<Question>;
-  downvoteAPIRequest: (
-    userIdToken: string,
-    questionId: string,
-    voteCmd: VOTE_CMD
-  ) => Promise<Question>;
+};
+
+type QuestionVoteHookProps = BaseVoteHookProps & {
+  isAnswerVote?: never;
+  isQuestionVote: true;
+  answerId?: never;
+  questionId: string;
+};
+
+type AnswerVoteHookProps = BaseVoteHookProps & {
+  isQuestionVote?: never;
+  isAnswerVote: true;
+  questionId?: never;
+  answerId: string;
 };
 
 function useUpvoteDownvote({
   upvotes,
   downvotes,
-  qid,
-  checkVoteStatus,
-  upvoteAPIRequest,
-  downvoteAPIRequest,
-}: VoteHookProp) {
-  const { isAuthenticated, getIdToken } = useAuth();
-  const [idToken, setIdToken] = useState<string | undefined>(undefined);
+  isQuestionVote,
+  questionId,
+  answerId,
+}: QuestionVoteHookProps | AnswerVoteHookProps) {
+  const { isAuthenticated, idToken } = useAuth();
   const [upvotesLocal, setUpvotes] = useState<number>(upvotes);
   const [downvotesLocal, setDownvotes] = useState<number>(downvotes);
   const [hasUpvoted, setHasUpvoted] = useState<boolean>(false);
@@ -39,56 +43,51 @@ function useUpvoteDownvote({
 
   useEffect(() => {
     const runChecks = async () => {
-      const userIdToken = await getIdToken();
-
-      const { isUpvote, isDownvote } = await checkVoteStatus(userIdToken, qid);
-      if (isUpvote) {
-        setHasUpvoted(true);
-      }
-
-      if (isDownvote) {
-        setHasDownvoted(true);
-      }
-      setIdToken(userIdToken);
+      const { isUpvote, isDownvote } = await checkQuestionVoteStatus(
+        idToken,
+        questionId as string
+      );
+      setHasUpvoted(isUpvote);
+      setHasDownvoted(isDownvote);
     };
-    if (isAuthenticated) {
+
+    if (isQuestionVote && isAuthenticated) {
       runChecks();
     }
-  }, [checkVoteStatus, getIdToken, isAuthenticated, qid]);
+  }, [idToken, isAuthenticated, isQuestionVote, questionId]);
 
   const upvoteOnClick = async () => {
-    if (hasUpvoted && idToken) {
-      const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpvoted(false);
-      setHasDownvoted(false);
-    } else if (idToken) {
-      const question = await upvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpvoted(true);
-      setHasDownvoted(false);
+    if (!isAuthenticated) {
+      return;
     }
+
+    const voteCommand = hasUpvoted ? VoteCommand.REMOVE : VoteCommand.INSERT;
+    const doc = isQuestionVote
+      ? await upvoteQuestion(idToken, questionId as string, voteCommand)
+      : await upvoteAnswer(idToken, answerId as string, voteCommand);
+    setUpvotes(doc.upvotes);
+    setDownvotes(doc.downvotes);
+    setHasUpvoted(!hasUpvoted);
+    setHasDownvoted(false);
   };
+
   const downvoteOnClick = async () => {
-    if (hasDownvoted && idToken) {
-      const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.remove);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpvoted(false);
-      setHasDownvoted(false);
-    } else if (idToken) {
-      const question = await downvoteAPIRequest(idToken, qid, VOTE_CMD.insert);
-      setUpvotes(question.upvotes);
-      setDownvotes(question.downvotes);
-      setHasUpvoted(false);
-      setHasDownvoted(true);
+    if (!isAuthenticated) {
+      return;
     }
+
+    const voteCommand = hasDownvoted ? VoteCommand.REMOVE : VoteCommand.INSERT;
+    const doc = isQuestionVote
+      ? await downvoteQuestion(idToken, questionId as string, voteCommand)
+      : await downvoteAnswer(idToken, answerId as string, voteCommand);
+    setUpvotes(doc.upvotes);
+    setDownvotes(doc.downvotes);
+    setHasDownvoted(!hasDownvoted);
+    setHasUpvoted(false);
   };
+
   // might not need to import all, but just left it so there is a flexibility
   return {
-    idToken,
     upvotesLocal,
     setUpvotes,
     downvotesLocal,
@@ -101,4 +100,5 @@ function useUpvoteDownvote({
     downvoteOnClick,
   };
 }
+
 export { useUpvoteDownvote };

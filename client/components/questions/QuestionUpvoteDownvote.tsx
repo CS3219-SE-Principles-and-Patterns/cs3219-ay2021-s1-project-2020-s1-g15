@@ -1,3 +1,6 @@
+import React, { FC } from "react";
+import { useRouter } from "next/router";
+import { Button, PageHeader, Row, Col, Statistic, Layout } from "antd";
 import {
   LikeFilled,
   DislikeFilled,
@@ -5,23 +8,21 @@ import {
   LikeOutlined,
   DislikeOutlined,
 } from "@ant-design/icons";
-import { Button, PageHeader, Row, Col, Statistic, Layout } from "antd";
-import { useAuth } from "components/authentication";
-import { useRouter } from "next/router";
-import React, { FC } from "react";
-import { checkVoteQuestion, downvoteQuestion, upvoteQuestion } from "utils";
-import { useUpvoteDownvote } from "utils/hooks";
+
 import styles from "./index.module.css";
+import { useAuth } from "components/authentication";
+import { useUpvoteDownvote } from "utils";
 
 const { Content } = Layout;
 
-type PageHeaderComponent = {
+type QuestionUpvoteDownvoteProps = {
   qid: string;
   title: string;
   upvotes: number;
   downvotes: number;
 };
-const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
+
+const QuestionUpvoteDownvote: FC<QuestionUpvoteDownvoteProps> = ({
   qid,
   title,
   upvotes,
@@ -36,12 +37,10 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
     upvoteOnClick,
     downvoteOnClick,
   } = useUpvoteDownvote({
+    isQuestionVote: true,
+    questionId: qid,
     upvotes,
     downvotes,
-    qid,
-    checkVoteStatus: checkVoteQuestion,
-    upvoteAPIRequest: upvoteQuestion,
-    downvoteAPIRequest: downvoteQuestion,
   });
 
   const onBack = () => {
@@ -52,14 +51,11 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
     }
   };
 
-  const upvote = async () => await downvoteOnClick();
-  const downvote = async () => await upvoteOnClick();
-
   const action = [
-    <Button icon={<LikeFilled />} key="1" onClick={upvote}>
+    <Button icon={<LikeFilled />} key="1" onClick={upvoteOnClick}>
       Upvote
     </Button>,
-    <Button icon={<DislikeFilled />} key="2" onClick={downvote}>
+    <Button icon={<DislikeFilled />} key="2" onClick={downvoteOnClick}>
       Downvote
     </Button>,
   ];
@@ -94,4 +90,5 @@ const QuestionUpvoteDownvote: FC<PageHeaderComponent> = ({
     </PageHeader>
   );
 };
+
 export { QuestionUpvoteDownvote };

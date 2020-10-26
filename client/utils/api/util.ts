@@ -9,6 +9,11 @@ const BASE_API_URL: string =
 const USERS_API_URL = `${BASE_API_URL}/users`;
 const QUESTIONS_API_URL = `${BASE_API_URL}/questions`;
 const ANSWERS_API_URL = `${BASE_API_URL}/answers`;
+const ANSWERS_VOTE_STATUS_API_URL = `${ANSWERS_API_URL}/vote-status`;
+const ANSWERS_UPVOTE_API_URL = (aid: string) =>
+  `${ANSWERS_API_URL}/${aid}/upvote`;
+const ANSWERS_DOWNVOTE_API_URL = (aid: string) =>
+  `${ANSWERS_API_URL}/${aid}/downvote`;
 
 function getAuthorizationString(idToken: string): string {
   return "Bearer " + idToken;
@@ -27,6 +32,9 @@ export {
   USERS_API_URL,
   QUESTIONS_API_URL,
   ANSWERS_API_URL,
+  ANSWERS_VOTE_STATUS_API_URL,
+  ANSWERS_UPVOTE_API_URL,
+  ANSWERS_DOWNVOTE_API_URL,
   getAuthorizationString,
   throwApiError,
   createUrlParamString,

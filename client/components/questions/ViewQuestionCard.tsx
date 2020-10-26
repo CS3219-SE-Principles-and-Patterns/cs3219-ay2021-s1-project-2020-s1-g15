@@ -16,7 +16,7 @@ type ViewQuestionCardProp = {
 const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
   question,
 }): JSX.Element => {
-  const { user, getIdToken } = useAuth();
+  const { user, idToken } = useAuth();
   const router = useRouter();
   const belongsToUser: boolean = !!user && user._id === question.userId;
 
@@ -32,8 +32,7 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
       okText: "Delete",
       okType: "danger",
       async onOk() {
-        const userIdToken = await getIdToken();
-        await deleteSingleQuestion(userIdToken, question._id);
+        await deleteSingleQuestion(idToken, question._id);
         notification.success({
           message: "Question succesfully deleted",
         });

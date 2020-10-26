@@ -80,7 +80,7 @@ const Config = Object.freeze({
 
 const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
   const isEditing: boolean = question !== undefined;
-  const { getIdToken, isAuthenticated } = useAuth();
+  const { idToken, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState<boolean>(isEditing); // set to true if editing to fetch question
   const [questionPreviewNode, setQuestionPreviewNode] = useState<ReactNode>();
   const [form] = Form.useForm();
@@ -98,10 +98,9 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
     await form.validateFields();
 
     setLoading(true);
-    const userIdToken = await getIdToken();
     const res: Question = isEditing
-      ? await editQuestion(questionReq, userIdToken, question?._id as string)
-      : await createQuestion(questionReq, userIdToken);
+      ? await editQuestion(questionReq, idToken, question?._id as string)
+      : await createQuestion(questionReq, idToken);
     notification.success({
       message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
     });

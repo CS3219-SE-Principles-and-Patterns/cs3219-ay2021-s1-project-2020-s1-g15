@@ -1,8 +1,8 @@
-export enum VOTE_CMD {
-  insert = "insert",
-  remove = "remove",
+export enum VoteCommand {
+  INSERT = "insert",
+  REMOVE = "remove",
 }
-export interface UpvoteDownvoteStatus {
+export interface VoteStatus {
   isUpvote: boolean;
   isDownvote: boolean;
 }

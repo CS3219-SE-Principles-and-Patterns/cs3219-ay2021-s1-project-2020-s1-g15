@@ -1,4 +1,4 @@
-import { Util, Question } from "utils/index";
+import { Util, Question, VoteStatus } from "utils/index";
 
 export type GetPaginatedQuestionsReq = {
   page: number;
@@ -21,6 +21,10 @@ export type EditQuestionReq = CreateQuestionReq;
 
 export type GetAnswersOfQuestionReq = {
   questionId: string;
+};
+
+export type CheckAnswerVoteStatusRes = {
+  [answerId: string]: VoteStatus;
 };
 
 export type CreateAnswerReq = {

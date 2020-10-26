@@ -1,13 +1,20 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Button, List, Space, Row, Modal, notification } from "antd";
 import {
   LikeOutlined,
+  LikeFilled,
   DislikeOutlined,
+  DislikeFilled,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import styles from "./index.module.css";
-import { Answer, deleteSingleAnswer } from "utils/index";
+import {
+  Answer,
+  deleteSingleAnswer,
+  useUpvoteDownvote,
+  VoteStatus,
+} from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
 import { useAuth } from "components/authentication";
@@ -17,15 +24,37 @@ const { confirm } = Modal;
 type ViewAnswersCardListItemProp = {
   answer: Answer;
   refreshAnswers: () => Promise<void>;
+  voteStatus: VoteStatus | undefined; // undefined if user is not auth
 };
 
 const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
   answer,
   refreshAnswers,
+  voteStatus,
 }): JSX.Element => {
-  const { firebaseUser } = useAuth();
+  const { firebaseUser, idToken } = useAuth();
   const isAnswerOwner: boolean = firebaseUser?.uid === answer.userId;
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const {
+    setHasUpvoted,
+    setHasDownvoted,
+    hasUpvoted,
+    hasDownvoted,
+    upvotesLocal,
+    downvotesLocal,
+    upvoteOnClick,
+    downvoteOnClick,
+  } = useUpvoteDownvote({
+    isAnswerVote: true,
+    answerId: answer._id,
+    upvotes: answer.upvotes,
+    downvotes: answer.downvotes,
+  });
+
+  useEffect(() => {
+    setHasUpvoted(voteStatus?.isUpvote ?? false);
+    setHasDownvoted(voteStatus?.isDownvote ?? false);
+  }, [voteStatus, setHasUpvoted, setHasDownvoted]);
 
   const onDeleteClick = (answerId: string): void => {
     confirm({
@@ -35,7 +64,7 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
       okText: "Delete",
       okType: "danger",
       async onOk() {
-        await deleteSingleAnswer(answerId);
+        await deleteSingleAnswer(idToken, answerId);
         await refreshAnswers();
         notification.success({
           message: "Answer succesfully deleted",
@@ -67,11 +96,19 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
         />
         <Row justify="space-between">
           <Space>
-            <Button type="text" icon={<LikeOutlined />}>
-              {answer.upvotes.toString()}
+            <Button
+              onClick={upvoteOnClick}
+              type="text"
+              icon={hasUpvoted ? <LikeFilled /> : <LikeOutlined />}
+            >
+              {upvotesLocal.toString()}
             </Button>
-            <Button type="text" icon={<DislikeOutlined />}>
-              {answer.downvotes.toString()}
+            <Button
+              onClick={downvoteOnClick}
+              type="text"
+              icon={hasDownvoted ? <DislikeFilled /> : <DislikeOutlined />}
+            >
+              {downvotesLocal.toString()}
             </Button>
           </Space>
           {isAnswerOwner ? (
