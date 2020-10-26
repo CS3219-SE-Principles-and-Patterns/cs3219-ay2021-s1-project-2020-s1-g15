@@ -31,6 +31,7 @@ import {
   VoteType,
   GetQuestionVoteStatusResponse,
   GetPaginatedQuestionsRequest,
+  GetPaginatedSearchQuestionsRequest,
   GetPaginatedQuestionsResponse,
   CreateQuestionRequest,
   UpvoteQuestionRequest,
@@ -54,14 +55,12 @@ router.get("/", async (req: Request, res: Response) => {
 
 // GET request - list all searched questions
 router.get("/", async (req: Request, res: Response) => {
-  const paginatedReq = req.query as GetPaginatedQuestionsRequest;
-  const searchString: string = req.params.searchString;
+  const paginatedReq = req.query as GetPaginatedSearchQuestionsRequest;
+  //const searchString: string = req.params.searchString;
   //tried both params and body
   const questionsRes: GetPaginatedQuestionsResponse = await getSearchedQuestions(
-    paginatedReq,
-    searchString
+    paginatedReq
   );
-
   return res.status(HttpStatusCode.OK).json(questionsRes);
 });
 

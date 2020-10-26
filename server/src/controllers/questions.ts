@@ -9,6 +9,7 @@ import {
   titleToSlug,
   toValidObjectId,
   GetPaginatedQuestionsResponse,
+  GetPaginatedSearchQuestionsRequest,
   GetPaginatedQuestionsRequest,
   CreateQuestionRequest,
   UpdateQuestionRequest,
@@ -58,11 +59,11 @@ async function getQuestionsSearchedArray(
 */
 
 async function getSearchedQuestions(
-  req: GetPaginatedQuestionsRequest,
-  searchString: string
+  req: GetPaginatedSearchQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
+  const searchString = req.search;
 
   if (!page || !pageSize) {
     throw new ApiError(
@@ -72,7 +73,8 @@ async function getSearchedQuestions(
   }
 
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find({ $text: { $search: searchString } })
+    //.find({ $text: { $search: searchString } })
+    .find({ title: searchString })
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();

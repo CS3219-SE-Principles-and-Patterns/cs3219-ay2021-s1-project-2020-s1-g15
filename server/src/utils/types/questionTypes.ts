@@ -8,6 +8,12 @@ export type GetPaginatedQuestionsRequest = {
   pageSize?: string | undefined;
 };
 
+export type GetPaginatedSearchQuestionsRequest = {
+  page?: string | undefined;
+  pageSize?: string | undefined;
+  search?: string;
+};
+
 export type GetPaginatedQuestionsResponse = {
   questions: Question[];
   total: number;
