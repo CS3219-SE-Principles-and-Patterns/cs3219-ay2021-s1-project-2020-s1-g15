@@ -9,7 +9,6 @@ import {
   titleToSlug,
   toValidObjectId,
   GetPaginatedQuestionsResponse,
-  GetPaginatedSearchQuestionsRequest,
   GetPaginatedQuestionsRequest,
   CreateQuestionRequest,
   UpdateQuestionRequest,
@@ -22,6 +21,7 @@ async function getQuestions(
 ): Promise<GetPaginatedQuestionsResponse> {
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
+  const searchString = req.search;
 
   if (!page || !pageSize) {
     throw new ApiError(
@@ -30,48 +30,35 @@ async function getQuestions(
     );
   }
 
-  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find()
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
-    .toArray();
-  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
+  if (searchString) {
+    const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
+      .find({ $text: { $search: searchString } })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+    const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
 
-  const [questions, total] = await Promise.all([
-    getPaginatedQuestions,
-    getQuestionsCollectionSize,
-  ]);
+    const [questions, total] = await Promise.all([
+      getPaginatedQuestions,
+      getQuestionsCollectionSize,
+    ]);
 
-  return { questions, total };
-}
+    return { questions, total };
+  } else {
+    const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
+      .find()
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+    const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
 
-async function getSearchedQuestions(
-  req: GetPaginatedSearchQuestionsRequest
-): Promise<GetPaginatedQuestionsResponse> {
-  const page = parseInt(req.page || "0");
-  const pageSize = parseInt(req.pageSize || "0");
-  const searchString = req.search;
+    const [questions, total] = await Promise.all([
+      getPaginatedQuestions,
+      getQuestionsCollectionSize,
+    ]);
 
-  if (!page || !pageSize || !searchString) {
-    throw new ApiError(
-      HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
-    );
+    return { questions, total };
   }
-
-  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find({ $text: { $search: searchString } })
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
-    .toArray();
-  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
-
-  const [questions, total] = await Promise.all([
-    getPaginatedQuestions,
-    getQuestionsCollectionSize,
-  ]);
-
-  return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
@@ -310,7 +297,6 @@ async function removeAnswerFromQuestion(
 
 export {
   getQuestions,
-  getSearchedQuestions,
   getQuestionById,
   getQuestionsByUserId,
   createQuestion,

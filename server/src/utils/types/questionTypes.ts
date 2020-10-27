@@ -6,12 +6,7 @@ import { VoteCommand, Level, Subject } from "src/utils";
 export type GetPaginatedQuestionsRequest = {
   page?: string | undefined;
   pageSize?: string | undefined;
-};
-
-export type GetPaginatedSearchQuestionsRequest = {
-  page?: string | undefined;
-  pageSize?: string | undefined;
-  search?: string;
+  search?: string | undefined;
 };
 
 export type GetPaginatedQuestionsResponse = {

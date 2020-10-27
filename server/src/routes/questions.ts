@@ -5,7 +5,6 @@ import { Answer, Question } from "../models";
 import { verifyUserAuth } from "../middlewares/authRouteHandler";
 import {
   getQuestions,
-  getSearchedQuestions,
   getQuestionById,
   createQuestion,
   updateQuestion,
@@ -30,7 +29,6 @@ import {
   VoteType,
   GetQuestionVoteStatusResponse,
   GetPaginatedQuestionsRequest,
-  GetPaginatedSearchQuestionsRequest,
   GetPaginatedQuestionsResponse,
   CreateQuestionRequest,
   UpvoteQuestionRequest,
@@ -49,15 +47,6 @@ router.get("/", async (req: Request, res: Response) => {
     paginatedReq
   );
 
-  return res.status(HttpStatusCode.OK).json(questionsRes);
-});
-
-// GET request - list all searched questions
-router.get("/search", async (req: Request, res: Response) => {
-  const paginatedReq = req.query as GetPaginatedSearchQuestionsRequest;
-  const questionsRes: GetPaginatedQuestionsResponse = await getSearchedQuestions(
-    paginatedReq
-  );
   return res.status(HttpStatusCode.OK).json(questionsRes);
 });
 
