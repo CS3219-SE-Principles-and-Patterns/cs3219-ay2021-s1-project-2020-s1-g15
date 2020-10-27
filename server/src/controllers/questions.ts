@@ -45,19 +45,6 @@ async function getQuestions(
   return { questions, total };
 }
 
-//GET SEARCHED QUESTIONS BY ARRAY
-/*
-async function getQuestionsSearchedArray(
-  searchString: string
-): Promise<Question[]> {
-  const questions: Question[] = await getQuestionsCollection()
-    .find({ $text: { $search: searchString } })
-    .toArray();
-
-  return questions;
-}
-*/
-
 async function getSearchedQuestions(
   req: GetPaginatedSearchQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
@@ -65,7 +52,7 @@ async function getSearchedQuestions(
   const pageSize = parseInt(req.pageSize || "0");
   const searchString = req.search;
 
-  if (!page || !pageSize) {
+  if (!page || !pageSize || !searchString) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
@@ -73,8 +60,7 @@ async function getSearchedQuestions(
   }
 
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    //.find({ $text: { $search: searchString } })
-    .find({ title: searchString })
+    .find({ $text: { $search: searchString } })
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
@@ -324,7 +310,6 @@ async function removeAnswerFromQuestion(
 
 export {
   getQuestions,
-  //getQuestionsSearchedArray,
   getSearchedQuestions,
   getQuestionById,
   getQuestionsByUserId,

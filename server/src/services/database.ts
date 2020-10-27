@@ -21,6 +21,10 @@ async function initDb(): Promise<void> {
     `MongoDB: connecting to ${getMongoDbName()} at ${getMongoDbUrl()}`
   );
   await mongoClient.connect();
+  await getQuestionsCollection().createIndex({
+    title: "text",
+    markdown: "text",
+  });
   console.log(`MongoDB: successfully connected`);
 }
 
@@ -41,6 +45,7 @@ async function closeDb(): Promise<void> {
 
 function getQuestionsCollection(): Collection<Question> {
   return getDb().collection("questions");
+  //.createIndex({ title: "text", markdown: "text" });
 }
 
 function getAnswersCollection(): Collection<Answer> {
