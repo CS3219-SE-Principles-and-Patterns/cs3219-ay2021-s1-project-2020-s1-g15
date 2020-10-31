@@ -2,9 +2,9 @@ import { stringify } from "querystring";
 import { ApiErrorRes } from "..";
 
 const BASE_API_URL: string =
-  process.env.NODE_ENV == "development"
+  process.env.NODE_ENV === "development"
     ? "http://localhost:8000/api"
-    : "http://localhost:8000/api";
+    : "https://answerleh-server-vbfonweyuq-as.a.run.app/api";
 
 const USERS_API_URL = `${BASE_API_URL}/users`;
 const QUESTIONS_API_URL = `${BASE_API_URL}/questions`;
