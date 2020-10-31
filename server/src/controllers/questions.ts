@@ -15,7 +15,6 @@ import {
   VoteIncrementObject,
 } from "../utils";
 
-// TODO: add search/filter in the future
 async function getQuestions(
   req: GetPaginatedQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
@@ -29,29 +28,34 @@ async function getQuestions(
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
     );
   }
-  const filterObject: { [key: string]: string } = {};
+  const filterObject: { [key: string]: Record<string, unknown> | string } = {};
+  if (searchText) {
+    filterObject["$text"] = { $search: searchText };
+  }
+
   if (level) {
     filterObject["level"] = level;
   }
   if (subject) {
     filterObject["subject"] = subject;
   }
-  console.log(searchText);
+
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find(searchText ? { $text: { $search: searchText } } : {})
-    .filter(filterObject)
+    .find(filterObject)
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
 
-  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
+  const getQuestionsCollectionSize: Promise<
+    Question[]
+  > = getQuestionsCollection().find(filterObject).toArray();
 
-  const [questions, total] = await Promise.all([
+  const [questions, questionArray] = await Promise.all([
     getPaginatedQuestions,
     getQuestionsCollectionSize,
   ]);
 
-  return { questions, total };
+  return { questions, total: questionArray.length };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
