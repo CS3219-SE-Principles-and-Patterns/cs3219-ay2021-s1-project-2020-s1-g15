@@ -10,6 +10,10 @@ import {
   getVotesCollection,
 } from "../../src/services/database";
 
+beforeAll(() => {
+  process.env.NODE_ENV = "test";
+});
+
 describe("Initialise database", () => {
   afterAll(async (done) => {
     await closeDb();

@@ -22,6 +22,10 @@ const getMockReqResNext = () => {
   };
 };
 
+beforeAll(() => {
+  process.env.NODE_ENV = "test";
+});
+
 describe("Bypass auth for dev/test environment", () => {
   beforeAll(() => {
     process.env.BYPASS_AUTH = "true";

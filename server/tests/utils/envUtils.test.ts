@@ -7,6 +7,12 @@ import {
   getMongoDbUrl,
 } from "src/utils";
 
+afterAll(() => {
+  process.env.NODE_ENV = "test";
+  delete process.env.ATLAS_USER;
+  delete process.env.ATLAS_PASSWORD;
+});
+
 describe("Node environment", () => {
   it("should throw assertion error if not set", () => {
     delete process.env.NODE_ENV;
@@ -56,6 +62,8 @@ describe("Mongo DB URL", () => {
     expect(getMongoDbUrl()).toBeTruthy();
 
     process.env.NODE_ENV = "prod";
+    process.env.ATLAS_USER = "dummy_user";
+    process.env.ATLAS_PASSWORD = "dummy_password";
     expect(getMongoDbUrl()).toBeTruthy();
   });
 

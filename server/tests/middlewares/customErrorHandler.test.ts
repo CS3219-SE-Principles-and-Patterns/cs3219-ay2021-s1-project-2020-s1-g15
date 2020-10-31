@@ -31,6 +31,10 @@ const getMockReqResNext = function () {
 const mockApiError = () => new ApiError(0, "MESSAGE");
 const mockError = () => new Error("MESSAGE");
 
+beforeAll(() => {
+  process.env.NODE_ENV = "test";
+});
+
 describe("Handle ApiError", () => {
   it("should not call next handler", async () => {
     const { req, res, next } = getMockReqResNext();
