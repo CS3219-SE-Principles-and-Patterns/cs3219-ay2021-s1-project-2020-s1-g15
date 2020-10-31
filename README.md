@@ -20,6 +20,11 @@
     - [Access local endpoints](#access-local-endpoints)
     - [Bypass Firebase Auth for dev and test environment](#bypass-firebase-auth-for-dev-and-test-environment)
     - [Lint and run tests](#lint-and-run-tests)
+  - [Production environment](#production-environment)
+    - [Connect to MongoDB Atlas production server](#connect-to-mongodb-atlas-production-server)
+    - [Manually deploy via Google Cloud Build](#manually-deploy-via-google-cloud-build)
+  - [Continuous Integration](#continuous-integration)
+  - [Continuous Deployment](#continuous-deployment)
 - [API reference](#api-reference)
   - [Authenticated routes](#authenticated-routes)
   - [Users](#users)
@@ -188,11 +193,64 @@ yarn test
 
 While running tests (`yarn test`), an in-memory version of MongoDB is used (see [`@shelf/jest-mongodb`](https://github.com/shelfio/jest-mongodb)). All reads and writes are performed using an ephemeral database which will not persist beyond the tests.
 
+### Production environment
+
+> **Warning**: this section requires admin credentials/privileges for this GCP project and MongoDB Atlas. The commands shown here **will not work** if you have just cloned this repository (since no credentials are stored here).
+
+#### Connect to MongoDB Atlas production server
+
+To start a local server which connects to the production MongoDB Atlas server, first create a `server/.env` file with the following environment variables:
+
+```sh
+# replace the <..> appropriately
+ATLAS_USER=<your_username_here>
+ATLAS_PASSWORD=<your_password_here>
+```
+
+Then, start the server:
+
+```sh
+# change to server/ directory first
+cd server/
+# start server (without hot reload) and connect to production MongoDB Atlas
+# this is the command used when deploying to Cloud Run
+yarn start
+```
+
+#### Manually deploy via Google Cloud Build
+
+To start a manual deployment to production, first ensure that the your `gcloud` project is set appropriately:
+
+```sh
+gcloud config set project answerleh
+```
+
+Then, **ensure you are at the root of the project** and run:
+
+```sh
+# run in root of project (ie. OUTSIDE the server/ dir)
+gcloud builds submit --config server/cloudbuild.yaml
+```
+
+### Continuous Integration
+
+GitHub Actions is responsible for the Continuous Integration (CI). The `yarn ci` command will be run in the `server/` directory to lint and run all tests. Refer to the workflow in [`.github/workflows/server-ci.yml`](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/.github/workflows/server-ci.yml) for more information. Any changes in the `master` branch will trigger this workflow to run. The generated code coverage report will also be automatically uploaded to [Codecov](https://codecov.io/).
+
+### Continuous Deployment
+
+Google Cloud Build is responsible for the Continuous Deployment (CD). Only changes in the `master` branch *and* within the `server/` directory will trigger this workflow to run. Refer to the Cloud Build configuration in [`server/cloudbuild.yaml`](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/server/cloudbuild.yaml) - the current workflow will:
+
+1. Pull the last Docker image in Container Registry to use as cache
+2. Generate the `.env` file from Secret Manager needed for MongoDB Atlas credentials
+3. Build the new Docker image as configured in [`server/Dockerfile`](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-ay2021-s1-project-2020-s1-g15/blob/master/server/Dockerfile)
+4. Push the new Docker image to Container Registry
+5. Deploy the new Docker image to Cloud Run as a serverless container
+
 ## API reference
 
 The following base URLs are assumed:
 
-- **Deployed endpoint**: TODO
+- **Deployed endpoint**: https://answerleh-server-vbfonweyuq-as.a.run.app
 - **Local endpoint**: http://localhost:8000
 
 ### Authenticated routes
