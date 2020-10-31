@@ -21,6 +21,7 @@ async function initDb(): Promise<void> {
     `MongoDB: connecting to ${getMongoDbName()} at ${getMongoDbUrl()}`
   );
   await mongoClient.connect();
+
   console.log(`MongoDB: successfully connected`);
 }
 

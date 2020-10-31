@@ -21,6 +21,7 @@ async function getQuestions(
 ): Promise<GetPaginatedQuestionsResponse> {
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
+  const searchString = req.search;
 
   if (!page || !pageSize) {
     throw new ApiError(
@@ -30,7 +31,7 @@ async function getQuestions(
   }
 
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find()
+    .find(searchString ? { $text: { $search: searchString } } : {})
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
