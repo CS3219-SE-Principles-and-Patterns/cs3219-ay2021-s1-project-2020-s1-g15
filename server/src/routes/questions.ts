@@ -167,7 +167,7 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
 
-  const answers: Answer[] = await getAnswersByQuestionId(questionId);
+  const answers: Answer[] = await getAnswersByQuestionId(questionId, undefined);
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),

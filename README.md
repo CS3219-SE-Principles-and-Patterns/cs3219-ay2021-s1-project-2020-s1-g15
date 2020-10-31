@@ -699,9 +699,12 @@ OR
 #### Get all answers by question ID
 
 - Method: `GET`
-- URL: `/api/answers?questionId=<qid>`
+- URL: `/api/answers?questionId=<qid>&sortBy=<sortBy>`
 - URL query
   - `<qid>`: the `ObjectId` of the question
+  - `<sortBy>`
+    - Sorted by highest nett vote by default, if no params are provided
+    - `createdAt` will sort answers by most recent
 - Auth required: NO
 
 **Success response**:
