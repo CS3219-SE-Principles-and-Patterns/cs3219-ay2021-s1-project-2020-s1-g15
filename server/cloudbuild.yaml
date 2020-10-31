@@ -6,7 +6,7 @@ steps:
 # Generate .env from Secret Manager (for MongoDB Atlas credentials)
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
-  args: [ '-c', "gcloud secrets versions access latest --secret=atlas-node-env --format='get(payload.data)' | tr '_-' '/+' | base64 -d > server/.env" ]
+  args: [ '-c', "gcloud secrets versions access latest --secret=mongo_atlas_prod_cred --format='get(payload.data)' | tr '_-' '/+' | base64 -d > server/.env" ]
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/answerleh/server', '--cache-from', 'gcr.io/answerleh/server', 'server/']

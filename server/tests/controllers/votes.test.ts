@@ -54,6 +54,7 @@ async function removeAnswerVote(
 
 beforeAll(async (done) => {
   // initialise the testing DB before starting
+  process.env.NODE_ENV = "test";
   await initDb();
   done();
 });
