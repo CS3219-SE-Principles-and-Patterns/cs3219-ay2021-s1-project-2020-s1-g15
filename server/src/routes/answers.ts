@@ -34,8 +34,9 @@ const router: Router = Router();
 router.get("/", async (req: Request, res: Response) => {
   // typecase to string; let controller handle the error handling
   const questionId: string = req.query.questionId as string;
+  const sortBy: string | undefined = req.query.sortBy as string | undefined;
 
-  const answers: Answer[] = await getAnswersByQuestionId(questionId);
+  const answers: Answer[] = await getAnswersByQuestionId(questionId, sortBy);
 
   return res.status(HttpStatusCode.OK).json(answers);
 });

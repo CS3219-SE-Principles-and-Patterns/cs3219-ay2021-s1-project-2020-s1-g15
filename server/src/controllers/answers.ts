@@ -16,7 +16,8 @@ import {
 } from "../utils";
 
 async function getAnswersByQuestionId(
-  questionId: string | ObjectId
+  questionId: string | ObjectId,
+  sortBy: string | undefined
 ): Promise<Answer[]> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
 
@@ -36,7 +37,16 @@ async function getAnswersByQuestionId(
       questionId: questionObjectId,
     })
     .toArray();
-  return answers;
+
+  const sortedAnswers = answers.sort((a: Answer, b: Answer) => {
+    if (sortBy === "createdAt") {
+      return b.createdAt.valueOf() - a.createdAt.valueOf();
+    }
+    const nettVotesA: number = a.upvotes - a.downvotes;
+    const nettVotesB: number = b.upvotes - b.downvotes;
+    return nettVotesB - nettVotesA;
+  });
+  return sortedAnswers;
 }
 
 async function getAnswersByUserId(
