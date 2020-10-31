@@ -11,6 +11,7 @@
     - [Pages](#pages)
     - [Question Page ( located in `pages/question` folder )](#question-page--located-in-pagesquestion-folder-)
   - [Development environment](#development-environment)
+  - [Production environment](#production-environment)
 - [Server](#server)
   - [Prerequisites](#prerequisites-1)
     - [Installing](#installing-1)
@@ -20,7 +21,7 @@
     - [Access local endpoints](#access-local-endpoints)
     - [Bypass Firebase Auth for dev and test environment](#bypass-firebase-auth-for-dev-and-test-environment)
     - [Lint and run tests](#lint-and-run-tests)
-  - [Production environment](#production-environment)
+  - [Production environment](#production-environment-1)
     - [Connect to MongoDB Atlas production server](#connect-to-mongodb-atlas-production-server)
     - [Manually deploy via Google Cloud Build](#manually-deploy-via-google-cloud-build)
   - [Continuous Integration](#continuous-integration)
@@ -103,6 +104,13 @@ yarn dev
 ```
 
 The project should be hosted on [localhost:3000](localhost:3000).
+
+### Production environment
+
+Deployed manually via Vercel using the Vercel CLI at https://answerleh.vercel.app/.
+
+- Use `vercel` to deploy to test URL
+- Use `vercel --prod` to deploy to production URL
 
 ## Server
 
