@@ -23,7 +23,13 @@ const getMongoDbUrl: () => string = () => {
   } else if (isDevEnv()) {
     return `mongodb://localhost:27017/${getMongoDbName()}`;
   } else if (isProdEnv()) {
-    return "error, not implemented"; // TODO
+    const { ATLAS_USER, ATLAS_PASSWORD } = process.env;
+    assert(ATLAS_USER !== undefined, "Atlas username env variable not set");
+    assert(
+      ATLAS_PASSWORD !== undefined,
+      "Atlast password env variable not set"
+    );
+    return `mongodb+srv://${ATLAS_USER}:${ATLAS_PASSWORD}@cluster0.2qruf.gcp.mongodb.net`;
   }
   // code should never reach here since either one of the 3 env must be set
   assert(false);

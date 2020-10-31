@@ -1,4 +1,3 @@
-// TODO: update .env with correct credentials
 import "dotenv/config"; // make sure this is at the top
 
 import app from "./services/server";
