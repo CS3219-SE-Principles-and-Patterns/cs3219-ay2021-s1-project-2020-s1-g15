@@ -45,7 +45,6 @@ async function closeDb(): Promise<void> {
 
 function getQuestionsCollection(): Collection<Question> {
   return getDb().collection("questions");
-  //.createIndex({ title: "text", markdown: "text" });
 }
 
 function getAnswersCollection(): Collection<Answer> {

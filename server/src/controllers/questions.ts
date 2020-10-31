@@ -30,35 +30,19 @@ async function getQuestions(
     );
   }
 
-  if (searchString) {
-    const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-      .find({ $text: { $search: searchString } })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
-    const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
+  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
+    .find(searchString ? { $text: { $search: searchString } } : {})
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
+    .toArray();
+  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
 
-    const [questions, total] = await Promise.all([
-      getPaginatedQuestions,
-      getQuestionsCollectionSize,
-    ]);
+  const [questions, total] = await Promise.all([
+    getPaginatedQuestions,
+    getQuestionsCollectionSize,
+  ]);
 
-    return { questions, total };
-  } else {
-    const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-      .find()
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
-    const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
-
-    const [questions, total] = await Promise.all([
-      getPaginatedQuestions,
-      getQuestionsCollectionSize,
-    ]);
-
-    return { questions, total };
-  }
+  return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
