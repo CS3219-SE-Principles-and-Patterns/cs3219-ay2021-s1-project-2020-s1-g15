@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import Particles from "react-tsparticles";
 import { Typography, Divider } from "antd";
-
+import { TeamOutlined } from "@ant-design/icons";
 import styles from "./landing.module.css";
 
-const { Paragraph, Title, Text } = Typography;
+const { Paragraph, Title } = Typography;
 
 const LandingPage: FC = () => {
   return (
@@ -103,53 +103,41 @@ const LandingPage: FC = () => {
           <div className={styles.firstSection}>
             <div className={styles.pitchBox}>
               <div className={`${styles.alignCenter} ${styles.headerText}`}>
-                {" "}
                 <Typography>
-                  Lorem iptsum
+                  <Title>Welcome to AnswerLeh</Title>
                   <Paragraph>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                    leo augue, imperdiet quis viverra ac, accumsan et mauris.
-                    Sed
+                    This application was built with NextJs and ExpressJs with
+                    typescript and Mongodb for CS3219 AY20/21 semester 1
                   </Paragraph>
                 </Typography>
               </div>
             </div>
           </div>
-
           <div className={styles.introColumn}>
             <Divider />
-            <Typography className={styles.alignCenter}>
-              <Title level={2}>
-                Lorem iptsum
-                <br />
-                <Text type="secondary"> Lorem iptsum</Text>
-              </Title>
-            </Typography>
+            <Typography className={styles.alignCenter}></Typography>
           </div>
-
           <div className={styles.infoColumn}>
-            <div className={`${styles.box}`}>
-              <Typography>
-                <div style={{ display: "flex" }}>
-                  <Title>Lorem iptsum</Title>
-                </div>
-              </Typography>
+            <div className={styles.box}>
+              <div className={styles.cardTitle}>
+                <Typography>
+                  <Title>Ask</Title>
+                </Typography>
+              </div>
             </div>
-            <div className={`${styles.box} ${styles.boxTask}`}>
-              {" "}
-              <Typography>
-                <div style={{ display: "flex" }}>
-                  <Title>Lorem iptsum</Title>
-                </div>
-              </Typography>
+            <div className={styles.box}>
+              <div className={styles.cardTitle}>
+                <Typography>
+                  <Title>Question</Title>
+                </Typography>
+              </div>
             </div>
-            <div className={`${styles.box} ${styles.boxOffer}`}>
-              {" "}
-              <Typography>
-                <div style={{ display: "flex" }}>
-                  <Title>Lorem iptsum</Title>
-                </div>
-              </Typography>
+            <div className={styles.box}>
+              <div className={styles.cardTitle}>
+                <Typography>
+                  <Title>Answer</Title>
+                </Typography>
+              </div>
             </div>
           </div>
 
@@ -166,28 +154,33 @@ const LandingPage: FC = () => {
           <div className={styles.infoColumnDev}>
             <div className={styles.box}>
               <Typography>
-                Lorem iptsum{" "}
+                <Title>Eugene Teu</Title>
                 <Paragraph>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                  Student at National University Of Singapore
                 </Paragraph>
               </Typography>
             </div>
             <div className={styles.box}>
               <Typography>
-                Lorem iptsum{" "}
+                <Title>Aaron Choo</Title>
                 <Paragraph>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                  Student at National University Of Singapore
                 </Paragraph>
               </Typography>
             </div>
             <div className={styles.box}>
               <Typography>
-                Lorem iptsum
+                <Title>Li Ziying</Title>
                 <Paragraph>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  leo augue, imperdiet quis viverra ac, accumsan et mauris. Sed
+                  Student at National University Of Singapore
+                </Paragraph>
+              </Typography>
+            </div>
+            <div className={styles.box}>
+              <Typography>
+                <Title>Yi you</Title>
+                <Paragraph>
+                  Student at Nanyang Technological University Of Singapore
                 </Paragraph>
               </Typography>
             </div>
