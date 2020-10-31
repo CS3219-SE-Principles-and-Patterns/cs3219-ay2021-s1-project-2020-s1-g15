@@ -43,6 +43,9 @@
     - [Downvote an answer](#downvote-an-answer)
     - [Update an answer](#update-an-answer)
     - [Delete an answer](#delete-an-answer)
+  - [Analytics](#analytics)
+    - [User analytics](#user-analytics)
+    - [Question analytics](#question-analytics)
 
 ## Client
 
@@ -820,32 +823,31 @@ OR
 - Code: `404 NOT FOUND`
 - Content: description of error
 
-### Analytics 
-
+### Analytics
 
 #### User analytics
 
 - Method: `GET`
-- URL: `/api/analytics/users/:uid`
-- URL query
-  - `<uid>`: the `UserId` of the question
+- URL: `/api/analytics/users/:id`
+- URL params
+  - `id`: the `ObjectId` of the user
 - Auth required: NO
 
 **Success response**:
 
-- Condition: if  exists,
+- Condition: if user exists
 - Code: `200 OK`
 - Content (example):
   ```js
   {
-    "totalNumQuestion" :10,
-    "totalNumAnswers" : 10,
-    "ratioOfQuestionsToAnswers": 1,
-    "ratioOfUpvotesToDownvote": 20, 
-     "totalNumberOfUpvotes": 100,
-     "totalNumberOfDownvotes": 200,
-     "topVotedAnswer" : Answer,
-     "topVotedQuestion" : Question,
+    "totalNumQuestions": 10,
+    "totalNumAnswers": 10,
+    "ratioQuestionsToAnswers": 1,
+    "totalNumUpvotes": 100,
+    "totalNumDownvotes": 200,
+    "ratioUpvotesToDownvotes": 20,
+    "topVotedAnswer" : Answer,
+    "topVotedQuestion" : Question,
   },
   ```
 
@@ -858,20 +860,22 @@ OR
 #### Question analytics
 
 - Method: `GET`
-- URL: `/api/analytics/questions/:qid`
-- URL query
-  - `<qid>`: the `ObjectId` of the question
+- URL: `/api/analytics/questions/:id`
+- URL params
+  - `id`: the `ObjectId` of the question
 - Auth required: NO
 
 **Success response**:
 
-- Condition: if user is authenticated, answer exists, and the `markdown` field is valid
+- Condition: if question exists
 - Code: `200 OK`
 - Content (example):
   ```js
   {
-    "totalNumberUpvotesOfQuestion": 10,
-    "totalNumberUpvotesOfAnwser": 10,
+    "totalNumQuestionUpvotes": 10,
+    "totalNumQuestionDownvotes": 10,
+    "totalNumAnswerUpvotes": 10,
+    "totalNumAnswerDownvotes": 10,
   },
   ```
 
