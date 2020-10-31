@@ -543,7 +543,7 @@ OR
 
 - Condition: if the user authentication failed for any reason
 - Status: `401 UNAUTHORIZED`
-- Content: description of error
+- Content: description of erro
 
 OR
 
@@ -817,5 +817,66 @@ OR
 OR
 
 - Condition: if answer does not exist
+- Code: `404 NOT FOUND`
+- Content: description of error
+
+### Analytics 
+
+
+#### User analytics
+
+- Method: `GET`
+- URL: `/api/analytics/users/:uid`
+- URL query
+  - `<uid>`: the `UserId` of the question
+- Auth required: NO
+
+**Success response**:
+
+- Condition: if  exists,
+- Code: `200 OK`
+- Content (example):
+  ```js
+  {
+    "totalNumQuestion" :10,
+    "totalNumAnswers" : 10,
+    "ratioOfQuestionsToAnswers": 1,
+    "ratioOfUpvotesToDownvote": 20, 
+     "totalNumberOfUpvotes": 100,
+     "totalNumberOfDownvotes": 200,
+     "topVotedAnswer" : Answer,
+     "topVotedQuestion" : Question,
+  },
+  ```
+
+**Error response**:
+
+- Condition: if user does not exist
+- Code: `404 NOT FOUND`
+- Content: description of error
+
+#### Question analytics
+
+- Method: `GET`
+- URL: `/api/analytics/questions/:qid`
+- URL query
+  - `<qid>`: the `ObjectId` of the question
+- Auth required: NO
+
+**Success response**:
+
+- Condition: if user is authenticated, answer exists, and the `markdown` field is valid
+- Code: `200 OK`
+- Content (example):
+  ```js
+  {
+    "totalNumberUpvotesOfQuestion": 10,
+    "totalNumberUpvotesOfAnwser": 10,
+  },
+  ```
+
+**Error response**:
+
+- Condition: if question does not exist
 - Code: `404 NOT FOUND`
 - Content: description of error
