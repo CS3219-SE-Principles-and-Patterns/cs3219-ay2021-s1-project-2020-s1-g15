@@ -24,26 +24,14 @@ import {
 import { useAuth } from "components/authentication";
 import QuestionPreview from "./QuestionPreview";
 import Link from "next/link";
+import { FormLabel } from "components/util";
 
-const { Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 type QuestionFormProp = {
   question?: Question | undefined;
-};
-
-type FormLabelProp = {
-  label: string;
-};
-
-const FormLabel: FC<FormLabelProp> = ({ label }): JSX.Element => {
-  return (
-    <Title style={{ marginBottom: "0px" }} level={4}>
-      {label}
-    </Title>
-  );
 };
 
 const subjectOptions: Subject[] = Object.values(Subject);

@@ -21,7 +21,7 @@ async function getQuestions(
 ): Promise<GetPaginatedQuestionsResponse> {
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
-  const searchString = req.search;
+  const { searchText, level, subject } = req;
 
   if (!page || !pageSize) {
     throw new ApiError(
@@ -29,12 +29,21 @@ async function getQuestions(
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
     );
   }
-
+  const filterObject: { [key: string]: string } = {};
+  if (level) {
+    filterObject["level"] = level;
+  }
+  if (subject) {
+    filterObject["subject"] = subject;
+  }
+  console.log(searchText);
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find(searchString ? { $text: { $search: searchString } } : {})
+    .find(searchText ? { $text: { $search: searchText } } : {})
+    .filter(filterObject)
     .skip((page - 1) * pageSize)
     .limit(pageSize)
     .toArray();
+
   const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments();
 
   const [questions, total] = await Promise.all([
