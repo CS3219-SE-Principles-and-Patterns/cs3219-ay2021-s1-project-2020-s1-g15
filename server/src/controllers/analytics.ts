@@ -1,89 +1,85 @@
 import { ObjectId } from "mongodb";
 import { getQuestionsByUserId } from "./questions";
-import { analyticsResponse, toValidObjectId } from "../utils";
+import { toValidObjectId } from "../utils";
+import { AnalyticsResponse } from "../utils/types/analyticsTypes";
 import { getAnswersByUserId } from "./answers";
 import { Question, Answer } from "../models";
 //GET request
 async function getAnalyticsbyUserId(
   id: string | ObjectId
-): Promise<analyticsResponse> {
+): Promise<AnalyticsResponse> {
   const userObjectId: ObjectId = toValidObjectId(id);
   const questions: Question[] = await getQuestionsByUserId(userObjectId);
   const answers: Answer[] = await getAnswersByUserId(userObjectId);
   //To get Total number of questions asked
-  const numQuestions: number = questions.length;
+  const totalNumQuestions: number = questions.length;
 
   //To get Total number of questions answered
-  const numAnswers: number = answers.length;
+  const totalNumAnswers: number = answers.length;
 
   //To get Ratio of questions asked to questions answered
-  const ratioQA: number = numQuestions / numAnswers;
+  const ratioQuestionsToAnswer: number = totalNumQuestions / totalNumAnswers;
 
   //To get Total number of upvotes (of all questions asked/answered)
-  let numUpvotes = 0;
+  let totalNumUpvotes = 0;
   for (const question of questions) {
-    numUpvotes = numUpvotes + question.upvotes;
+    totalNumUpvotes = totalNumUpvotes + question.upvotes;
   }
   for (const answer of answers) {
-    numUpvotes = numUpvotes + answer.upvotes;
+    totalNumUpvotes = totalNumUpvotes + answer.upvotes;
   }
 
   //To get Total number of downvotes (of all questions asked/answered)
-  let numDownpvotes = 0;
+  let totalNumDownvotes = 0;
   for (const question of questions) {
-    numDownpvotes = numDownpvotes + question.downvotes;
+    totalNumDownvotes = totalNumDownvotes + question.downvotes;
   }
   for (const answer of answers) {
-    numDownpvotes = numDownpvotes + answer.downvotes;
+    totalNumDownvotes = totalNumDownvotes + answer.downvotes;
   }
 
   //To get Ratio of upvotes/downvotes
-  const ratioUD = numUpvotes / numDownpvotes;
+  const ratioUpvotesToDownvotes = totalNumUpvotes / totalNumDownvotes;
 
   //To get Top voted answer
-  let topAnswer: Answer = answers[0]; //to initialise an initial top answer
-  let currenthighestA = 0;
-  let netA = 0;
-  for (const answer of answers) {
-    netA = answer.upvotes - answer.downvotes;
-    if (netA > currenthighestA) {
-      topAnswer = answer;
-      currenthighestA = netA;
-    } else continue;
+  let topAnswer: Answer | null;
+  let topVotedAnswer: ObjectId | null;
+  if (answers.length == 0) {
+    topAnswer = null;
+    topVotedAnswer = null;
+  } else {
+    topAnswer = answers[0]; //to initialise an initial top answer
+    let currenthighestA = topAnswer.upvotes - topAnswer.downvotes;
+    let netA = 0;
+    for (const answer of answers) {
+      netA = answer.upvotes - answer.downvotes;
+      if (netA > currenthighestA) {
+        topAnswer = answer;
+        currenthighestA = netA;
+      } else continue;
+    }
+    topVotedAnswer = toValidObjectId(topAnswer._id);
   }
 
   //To get Top voted question
-  let topQuestion: Question = questions[0]; //to initialise an initial top question
-  let currenthighestQ = 0;
-  let netQ = 0;
-  for (const question of questions) {
-    netQ = question.upvotes - question.downvotes;
-    if (netQ > currenthighestQ) {
-      topQuestion = question;
-      currenthighestQ = netA;
-    } else continue;
+  let topQuestion: Question | null;
+  let topVotedQuestion: ObjectId | null;
+  if (questions.length == 0) {
+    topQuestion = null;
+    topVotedQuestion = null;
+  } else {
+    topQuestion = questions[0]; //to initialise an initial top answer
+    let currenthighestQ = topQuestion.upvotes - topQuestion.downvotes;
+    let netQ = 0;
+    for (const question of questions) {
+      netQ = question.upvotes - question.downvotes;
+      if (netQ > currenthighestQ) {
+        topQuestion = question;
+        currenthighestQ = netQ;
+      } else continue;
+    }
+    topVotedQuestion = toValidObjectId(topQuestion._id);
   }
-
-  //To gather all different aspects required in the analytics api output
-  const [
-    totalNumQuestions,
-    totalNumAnswers,
-    ratioQuestionsToAnswer,
-    totalNumUpvotes,
-    totalNumDownvotes,
-    ratioUpvotesToDownvotes,
-    topVotedAnswer,
-    topVotedQuestion,
-  ] = await Promise.all([
-    numQuestions,
-    numAnswers,
-    ratioQA,
-    numUpvotes,
-    numDownpvotes,
-    ratioUD,
-    toValidObjectId(topAnswer._id),
-    toValidObjectId(topQuestion._id),
-  ]);
 
   //To return the results
   return {
