@@ -1,6 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Button, Table, PageHeader, Tag, Input, Pagination, Col } from "antd";
+import {
+  Button,
+  Table,
+  PageHeader,
+  Tag,
+  Input,
+  Pagination,
+  Col,
+  Form,
+  Select,
+  Divider,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 
 import {
@@ -10,20 +21,79 @@ import {
   QuestionTableData,
   Route,
   getPaginatedQuestions,
+  Level,
+  Subject,
+  SearchForm,
 } from "../../utils";
 import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
+import { FormLabel } from "components/util";
+import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
+const { Option } = Select;
+
+const subjectOptions: Subject[] = Object.values(Subject);
+const levelOptions: Level[] = Object.values(Level);
+// config values for the form
+const Config = Object.freeze({
+  SearchText: Object.freeze({
+    NAME: "searchText",
+    LABEL: "Search",
+    PLACEHOLDER: "Search for your question",
+    RULES: [
+      {
+        max: 1000,
+      },
+    ],
+  }),
+  Level: Object.freeze({
+    NAME: "level",
+    LABEL: "Level",
+    PLACEHOLDER: "Choose an appropriate level",
+  }),
+  Subject: Object.freeze({
+    NAME: "subject",
+    LABEL: "Subject",
+    PLACEHOLDER: "Choose an appropriate subject",
+  }),
+});
+
+const defaultSearchForm: SearchForm = {
+  searchText: "",
+  level: "",
+  subject: "",
+};
+
 const ForumPage = ({ questions, total }): JSX.Element => {
   const [isInitial, setIsInitial] = useState<boolean>(false);
   const [currQuestions, setQuestions] = useState<Question[]>(questions);
   const [currTotal, setCurrTotal] = useState<number>(total);
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize] = useState<number>(10);
   const [loading, setLoading] = useState(false); //State for loading indicator
+  const [form] = Form.useForm();
+  const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
 
   const router = useRouter();
+
+  const onFormFinish = async (searchReq: SearchForm) => {
+    // validation will throw error and stop execution if it fails
+    await form.validateFields();
+    setLoading(true);
+    setSearchForm({ ...searchReq });
+    setLoading(false);
+  };
+
+  const clearFilters = () => {
+    form.setFields([
+      { name: Config.Subject.NAME, value: undefined },
+      { name: Config.Level.NAME, value: undefined },
+      { name: Config.SearchText.NAME, value: undefined },
+    ]);
+    setSearchForm(defaultSearchForm);
+  };
+
   const dummyAsk = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     router.push({
@@ -109,24 +179,34 @@ const ForumPage = ({ questions, total }): JSX.Element => {
     router.push(`${Route.USER}/${id}`);
   };
 
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    const { questions, total } = await getPaginatedQuestions({
+      searchText: searchForm.searchText ?? "",
+      level: searchForm.level ?? "",
+      subject: searchForm.subject ?? "",
+      page,
+      pageSize,
+    });
+    setQuestions(questions);
+    setCurrTotal(total);
+    setLoading(false);
+  }, [
+    page,
+    pageSize,
+    searchForm.level,
+    searchForm.searchText,
+    searchForm.subject,
+  ]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const { questions, total } = await getPaginatedQuestions({
-        page,
-        pageSize,
-      });
-      setQuestions(questions);
-      setCurrTotal(total);
-      setLoading(false);
-    };
     if (!isInitial) {
       // prevent re-fetching on first load
       fetchData();
     } else {
       setIsInitial(false);
     }
-  }, [isInitial, page, pageSize]);
+  }, [fetchData, isInitial]);
 
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
@@ -142,11 +222,64 @@ const ForumPage = ({ questions, total }): JSX.Element => {
               </Button>,
             ]}
           />
-          <Search
-            className={styles.searchBar}
-            placeholder="Search for your question"
-            enterButton
-          />
+          <Divider />
+          <Form layout="vertical" form={form} onFinish={onFormFinish}>
+            {/* Search function */}
+            <Form.Item
+              name={Config.SearchText.NAME}
+              label={<FormLabel label={Config.SearchText.LABEL} />}
+              rules={Config.SearchText.RULES}
+            >
+              <Search
+                className={styles.searchBar}
+                placeholder={Config.SearchText.PLACEHOLDER}
+                enterButton={
+                  <Button
+                    icon={<SearchOutlined />}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Search
+                  </Button>
+                }
+              />
+            </Form.Item>
+            {/* LEVEL SELECT */}
+            <Form.Item
+              name={Config.Level.NAME}
+              label={<FormLabel label={Config.Level.LABEL} />}
+            >
+              <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
+                {levelOptions.map((level) => (
+                  <Option key={level} value={level}>
+                    {level}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            {/* SUBJECT SELECT */}
+            <Form.Item
+              name={Config.Subject.NAME}
+              label={<FormLabel label={Config.Subject.LABEL} />}
+            >
+              <Select
+                disabled={loading}
+                placeholder={Config.Subject.PLACEHOLDER}
+              >
+                {subjectOptions.map((subject) => (
+                  <Option key={subject} value={subject}>
+                    {subject}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button danger onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            </Form.Item>
+          </Form>
 
           <br />
           <Table
@@ -175,6 +308,9 @@ const ForumPage = ({ questions, total }): JSX.Element => {
 // This gets called on every request
 export async function getServerSideProps() {
   const { questions, total } = await getPaginatedQuestions({
+    level: "",
+    subject: "",
+    searchText: "",
     page: 1,
     pageSize: 10,
   });
