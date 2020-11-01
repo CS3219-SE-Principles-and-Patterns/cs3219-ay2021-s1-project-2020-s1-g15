@@ -42,9 +42,15 @@ async function getAnswersByQuestionId(
     if (sortBy === "createdAt") {
       return b.createdAt.valueOf() - a.createdAt.valueOf();
     }
+
     const nettVotesA: number = a.upvotes - a.downvotes;
     const nettVotesB: number = b.upvotes - b.downvotes;
-    return nettVotesB - nettVotesA;
+
+    if (nettVotesA === nettVotesB) {
+      return b.upvotes - a.upvotes;
+    } else {
+      return nettVotesB - nettVotesA;
+    }
   });
   return sortedAnswers;
 }
