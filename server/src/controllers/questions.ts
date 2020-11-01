@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { FilterQuery, ObjectId } from "mongodb";
 
 import { getQuestionsCollection } from "../services/database";
 import { Question } from "../models";
@@ -13,6 +13,8 @@ import {
   CreateQuestionRequest,
   UpdateQuestionRequest,
   VoteIncrementObject,
+  Level,
+  Subject,
 } from "../utils";
 
 async function getQuestions(
@@ -28,16 +30,16 @@ async function getQuestions(
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
     );
   }
-  const filterObject: { [key: string]: Record<string, unknown> | string } = {};
+  const filterObject: FilterQuery<Question> = {};
   if (searchText) {
     filterObject["$text"] = { $search: searchText };
   }
 
   if (level) {
-    filterObject["level"] = level;
+    filterObject["level"] = level as Level;
   }
   if (subject) {
-    filterObject["subject"] = subject;
+    filterObject["subject"] = subject as Subject;
   }
 
   const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
@@ -46,16 +48,16 @@ async function getQuestions(
     .limit(pageSize)
     .toArray();
 
-  const getQuestionsCollectionSize: Promise<
-    Question[]
-  > = getQuestionsCollection().find(filterObject).toArray();
+  const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments(
+    filterObject
+  );
 
-  const [questions, questionArray] = await Promise.all([
+  const [questions, total] = await Promise.all([
     getPaginatedQuestions,
     getQuestionsCollectionSize,
   ]);
 
-  return { questions, total: questionArray.length };
+  return { questions, total };
 }
 
 async function getQuestionById(id: string | ObjectId): Promise<Question> {
