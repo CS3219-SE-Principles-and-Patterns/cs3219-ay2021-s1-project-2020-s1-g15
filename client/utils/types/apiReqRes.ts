@@ -40,6 +40,7 @@ export type ApiErrorRes = {
 };
 
 export type RegisterUserReq = {
+  username: string;
   email: string;
   password: string;
 };

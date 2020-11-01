@@ -5,15 +5,13 @@ function getUsersIdUrl(id: string) {
   return `${USERS_API_URL}/${id}`;
 }
 
-async function registerUser(param: RegisterUserReq): Promise<GetSingleUserRes> {
-  const { email, password } = param;
-
+async function registerUser(req: RegisterUserReq): Promise<GetSingleUserRes> {
   const res = await fetch(USERS_API_URL, {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(req),
     headers: {
       "Content-Type": "application/json",
-      authorization: "basic" + btoa(email + ":" + password),
+      authorization: "basic" + btoa(req.email + ":" + req.password),
     },
   });
 
