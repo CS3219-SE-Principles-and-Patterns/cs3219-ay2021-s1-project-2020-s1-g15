@@ -42,6 +42,7 @@ router.get("/:id/answers", async (req: Request, res: Response) => {
 // POST request - create a single User
 router.post("/", async (req: Request, res: Response) => {
   const data: ResisterUserRequest = {
+    username: req.body.username,
     email: req.body.email,
     password: req.body.password,
   };

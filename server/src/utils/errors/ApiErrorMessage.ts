@@ -17,8 +17,11 @@ enum Answer {
 enum User {
   NOT_FOUND = "User not found",
   NOT_AUTHENTICATED = "User authentication failed",
-  MISSING_REQUIRED_FIELDS = "Email or password is missing",
-  INVALID_FIELDS = "Email or password is invalid",
+  MISSING_REQUIRED_FIELDS = "Username, email or password is missing",
+  INVALID_USERNAME = "Username must have at least four characters",
+  INVALID_EMAIL = "Email must be valid",
+  INVALID_PASSWORD = "Passwords must have at least six characters",
+  ALREADY_EXISTS = "This username and/or email already exists",
 }
 
 enum Vote {
