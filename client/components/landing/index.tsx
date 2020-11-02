@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import Particles from "react-tsparticles";
 import { Typography, Divider } from "antd";
-import { TeamOutlined } from "@ant-design/icons";
+
 import styles from "./landing.module.css";
 
 const { Paragraph, Title } = Typography;

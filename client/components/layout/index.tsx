@@ -2,14 +2,14 @@ import React, { FC } from "react";
 import router from "next/router";
 import Link from "next/link";
 import Head from "next/head";
-import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
-import { UserOutlined, CloseCircleFilled } from "@ant-design/icons";
+import { Button, Dropdown, Layout, Menu, Row, Typography } from "antd";
+import { UserOutlined, LogoutOutlined, DownOutlined } from "@ant-design/icons";
 
-import styles from "./Layout.module.css";
 import { useAuth } from "../authentication";
 import { Route, NavMenuKey } from "utils/index";
 
 const { Header, Footer, Content } = Layout;
+const { Text } = Typography;
 
 type props = {
   children: React.ReactNode;
@@ -18,28 +18,24 @@ type props = {
 };
 
 const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
-  const { isAuthenticated, logout, firebaseUser } = useAuth();
-  const logoutApplication = async (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    if (logout) {
-      await logout();
-      router.push(`${Route.HOME}`);
-    }
+  const { logout, user } = useAuth();
+
+  const onLogoutClick = async () => {
+    await logout();
+    router.push(`${Route.HOME}`);
   };
 
-  const userMenu = (
-    <Menu mode="vertical" className={styles.dropdownMenu}>
-      <Menu.Item key={NavMenuKey.USER}>
-        <Link href={Route.USER + `${firebaseUser?.uid}`}>
-          <Button type="primary">My Page</Button>
+  const authMenu: JSX.Element = (
+    <Menu>
+      <Menu.Item>
+        <Link href={`/users/${user?.username}`}>
+          <span>
+            <UserOutlined /> Profile
+          </span>
         </Link>
       </Menu.Item>
-      <Menu.Item key={NavMenuKey.LOGOUT}>
-        <Button icon={<CloseCircleFilled />} onClick={logoutApplication}>
-          Log Out
-        </Button>
+      <Menu.Item onClick={onLogoutClick}>
+        <LogoutOutlined /> Logout
       </Menu.Item>
     </Menu>
   );
@@ -51,38 +47,53 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Layout>
-        <Header className={styles.header}>
-          <div className={styles.logo}>AnswerLeh</div>
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            selectedKeys={[selectedkey ?? ""]}
-          >
-            <Menu.Item key={NavMenuKey.HOME}>
-              <Link href={Route.HOME}>Home</Link>
-            </Menu.Item>
-            <Menu.Item key={NavMenuKey.FORUM}>
-              <Link href={Route.FORUM}>Forum</Link>
-            </Menu.Item>
-            <Menu.Item key={NavMenuKey.LOGIN} className={styles.userProfile}>
-              {isAuthenticated ? (
-                <Dropdown overlay={userMenu} placement="bottomCenter">
-                  <a
-                    className="ant-dropdown-link"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <Avatar icon={<UserOutlined />} />
-                  </a>
-                </Dropdown>
-              ) : (
+      <Layout style={{ minHeight: "100vh" }}>
+        <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
+          <Row justify="space-between" align="middle">
+            <Row>
+              <Text
+                style={{
+                  color: "white",
+                  marginRight: "24px",
+                  fontSize: "20px",
+                }}
+              >
+                AnswerLeh
+              </Text>
+              <Menu
+                theme="dark"
+                mode="horizontal"
+                selectedKeys={[selectedkey ?? ""]}
+              >
+                <Menu.Item key={NavMenuKey.HOME}>
+                  <Link href={Route.HOME}>Home</Link>
+                </Menu.Item>
+                <Menu.Item key={NavMenuKey.FORUM}>
+                  <Link href={Route.FORUM}>Forum</Link>
+                </Menu.Item>
+              </Menu>
+            </Row>
+
+            {user ? (
+              <Dropdown overlay={authMenu}>
+                <Button type="primary">
+                  {user.username}
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
+            ) : (
+              <Button type="primary">
                 <Link href={Route.LOGIN}>Login</Link>
-              )}
-            </Menu.Item>
-          </Menu>
+              </Button>
+            )}
+          </Row>
         </Header>
-        <Content className={styles.content}>{children}</Content>
-        <Footer className={styles.footer}></Footer>
+
+        <Content style={{ padding: "1.5rem", marginTop: 64 }}>
+          {children}
+        </Content>
+
+        <Footer></Footer>
       </Layout>
     </>
   );

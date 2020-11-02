@@ -1,5 +1,5 @@
 .hero {
-  margin-top: -21px; /*offset content in layout component*/
+  margin-top: -24px; /*offset content in layout component*/
   margin-left: -24px;
   margin-right: -24px;
 }
@@ -8,13 +8,8 @@
 }
 .title {
   position: absolute;
-  top: 15rem;
-  left: 30%;
-  right: 30%;
-  /* left: auto; */
-  /*width: 100%;*/
-  /* right: auto; */
-  background: transparent;
+  top: 12rem;
+  width: 100%;
   color: white;
   text-align: center;
 }
@@ -46,7 +41,7 @@
 }
 
 .firstSection {
-  margin: 0.5rem auto 0.5rem auto;
+  margin: 3rem auto 2rem auto;
   justify-content: center;
 }
 
@@ -78,12 +73,13 @@
 }
 
 .box {
+  background-color: white;
   flex: 1 1 150px;
   margin: 8px;
-  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
   overflow-wrap: break-word;
   border-radius: 15px;
-  padding: 15px;  
+  padding: 15px;
 }
 
 .cardTitle {
