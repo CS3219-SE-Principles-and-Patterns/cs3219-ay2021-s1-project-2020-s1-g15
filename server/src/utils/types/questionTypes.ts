@@ -1,7 +1,10 @@
-import { Question } from "src/models";
+import { Question, User } from "src/models";
 import { VoteCommand, Level, Subject } from "src/utils";
 
 // API REQUEST RESPONSE //
+
+export type GetSingleQuestionResponse = Omit<Question, "userId"> &
+  Pick<User, "_id" | "email" | "username">;
 
 export type GetPaginatedQuestionsRequest = {
   page?: string | undefined;

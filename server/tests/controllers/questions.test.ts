@@ -104,7 +104,7 @@ describe("Get a specific questions", () => {
     // get back the same quesion:
     const question = await getQuestionById(createdQuestion._id);
 
-    expect(question).toStrictEqual(createdQuestion);
+    expect(question._id).toStrictEqual(createdQuestion._id);
   });
 });
 
@@ -154,7 +154,7 @@ describe("Update a question", () => {
     // get back the question
     const question = await getQuestionById(createdQuestion._id);
 
-    expect(updatedQuestion).toStrictEqual(question);
+    expect(updatedQuestion._id).toStrictEqual(question._id);
   });
 });
 
@@ -201,7 +201,7 @@ describe("Add an answer reference to a question", () => {
     // get back the question
     const question = await getQuestionById(createdQuestion._id);
 
-    expect(updatedQuestion).toStrictEqual(question);
+    expect(updatedQuestion._id).toStrictEqual(question._id);
   });
 });
 

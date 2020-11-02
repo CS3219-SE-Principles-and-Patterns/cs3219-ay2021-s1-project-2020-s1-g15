@@ -35,6 +35,7 @@ import {
   DownvoteQuestionRequest,
   UpdateQuestionRequest,
   VoteIncrementObject,
+  GetSingleQuestionResponse,
 } from "../utils";
 
 const router: Router = Router();
@@ -53,7 +54,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
 
-  const question: Question = await getQuestionById(id);
+  const question: GetSingleQuestionResponse = await getQuestionById(id);
 
   return res.status(HttpStatusCode.OK).json(question);
 });

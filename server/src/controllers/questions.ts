@@ -15,6 +15,7 @@ import {
   VoteIncrementObject,
   Level,
   Subject,
+  GetSingleQuestionResponse,
 } from "../utils";
 
 async function getQuestions(
@@ -60,13 +61,49 @@ async function getQuestions(
   return { questions, total };
 }
 
-async function getQuestionById(id: string | ObjectId): Promise<Question> {
+async function getQuestionById(
+  id: string | ObjectId
+): Promise<GetSingleQuestionResponse> {
   const questionObjectId: ObjectId = toValidObjectId(id);
 
-  const question: Question | null = await getQuestionsCollection().findOne({
-    _id: questionObjectId,
-  });
+  const result: GetSingleQuestionResponse[] = await getQuestionsCollection()
+    .aggregate<GetSingleQuestionResponse>([
+      {
+        // match only the questionObjectId
+        $match: { _id: questionObjectId },
+      },
+      {
+        // join the users collection
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        // flatten resulting array to one doc
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        // exclude certian fields
+        $project: {
+          userId: false,
+          user: {
+            createdAt: false,
+            updatedAt: false,
+            questionIds: false,
+            answerIds: false,
+          },
+        },
+      },
+    ])
+    .toArray();
 
+  const question: GetSingleQuestionResponse | null = result[0];
   if (question == null) {
     throw new ApiError(
       HttpStatusCode.NOT_FOUND,
