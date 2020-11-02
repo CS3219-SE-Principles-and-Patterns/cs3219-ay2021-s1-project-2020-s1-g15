@@ -5,18 +5,19 @@ import { Space, Row, Col } from "antd";
 import FluidPage from "components/layout";
 import {
   NavMenuKey,
-  Question,
   Answer,
   getSingleQuestion,
   getAnswersOfQuestion,
+  GetSingleQuestionRes,
 } from "utils/index";
 import {
   ViewQuestionCard,
   ViewAnswersCard,
   QuestionUpvoteDownvote,
 } from "components/questions";
+
 type QuestionPageProps = {
-  question: Question;
+  question: GetSingleQuestionRes;
   answers: Answer[];
 };
 

@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import { Question, Route, deleteSingleQuestion } from "utils/index";
+import { Route, deleteSingleQuestion, GetSingleQuestionRes } from "utils/index";
 import { useAuth } from "components/authentication";
 import QuestionPreview from "./QuestionPreview";
 
 const { confirm } = Modal;
 
 type ViewQuestionCardProp = {
-  question: Question;
+  question: GetSingleQuestionRes;
 };
 
 const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
@@ -18,7 +18,7 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
 }): JSX.Element => {
   const { user, idToken } = useAuth();
   const router = useRouter();
-  const belongsToUser: boolean = !!user && user._id === question.userId;
+  const belongsToUser: boolean = !!user && user._id === question.user._id;
 
   const onEditClick = () => {
     router.push(Route.QUESTION_EDIT(question._id, question.slug));

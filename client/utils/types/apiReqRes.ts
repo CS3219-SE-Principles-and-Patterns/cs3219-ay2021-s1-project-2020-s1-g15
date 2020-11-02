@@ -1,10 +1,28 @@
-import { Util, Question, VoteStatus } from "utils/index";
+import { Util, Question, User, VoteStatus } from "utils/index";
+
+//-------------------
+// MISC
+//-------------------
 
 export type SearchForm = {
   level: string;
   subject: string;
   searchText: string;
 };
+
+export type ApiErrorRes = {
+  status: string;
+  message: string;
+};
+
+//-------------------
+// QUESTIONS
+//-------------------
+
+export type GetSingleQuestionRes = Omit<Question, "userId"> & {
+  user: Pick<User, "_id" | "email" | "username">;
+};
+
 export type GetPaginatedQuestionsReq = SearchForm & {
   page: number;
   pageSize: number;
@@ -24,6 +42,10 @@ export type CreateQuestionReq = {
 
 export type EditQuestionReq = CreateQuestionReq;
 
+//-------------------
+// ANSWERS
+//-------------------
+
 export type GetAnswersOfQuestionReq = {
   questionId: string;
 };
@@ -39,10 +61,9 @@ export type CreateAnswerReq = {
 
 export type EditAnswerReq = Pick<CreateAnswerReq, "markdown">;
 
-export type ApiErrorRes = {
-  status: string;
-  message: string;
-};
+//-------------------
+// USERS
+//-------------------
 
 export type RegisterUserReq = {
   username: string;

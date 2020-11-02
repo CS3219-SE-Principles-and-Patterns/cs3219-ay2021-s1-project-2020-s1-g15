@@ -3,8 +3,9 @@ import { VoteCommand, Level, Subject } from "src/utils";
 
 // API REQUEST RESPONSE //
 
-export type GetSingleQuestionResponse = Omit<Question, "userId"> &
-  Pick<User, "_id" | "email" | "username">;
+export type GetSingleQuestionResponse = Omit<Question, "userId"> & {
+  user: Pick<User, "_id" | "email" | "username">;
+};
 
 export type GetPaginatedQuestionsRequest = {
   page?: string | undefined;

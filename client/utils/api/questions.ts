@@ -12,6 +12,7 @@ import {
   getAuthorizationString,
   throwApiError,
 } from "./util";
+import { GetSingleQuestionRes } from "utils/types";
 
 async function getPaginatedQuestions(
   req: GetPaginatedQuestionsReq
@@ -27,7 +28,7 @@ async function getPaginatedQuestions(
   return res.json();
 }
 
-async function getSingleQuestion(id: string): Promise<Question> {
+async function getSingleQuestion(id: string): Promise<GetSingleQuestionRes> {
   const res = await fetch(`${QUESTIONS_API_URL}/${id}`, {
     method: "GET",
   });
