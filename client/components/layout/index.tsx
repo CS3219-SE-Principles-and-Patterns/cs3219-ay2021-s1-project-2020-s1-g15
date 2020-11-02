@@ -89,7 +89,7 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
           </Row>
         </Header>
 
-        <Content style={{ padding: "1.5rem", marginTop: 64 }}>
+        <Content style={{ padding: "1.5rem", marginTop: 64, height: "100%" }}>
           {children}
         </Content>
 
