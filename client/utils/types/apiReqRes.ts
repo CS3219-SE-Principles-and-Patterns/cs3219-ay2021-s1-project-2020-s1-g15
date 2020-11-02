@@ -1,6 +1,11 @@
 import { Util, Question, VoteStatus } from "utils/index";
 
-export type GetPaginatedQuestionsReq = {
+export type SearchForm = {
+  level: string;
+  subject: string;
+  searchText: string;
+};
+export type GetPaginatedQuestionsReq = SearchForm & {
   page: number;
   pageSize: number;
 };

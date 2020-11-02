@@ -42,7 +42,6 @@ const router: Router = Router();
 // GET request - list all questions
 router.get("/", async (req: Request, res: Response) => {
   const paginatedReq = req.query as GetPaginatedQuestionsRequest;
-
   const questionsRes: GetPaginatedQuestionsResponse = await getQuestions(
     paginatedReq
   );
