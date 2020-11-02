@@ -2,10 +2,10 @@ import React, { FC, useState, useEffect } from "react";
 import { List, Card, Space, Typography } from "antd";
 
 import {
-  Answer,
   getAnswersOfQuestion,
   CheckAnswerVoteStatusRes,
   checkAnswerVoteStatus,
+  GetSingleAnswerRes,
 } from "utils/index";
 import { AnswerForm } from "./AnswerForm";
 import { ViewAnswersCardListItem } from "./ViewAnswersCardListItem";
@@ -14,7 +14,7 @@ import { useAuth } from "components/authentication";
 const { Text } = Typography;
 
 type ViewAnswersCardProp = {
-  answers: Answer[];
+  answers: GetSingleAnswerRes[];
   questionId: string;
 };
 
@@ -23,7 +23,7 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
   questionId,
 }): JSX.Element => {
   const { isAuthenticated, idToken } = useAuth();
-  const [answers, setAnswers] = useState<Answer[]>(initialAnswers);
+  const [answers, setAnswers] = useState<GetSingleAnswerRes[]>(initialAnswers);
   const [answerVoteStatusMap, setAnswerVoteStatusMap] = useState<
     CheckAnswerVoteStatusRes
   >({});
@@ -45,7 +45,9 @@ const ViewAnswersCard: FC<ViewAnswersCardProp> = ({
   }, [answers, isAuthenticated, idToken]);
 
   const refreshAnswers = async (): Promise<void> => {
-    const answers: Answer[] = await getAnswersOfQuestion({ questionId });
+    const answers: GetSingleAnswerRes[] = await getAnswersOfQuestion({
+      questionId,
+    });
     setAnswers(answers);
   };
 

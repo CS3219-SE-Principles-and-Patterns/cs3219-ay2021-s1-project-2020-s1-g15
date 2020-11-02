@@ -1,3 +1,5 @@
+import { GetSingleQuestionRes } from "./apiReqRes";
+
 export type Util = {
   _id: string;
   createdAt: Date;
@@ -16,10 +18,7 @@ export type Question = Util & {
   downvotes: number; // number of downvotes, updated when adding downvotes
 };
 
-export type QuestionTableData = Util &
-  Question & {
-    key: number;
-  };
+export type QuestionTableData = GetSingleQuestionRes & { key: string };
 
 export type Answer = Util & {
   markdown: string;

@@ -15,6 +15,7 @@ import {
   VoteIncrementObject,
   Level,
   Subject,
+  GetSingleQuestionResponse,
 } from "../utils";
 
 async function getQuestions(
@@ -30,26 +31,68 @@ async function getQuestions(
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
     );
   }
-  const filterObject: FilterQuery<Question> = {};
-  if (searchText) {
-    filterObject["$text"] = { $search: searchText };
-  }
 
+  const query: FilterQuery<GetSingleQuestionResponse> = {};
+  if (searchText) {
+    query.$text = { $search: searchText.trim() };
+  }
   if (level) {
-    filterObject["level"] = level as Level;
+    query.level = level as Level;
   }
   if (subject) {
-    filterObject["subject"] = subject as Subject;
+    query.subject = subject as Subject;
   }
 
-  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find(filterObject)
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
+  const getPaginatedQuestions: Promise<
+    GetSingleQuestionResponse[]
+  > = getQuestionsCollection()
+    .aggregate<GetSingleQuestionResponse>([
+      { $match: query },
+      {
+        // join the users collection
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        // flatten resulting array to one doc
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        // exclude certain fields
+        $project: {
+          userId: false,
+          user: {
+            createdAt: false,
+            updatedAt: false,
+            questionIds: false,
+            answerIds: false,
+          },
+        },
+      },
+      {
+        // sort by more recent first
+        $sort: { createdAt: -1 },
+      },
+      {
+        // pagination
+        $skip: (page - 1) * pageSize,
+      },
+      {
+        // pagination
+        $limit: pageSize,
+      },
+    ])
     .toArray();
 
   const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments(
-    filterObject
+    query
   );
 
   const [questions, total] = await Promise.all([
@@ -60,13 +103,49 @@ async function getQuestions(
   return { questions, total };
 }
 
-async function getQuestionById(id: string | ObjectId): Promise<Question> {
+async function getQuestionById(
+  id: string | ObjectId
+): Promise<GetSingleQuestionResponse> {
   const questionObjectId: ObjectId = toValidObjectId(id);
 
-  const question: Question | null = await getQuestionsCollection().findOne({
-    _id: questionObjectId,
-  });
+  const result: GetSingleQuestionResponse[] = await getQuestionsCollection()
+    .aggregate<GetSingleQuestionResponse>([
+      {
+        // match only the questionObjectId
+        $match: { _id: questionObjectId },
+      },
+      {
+        // join the users collection
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        // flatten resulting array to one doc
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        // exclude certain fields
+        $project: {
+          userId: false,
+          user: {
+            createdAt: false,
+            updatedAt: false,
+            questionIds: false,
+            answerIds: false,
+          },
+        },
+      },
+    ])
+    .toArray();
 
+  const question: GetSingleQuestionResponse | null = result[0];
   if (question == null) {
     throw new ApiError(
       HttpStatusCode.NOT_FOUND,

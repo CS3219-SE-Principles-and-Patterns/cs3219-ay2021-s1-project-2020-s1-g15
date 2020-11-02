@@ -2,7 +2,12 @@ import React, { FC, useState } from "react";
 import { Row, Form, Input, Button, notification, Space, Tabs } from "antd";
 
 import styles from "./index.module.css";
-import { Answer, createAnswer, editAnswer } from "utils/index";
+import {
+  Answer,
+  createAnswer,
+  editAnswer,
+  GetSingleAnswerRes,
+} from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { useAuth } from "components/authentication";
 
@@ -20,7 +25,7 @@ type CreateAnswerFormProp = CommonAnswerFormProp & {
 
 type EditAnswerFormProp = CommonAnswerFormProp & {
   isEdit: true;
-  answer: Answer;
+  answer: GetSingleAnswerRes;
   onCancelEdit: () => void;
 };
 

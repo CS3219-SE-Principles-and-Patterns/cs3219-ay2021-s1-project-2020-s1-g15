@@ -10,10 +10,10 @@ import {
 
 import styles from "./index.module.css";
 import {
-  Answer,
   deleteSingleAnswer,
   useUpvoteDownvote,
   VoteStatus,
+  GetSingleAnswerRes,
 } from "utils/index";
 import { AnswerPreview } from "./AnswerPreview";
 import { AnswerForm } from "./AnswerForm";
@@ -22,7 +22,7 @@ import { useAuth } from "components/authentication";
 const { confirm } = Modal;
 
 type ViewAnswersCardListItemProp = {
-  answer: Answer;
+  answer: GetSingleAnswerRes;
   refreshAnswers: () => Promise<void>;
   voteStatus: VoteStatus | undefined; // undefined if user is not auth
 };
@@ -33,7 +33,7 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
   voteStatus,
 }): JSX.Element => {
   const { firebaseUser, idToken } = useAuth();
-  const isAnswerOwner: boolean = firebaseUser?.uid === answer.userId;
+  const isAnswerOwner: boolean = firebaseUser?.uid === answer.user._id;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const {
     setHasUpvoted,

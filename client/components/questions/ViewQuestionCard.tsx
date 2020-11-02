@@ -1,24 +1,57 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
-import { Card, Divider, Space, Row, Button, Modal, notification } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Divider,
+  Space,
+  Row,
+  Button,
+  Modal,
+  notification,
+  Tooltip,
+} from "antd";
+import {
+  ExclamationCircleOutlined,
+  LikeFilled,
+  DislikeFilled,
+  LikeOutlined,
+  DislikeOutlined,
+} from "@ant-design/icons";
 
-import { Question, Route, deleteSingleQuestion } from "utils/index";
+import {
+  Route,
+  deleteSingleQuestion,
+  GetSingleQuestionRes,
+  useUpvoteDownvote,
+} from "utils/index";
 import { useAuth } from "components/authentication";
 import QuestionPreview from "./QuestionPreview";
 
 const { confirm } = Modal;
 
 type ViewQuestionCardProp = {
-  question: Question;
+  question: GetSingleQuestionRes;
 };
 
 const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
   question,
 }): JSX.Element => {
-  const { user, idToken } = useAuth();
+  const { isAuthenticated, user, idToken } = useAuth();
   const router = useRouter();
-  const belongsToUser: boolean = !!user && user._id === question.userId;
+  const belongsToUser: boolean = !!user && user._id === question.user._id;
+  const {
+    hasUpvoted,
+    hasDownvoted,
+    upvotesLocal,
+    downvotesLocal,
+    upvoteOnClick,
+    downvoteOnClick,
+  } = useUpvoteDownvote({
+    isQuestionVote: true,
+    questionId: question._id,
+    upvotes: question.upvotes,
+    downvotes: question.downvotes,
+  });
 
   const onEditClick = () => {
     router.push(Route.QUESTION_EDIT(question._id, question.slug));
@@ -43,6 +76,25 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
 
   return (
     <Card>
+      <Button.Group size="large" style={{ marginBottom: "16px" }}>
+        <Tooltip title={isAuthenticated ? "Upvote" : "Login to upvote"}>
+          <Button
+            icon={hasUpvoted ? <LikeFilled /> : <LikeOutlined />}
+            onClick={upvoteOnClick}
+          >
+            {upvotesLocal.toString()}
+          </Button>
+        </Tooltip>
+        <Tooltip title={isAuthenticated ? "Downvote" : "Login to downvote"}>
+          <Button
+            icon={hasDownvoted ? <DislikeFilled /> : <DislikeOutlined />}
+            onClick={downvoteOnClick}
+          >
+            {downvotesLocal.toString()}
+          </Button>
+        </Tooltip>
+      </Button.Group>
+
       <QuestionPreview question={question} />
 
       {belongsToUser ? (

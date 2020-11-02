@@ -1,40 +1,43 @@
 import React, { FC } from "react";
+import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { Space, Row, Col } from "antd";
+import { Space, Row, Col, PageHeader } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
 
 import FluidPage from "components/layout";
 import {
   NavMenuKey,
-  Question,
-  Answer,
   getSingleQuestion,
   getAnswersOfQuestion,
+  GetSingleQuestionRes,
+  GetSingleAnswerRes,
+  Route,
 } from "utils/index";
-import {
-  ViewQuestionCard,
-  ViewAnswersCard,
-  QuestionUpvoteDownvote,
-} from "components/questions";
+import { ViewQuestionCard, ViewAnswersCard } from "components/questions";
+
 type QuestionPageProps = {
-  question: Question;
-  answers: Answer[];
+  question: GetSingleQuestionRes;
+  answers: GetSingleAnswerRes[];
 };
 
 const QuestionPage: FC<QuestionPageProps> = ({
   question,
   answers,
 }): JSX.Element => {
+  const router = useRouter();
+
   return (
     <FluidPage title={question.title} selectedkey={NavMenuKey.FORUM}>
       <Row justify="center">
         <Col flex="750px">
+          <PageHeader
+            title={<h1>Question</h1>}
+            backIcon={
+              <LeftOutlined size={64} style={{ marginBottom: "12px" }} />
+            }
+            onBack={() => router.push(Route.FORUM)}
+          />
           <Space style={{ width: "100%" }} direction="vertical" size="large">
-            <QuestionUpvoteDownvote
-              qid={question._id}
-              title={question.slug}
-              upvotes={question.upvotes}
-              downvotes={question.downvotes}
-            />
             <ViewQuestionCard question={question} />
             <ViewAnswersCard answers={answers} questionId={question._id} />
           </Space>
@@ -62,7 +65,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { props: {} }; // needed to stop execution of code after
   }
 
-  const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
+  const answers: GetSingleAnswerRes[] = await getAnswersOfQuestion({
+    questionId: qid,
+  });
 
   return {
     props: {

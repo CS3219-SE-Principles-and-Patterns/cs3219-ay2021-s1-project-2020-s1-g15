@@ -6,19 +6,20 @@ import {
   toRelativeTimeAgo,
   markdownToReactNode,
   CreateQuestionReq,
+  GetSingleQuestionRes,
 } from "utils/index";
 
 const { Title } = Typography;
 
 type ViewQuestionProp = {
-  question: CreateQuestionReq & {
-    userId?: string | undefined;
-    createdAt?: Date | string | undefined;
-  };
+  question: CreateQuestionReq &
+    (Partial<Pick<GetSingleQuestionRes, "user">> & {
+      createdAt?: Date | string | undefined;
+    });
 };
 
 const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
-  const { title, userId, createdAt, level, subject, markdown } = question;
+  const { title, user, createdAt, level, subject, markdown } = question;
 
   return (
     <>
@@ -27,9 +28,9 @@ const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
       </Typography>
 
       <Space direction="vertical">
-        {userId && createdAt ? (
+        {user && createdAt ? (
           <Space>
-            <span style={{ color: grey[4] }}>{userId}</span>
+            <span style={{ color: grey[4] }}>{user.username}</span>
             <span style={{ color: grey[1] }}>
               {toRelativeTimeAgo(createdAt)}
             </span>
