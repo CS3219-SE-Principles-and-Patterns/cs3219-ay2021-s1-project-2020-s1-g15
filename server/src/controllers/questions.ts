@@ -21,7 +21,6 @@ import {
 async function getQuestions(
   req: GetPaginatedQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
-  console.log(req);
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
   const { searchText, level, subject } = req;
