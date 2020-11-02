@@ -5,10 +5,10 @@ import { Space, Row, Col } from "antd";
 import FluidPage from "components/layout";
 import {
   NavMenuKey,
-  Answer,
   getSingleQuestion,
   getAnswersOfQuestion,
   GetSingleQuestionRes,
+  GetSingleAnswerRes,
 } from "utils/index";
 import {
   ViewQuestionCard,
@@ -18,7 +18,7 @@ import {
 
 type QuestionPageProps = {
   question: GetSingleQuestionRes;
-  answers: Answer[];
+  answers: GetSingleAnswerRes[];
 };
 
 const QuestionPage: FC<QuestionPageProps> = ({
@@ -63,7 +63,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { props: {} }; // needed to stop execution of code after
   }
 
-  const answers: Answer[] = await getAnswersOfQuestion({ questionId: qid });
+  const answers: GetSingleAnswerRes[] = await getAnswersOfQuestion({
+    questionId: qid,
+  });
 
   return {
     props: {

@@ -5,6 +5,7 @@ import {
   EditAnswerReq,
   VoteCommand,
   CheckAnswerVoteStatusRes,
+  GetSingleAnswerRes,
 } from "utils/index";
 import {
   ANSWERS_API_URL,
@@ -18,7 +19,7 @@ import {
 
 async function getAnswersOfQuestion(
   req: GetAnswersOfQuestionReq
-): Promise<Answer[]> {
+): Promise<GetSingleAnswerRes[]> {
   const res = await fetch(`${ANSWERS_API_URL}/${createUrlParamString(req)}`, {
     method: "GET",
   });
@@ -27,7 +28,7 @@ async function getAnswersOfQuestion(
     return throwApiError(res);
   }
 
-  return res.json() as Promise<Answer[]>;
+  return res.json() as Promise<GetSingleAnswerRes[]>;
 }
 
 async function createAnswer(

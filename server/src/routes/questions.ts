@@ -22,7 +22,7 @@ import {
 } from "../controllers/votes";
 import {
   deleteAllAnswersByQuestionId,
-  getAnswersByQuestionId,
+  getUnprocessedAnswersByQuestionId,
 } from "../controllers/answers";
 import {
   HttpStatusCode,
@@ -167,7 +167,7 @@ router.delete("/:id", verifyUserAuth, async (req: Request, res: Response) => {
   const userId: ObjectId = res.locals.uid;
   const questionId: string = req.params.id;
 
-  const answers: Answer[] = await getAnswersByQuestionId(questionId, undefined);
+  const answers: Answer[] = await getUnprocessedAnswersByQuestionId(questionId);
   await Promise.all([
     deleteQuestion(userId, questionId),
     removeQuestionFromUser(userId, questionId),

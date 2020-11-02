@@ -13,12 +13,28 @@ import {
   CreateAnswerRequest,
   EditAnswerRequest,
   VoteIncrementObject,
+  GetSingleAnswerResponse,
 } from "../utils";
+
+// for internal usage without sanitisation/sorting
+async function getUnprocessedAnswersByQuestionId(
+  questionId: string | ObjectId
+): Promise<Answer[]> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+
+  const answers: Answer[] = await getAnswersCollection()
+    .find({
+      questionId: questionObjectId,
+    })
+    .toArray();
+
+  return answers;
+}
 
 async function getAnswersByQuestionId(
   questionId: string | ObjectId,
   sortBy: string | undefined
-): Promise<Answer[]> {
+): Promise<GetSingleAnswerResponse[]> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
 
   const question: Question | null = await getQuestionsCollection().findOne({
@@ -32,27 +48,59 @@ async function getAnswersByQuestionId(
     );
   }
 
-  const answers: Answer[] = await getAnswersCollection()
-    .find({
-      questionId: questionObjectId,
-    })
+  const result: GetSingleAnswerResponse[] = await getAnswersCollection()
+    .aggregate<GetSingleAnswerResponse>([
+      {
+        // match only the questionObjectId
+        $match: { questionId: questionObjectId },
+      },
+      {
+        // join the users collection
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        // flatten resulting array to one doc
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        // add nettVote field so we can sort by it later
+        $addFields: {
+          nettVotes: {
+            $subtract: ["$upvotes", "$downvotes"],
+          },
+        },
+      },
+      {
+        $sort:
+          sortBy === "createdAt"
+            ? { createdAt: -1 }
+            : { nettVotes: -1, upvotes: -1, createdAt: -1 },
+      },
+      {
+        // exclude certain fields
+        $project: {
+          userId: false,
+          nettVotes: false,
+          user: {
+            createdAt: false,
+            updatedAt: false,
+            questionIds: false,
+            answerIds: false,
+          },
+        },
+      },
+    ])
     .toArray();
 
-  const sortedAnswers = answers.sort((a: Answer, b: Answer) => {
-    if (sortBy === "createdAt") {
-      return b.createdAt.valueOf() - a.createdAt.valueOf();
-    }
-
-    const nettVotesA: number = a.upvotes - a.downvotes;
-    const nettVotesB: number = b.upvotes - b.downvotes;
-
-    if (nettVotesA === nettVotesB) {
-      return b.upvotes - a.upvotes;
-    } else {
-      return nettVotesB - nettVotesA;
-    }
-  });
-  return sortedAnswers;
+  return result;
 }
 
 async function getAnswersByUserId(
@@ -223,6 +271,7 @@ async function deleteAllAnswersByQuestionId(
 
 export {
   createAnswer,
+  getUnprocessedAnswersByQuestionId,
   getAnswersByQuestionId,
   getAnswersByUserId,
   deleteAnswer,

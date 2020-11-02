@@ -1,4 +1,5 @@
 import { Util, Question, User, VoteStatus } from "utils/index";
+import { Answer } from "./models";
 
 //-------------------
 // MISC
@@ -45,6 +46,10 @@ export type EditQuestionReq = CreateQuestionReq;
 //-------------------
 // ANSWERS
 //-------------------
+
+export type GetSingleAnswerRes = Omit<Answer, "userId"> & {
+  user: Pick<User, "_id" | "email" | "username">;
+};
 
 export type GetAnswersOfQuestionReq = {
   questionId: string;
