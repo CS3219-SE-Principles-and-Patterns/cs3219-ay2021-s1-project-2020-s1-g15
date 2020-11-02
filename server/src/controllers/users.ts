@@ -11,6 +11,36 @@ import {
   toValidObjectId,
 } from "../utils";
 
+async function checkUniqueUsernameAndEmail(
+  username: string,
+  email: string
+): Promise<boolean> {
+  const numClashes = await getUsersCollection().countDocuments({
+    $or: [{ username: username }, { email: email }],
+  });
+
+  return numClashes === 0;
+}
+
+/**
+ * Returns a single user by id or username
+ */
+async function getUserByIdOrUsername(
+  id: ObjectId | string | string[] | undefined,
+  username: string | string[] | undefined
+): Promise<User> {
+  if (id instanceof ObjectId || typeof id === "string") {
+    return getUserById(id);
+  }
+  if (typeof username === "string") {
+    return getUserByUsername(username);
+  }
+  throw new ApiError(
+    HttpStatusCode.BAD_REQUEST,
+    ApiErrorMessage.User.ID_OR_USERNAME_NEEDED
+  );
+}
+
 /**
  * Returns a single user by id
  *
@@ -32,26 +62,77 @@ async function getUserById(id: string | ObjectId): Promise<User> {
 }
 
 /**
+ * Returns a single user by username
+ *
+ * @param id the username of the user
+ */
+async function getUserByUsername(username: string): Promise<User> {
+  if (username.length < 4) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.INVALID_USERNAME
+    );
+  }
+
+  const user: User | null = await getUsersCollection().findOne({
+    username: username,
+  });
+
+  if (user == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.NOT_FOUND
+    );
+  }
+  return user;
+}
+
+/**
  * Registers the user in Firebase and creates the user document.
  *
  * @param data the UserRequestBody with email and password keys
  */
 async function registerAndCreateUser(data: ResisterUserRequest): Promise<User> {
-  const { email, password }: ResisterUserRequest = data;
+  const { username, email, password }: ResisterUserRequest = data;
 
-  if (!email || !password) {
+  if (!username || !email || !password) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
       ApiErrorMessage.User.MISSING_REQUIRED_FIELDS
     );
   }
 
+  const trimmedUsername: string = username.trim();
   const trimmedEmail: string = email.trim();
   const trimmedPassword: string = password.trim();
-  if (trimmedPassword === "" || trimmedEmail === "") {
+  if (trimmedUsername.length < 4) {
     throw new ApiError(
       HttpStatusCode.BAD_REQUEST,
-      ApiErrorMessage.User.INVALID_FIELDS
+      ApiErrorMessage.User.INVALID_USERNAME
+    );
+  }
+  if (!trimmedEmail.includes("@")) {
+    // just a quick sanity check, will be further checked by firebase auth later
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.User.INVALID_EMAIL
+    );
+  }
+  if (trimmedPassword.length < 6) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.User.INVALID_PASSWORD
+    );
+  }
+
+  const isUniqueUsernameAndEmail: boolean = await checkUniqueUsernameAndEmail(
+    trimmedUsername,
+    trimmedEmail
+  );
+  if (!isUniqueUsernameAndEmail) {
+    throw new ApiError(
+      HttpStatusCode.BAD_REQUEST,
+      ApiErrorMessage.User.ALREADY_EXISTS
     );
   }
 
@@ -62,8 +143,8 @@ async function registerAndCreateUser(data: ResisterUserRequest): Promise<User> {
   try {
     await getAuth().createUser({
       uid: userObjectId.toHexString(),
-      email: email,
-      password: password,
+      email: trimmedEmail,
+      password: trimmedPassword,
     });
   } catch (error) {
     throw new ApiError(HttpStatusCode.BAD_REQUEST, error.message);
@@ -74,8 +155,8 @@ async function registerAndCreateUser(data: ResisterUserRequest): Promise<User> {
     _id: userObjectId,
     createdAt: new Date(),
     updatedAt: new Date(),
-    email: email,
-    username: email,
+    email: trimmedEmail,
+    username: trimmedUsername,
     questionIds: [],
     answerIds: [],
   };
@@ -223,6 +304,8 @@ export {
   addQuestionToUser,
   removeQuestionFromUser,
   getUserById,
+  getUserByUsername,
+  getUserByIdOrUsername,
   addAnswerToUser,
   removeAnswerFromUser,
   removeAllAnswersFromUsers,

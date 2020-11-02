@@ -48,6 +48,7 @@ export enum Subject {
 }
 
 export type User = Util & {
+  username: string;
   email: string;
   answerIds: string[];
   questionIds: string[];

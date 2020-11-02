@@ -4,19 +4,8 @@
 }
 
 .card {
-  flex-grow: 1;
-  max-width: 500px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.22);
-  padding: 2rem;
-}
-
-.loginForm {
-  margin: auto;
-}
-.loginFormForgot {
-  float: right;
-}
-.loginFormButton {
-  width: 100%;
-  margin-right: 8px;
+  width: 90vw;
+  max-width: 400px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05), 0 7px 7px rgba(0, 0, 0, 0.12);
+  padding: 1rem;
 }
