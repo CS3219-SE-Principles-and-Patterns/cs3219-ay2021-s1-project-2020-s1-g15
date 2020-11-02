@@ -11,7 +11,6 @@ const UserPage: FC = (): JSX.Element => {
   const router = useRouter();
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -21,11 +20,9 @@ const UserPage: FC = (): JSX.Element => {
         return;
       }
 
-      setLoading(true);
       try {
         const user = await getSingleUser({ username });
         setUser(user);
-        setLoading(false);
       } catch (error) {
         setIsNotFound(true);
       }
@@ -35,10 +32,12 @@ const UserPage: FC = (): JSX.Element => {
   return isNotFound ? (
     <NotFoundPage />
   ) : (
-    <FluidPage title={`AnswerLeh - ${(user as User).username}`}>
-      <Spin spinning={loading}>
-        <ViewUser user={user as User} />
-      </Spin>
+    <FluidPage title={`AnswerLeh - ${user?.username}`}>
+      {user ? (
+        <ViewUser user={user} />
+      ) : (
+        <Spin size="large" style={{ width: "100%", marginTop: "5rem" }} />
+      )}
     </FluidPage>
   );
 };
