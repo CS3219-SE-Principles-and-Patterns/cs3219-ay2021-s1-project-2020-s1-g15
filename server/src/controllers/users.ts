@@ -23,6 +23,25 @@ async function checkUniqueUsernameAndEmail(
 }
 
 /**
+ * Returns a single user by id or username
+ */
+async function getUserByIdOrUsername(
+  id: ObjectId | string | string[] | undefined,
+  username: string | string[] | undefined
+): Promise<User> {
+  if (id instanceof ObjectId || typeof id === "string") {
+    return getUserById(id);
+  }
+  if (typeof username === "string") {
+    return getUserByUsername(username);
+  }
+  throw new ApiError(
+    HttpStatusCode.BAD_REQUEST,
+    ApiErrorMessage.User.ID_OR_USERNAME_NEEDED
+  );
+}
+
+/**
  * Returns a single user by id
  *
  * @param id the user id of the user
@@ -31,6 +50,32 @@ async function getUserById(id: string | ObjectId): Promise<User> {
   const userObjectId: ObjectId = toValidObjectId(id);
   const user: User | null = await getUsersCollection().findOne({
     _id: userObjectId,
+  });
+
+  if (user == null) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.NOT_FOUND
+    );
+  }
+  return user;
+}
+
+/**
+ * Returns a single user by username
+ *
+ * @param id the username of the user
+ */
+async function getUserByUsername(username: string): Promise<User> {
+  if (username.length < 4) {
+    throw new ApiError(
+      HttpStatusCode.NOT_FOUND,
+      ApiErrorMessage.User.INVALID_USERNAME
+    );
+  }
+
+  const user: User | null = await getUsersCollection().findOne({
+    username: username,
   });
 
   if (user == null) {
@@ -259,6 +304,8 @@ export {
   addQuestionToUser,
   removeQuestionFromUser,
   getUserById,
+  getUserByUsername,
+  getUserByIdOrUsername,
   addAnswerToUser,
   removeAnswerFromUser,
   removeAllAnswersFromUsers,

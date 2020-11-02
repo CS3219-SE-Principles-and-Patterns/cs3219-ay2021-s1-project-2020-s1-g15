@@ -22,6 +22,7 @@ enum User {
   INVALID_EMAIL = "Email must be valid",
   INVALID_PASSWORD = "Passwords must have at least six characters",
   ALREADY_EXISTS = "This username and/or email already exists",
+  ID_OR_USERNAME_NEEDED = "User ID or username must be present",
 }
 
 enum Vote {

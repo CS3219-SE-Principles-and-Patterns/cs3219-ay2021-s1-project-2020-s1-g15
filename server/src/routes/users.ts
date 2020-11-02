@@ -2,17 +2,22 @@ import { Router, Request, Response } from "express";
 
 import { User } from "../models";
 import { HttpStatusCode, ResisterUserRequest } from "../utils";
-import { getUserById, registerAndCreateUser } from "../controllers/users";
+import {
+  registerAndCreateUser,
+  getUserById,
+  getUserByIdOrUsername,
+} from "../controllers/users";
 import { getQuestionsByUserId } from "../controllers/questions";
 import { getAnswersByUserId } from "../controllers/answers";
 
 const router: Router = Router();
 
 // GET request - get a single User
-router.get("/:id", async (req: Request, res: Response) => {
-  const id: string = req.params.id;
+router.get("/", async (req: Request, res: Response) => {
+  const username = req.query.username as string | string[] | undefined;
+  const id = req.query.id as string | string[] | undefined;
 
-  const user: User = await getUserById(id);
+  const user: User = await getUserByIdOrUsername(id, username);
 
   return res.status(HttpStatusCode.OK).json(user);
 });
