@@ -16,7 +16,7 @@ export type GetPaginatedQuestionsRequest = {
 };
 
 export type GetPaginatedQuestionsResponse = {
-  questions: Question[];
+  questions: GetSingleQuestionResponse[];
   total: number;
 };
 

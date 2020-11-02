@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import {
   Button,
   Table,
@@ -7,28 +7,32 @@ import {
   Tag,
   Input,
   Pagination,
-  Col,
   Form,
   Select,
-  Divider,
+  Space,
+  Row,
 } from "antd";
+import {
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 
 import {
   NavMenuKey,
   PageTitle,
-  Question,
   QuestionTableData,
   Route,
   getPaginatedQuestions,
   Level,
   Subject,
   SearchForm,
+  GetSingleQuestionRes,
+  toRelativeTimeAgo,
 } from "../../utils";
 import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
-import { FormLabel } from "components/util";
-import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -40,7 +44,7 @@ const Config = Object.freeze({
   SearchText: Object.freeze({
     NAME: "searchText",
     LABEL: "Search",
-    PLACEHOLDER: "Search for your question",
+    PLACEHOLDER: "Search for a question",
     RULES: [
       {
         max: 1000,
@@ -50,12 +54,12 @@ const Config = Object.freeze({
   Level: Object.freeze({
     NAME: "level",
     LABEL: "Level",
-    PLACEHOLDER: "Choose an appropriate level",
+    PLACEHOLDER: "Choose a level",
   }),
   Subject: Object.freeze({
     NAME: "subject",
     LABEL: "Subject",
-    PLACEHOLDER: "Choose an appropriate subject",
+    PLACEHOLDER: "Choose a subject",
   }),
 });
 
@@ -67,15 +71,15 @@ const defaultSearchForm: SearchForm = {
 
 const ForumPage = ({ questions, total }): JSX.Element => {
   const [isInitial, setIsInitial] = useState<boolean>(false);
-  const [currQuestions, setQuestions] = useState<Question[]>(questions);
+  const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>(
+    questions
+  );
   const [currTotal, setCurrTotal] = useState<number>(total);
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [loading, setLoading] = useState(false); //State for loading indicator
   const [form] = Form.useForm();
   const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
-
-  const router = useRouter();
 
   const onFormFinish = async (searchReq: SearchForm) => {
     // validation will throw error and stop execution if it fails
@@ -94,90 +98,80 @@ const ForumPage = ({ questions, total }): JSX.Element => {
     setSearchForm(defaultSearchForm);
   };
 
-  const dummyAsk = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    router.push({
-      pathname: `${Route.QUESTION_ASK}`,
-    });
-  };
-
-  const ViewQuestion = (_id: string, slug: string) =>
-    router.push(Route.QUESTION_VIEW(_id, slug));
-
   const onPageChange = (page: number) => {
     setPage(page);
   };
 
   const columns: ColumnsType<QuestionTableData> = [
     {
-      title: "title",
+      title: "Votes/Author",
+      key: "votes",
+      render: (_, record) => (
+        <Space direction="vertical">
+          <Row justify="center">
+            <Tag>
+              <ArrowUpOutlined /> {record.upvotes}
+            </Tag>
+            <Tag>
+              <ArrowDownOutlined /> {record.downvotes}
+            </Tag>
+          </Row>
+          <Button type="link">
+            <Link
+              href={`${Route.USER}/[username]`}
+              as={`${Route.USER}/${record.user.username}`}
+            >
+              {record.user.username}
+            </Link>
+          </Button>
+        </Space>
+      ),
+    },
+    {
+      title: "Title",
       dataIndex: "title",
       key: "title",
     },
     {
-      title: "slug",
-      dataIndex: "slug",
-      key: "slug",
-    },
-    {
-      title: "created",
+      title: "Created",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (text) => toRelativeTimeAgo(text),
     },
     {
-      title: "level",
-      dataIndex: "level",
-      key: "createdAt",
-      render: (text, record) => (
-        <span>
-          <Tag color="blue" key={record._id}>
-            {text}
-          </Tag>
-        </span>
-      ),
-    },
-    {
-      title: "subject",
-      dataIndex: "subject",
-      key: "createdAt",
-      render: (text, record) => (
-        <span>
-          <Tag color="purple" key={record._id}>
-            {text}
-          </Tag>
-        </span>
-      ),
-    },
-    {
-      title: "action",
-      key: "action",
+      title: "Level/Subject",
+      key: "tags",
       render: (_, record) => (
-        <Col>
-          <Button
-            className={styles.tableButton}
-            onClick={() => ViewQuestion(record._id, record.slug)}
-            type={"primary"}
+        <Space direction="vertical">
+          <Tag color="blue" key={record._id}>
+            {record.level}
+          </Tag>
+          <Tag color="purple" key={record._id}>
+            {record.subject}
+          </Tag>
+        </Space>
+      ),
+    },
+    {
+      key: "action",
+      align: "right",
+      render: (_, record) => (
+        <Button className={styles.tableButton} type={"primary"}>
+          <Link
+            href={`${Route.QUESTION}/[qid]/[slug]`}
+            as={Route.QUESTION_VIEW(record._id, record.slug)}
           >
             View Question
-          </Button>
-          <Button onClick={() => navigateToUserPage(record.userId)}>
-            View User
-          </Button>
-        </Col>
+          </Link>
+        </Button>
       ),
     },
   ];
 
-  const tableData = currQuestions.map(
-    (x: Question, index: number) =>
-      ({
-        key: index,
-        ...x,
-      } as QuestionTableData)
-  );
-  const navigateToUserPage = async (id: string) => {
-    router.push(`${Route.USER}/${id}`);
-  };
+  const tableData = currQuestions.map((question: GetSingleQuestionRes) => ({
+    key: question._id,
+    ...question,
+  }));
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -208,6 +202,67 @@ const ForumPage = ({ questions, total }): JSX.Element => {
     }
   }, [fetchData, isInitial]);
 
+  const filterForm = (
+    <>
+      <Form layout="inline" form={form} onFinish={onFormFinish}>
+        {/* Search function */}
+        <Form.Item
+          name={Config.SearchText.NAME}
+          label={Config.SearchText.LABEL}
+          rules={Config.SearchText.RULES}
+          className={styles.m8}
+        >
+          <Search
+            placeholder={Config.SearchText.PLACEHOLDER}
+            enterButton={
+              <Button
+                icon={<SearchOutlined />}
+                type="primary"
+                htmlType="submit"
+              >
+                Search
+              </Button>
+            }
+          />
+        </Form.Item>
+        {/* LEVEL SELECT */}
+        <Form.Item
+          name={Config.Level.NAME}
+          label={Config.Level.LABEL}
+          className={styles.m8}
+        >
+          <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
+            {levelOptions.map((level) => (
+              <Option key={level} value={level}>
+                {level}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        {/* SUBJECT SELECT */}
+        <Form.Item
+          name={Config.Subject.NAME}
+          label={Config.Subject.LABEL}
+          className={styles.m8}
+        >
+          <Select disabled={loading} placeholder={Config.Subject.PLACEHOLDER}>
+            {subjectOptions.map((subject) => (
+              <Option key={subject} value={subject}>
+                {subject}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </Form>
+      <Row justify="end">
+        <Button danger onClick={clearFilters} className={styles.m8}>
+          Clear Filters
+        </Button>
+      </Row>
+    </>
+  );
+
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
       {
@@ -215,74 +270,15 @@ const ForumPage = ({ questions, total }): JSX.Element => {
           <PageHeader
             className={styles.pageHeader}
             title={<h1>Forum</h1>}
-            subTitle="This is the forum"
             extra={[
-              <Button type="primary" key="3" onClick={dummyAsk}>
-                Ask a Question
+              <Button type="primary" key="3">
+                <Link href={Route.QUESTION_ASK}>Ask a Question</Link>
               </Button>,
             ]}
           />
-          <Divider />
-          <Form layout="vertical" form={form} onFinish={onFormFinish}>
-            {/* Search function */}
-            <Form.Item
-              name={Config.SearchText.NAME}
-              label={<FormLabel label={Config.SearchText.LABEL} />}
-              rules={Config.SearchText.RULES}
-            >
-              <Search
-                className={styles.searchBar}
-                placeholder={Config.SearchText.PLACEHOLDER}
-                enterButton={
-                  <Button
-                    icon={<SearchOutlined />}
-                    type="primary"
-                    htmlType="submit"
-                  >
-                    Search
-                  </Button>
-                }
-              />
-            </Form.Item>
-            {/* LEVEL SELECT */}
-            <Form.Item
-              name={Config.Level.NAME}
-              label={<FormLabel label={Config.Level.LABEL} />}
-            >
-              <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
-                {levelOptions.map((level) => (
-                  <Option key={level} value={level}>
-                    {level}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
 
-            {/* SUBJECT SELECT */}
-            <Form.Item
-              name={Config.Subject.NAME}
-              label={<FormLabel label={Config.Subject.LABEL} />}
-            >
-              <Select
-                disabled={loading}
-                placeholder={Config.Subject.PLACEHOLDER}
-              >
-                {subjectOptions.map((subject) => (
-                  <Option key={subject} value={subject}>
-                    {subject}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button danger onClick={clearFilters}>
-                Clear Filters
-              </Button>
-            </Form.Item>
-          </Form>
-
-          <br />
           <Table
+            title={() => filterForm}
             loading={loading}
             columns={columns}
             dataSource={tableData}

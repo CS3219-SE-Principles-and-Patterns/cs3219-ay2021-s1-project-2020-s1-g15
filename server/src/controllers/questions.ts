@@ -21,6 +21,7 @@ import {
 async function getQuestions(
   req: GetPaginatedQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
+  console.log(req);
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
   const { searchText, level, subject } = req;
@@ -31,26 +32,68 @@ async function getQuestions(
       ApiErrorMessage.Question.INVALID_PAGINATION_FIELDS
     );
   }
-  const filterObject: FilterQuery<Question> = {};
-  if (searchText) {
-    filterObject["$text"] = { $search: searchText };
-  }
 
+  const query: FilterQuery<GetSingleQuestionResponse> = {};
+  if (searchText) {
+    query.$text = { $search: searchText.trim() };
+  }
   if (level) {
-    filterObject["level"] = level as Level;
+    query.level = level as Level;
   }
   if (subject) {
-    filterObject["subject"] = subject as Subject;
+    query.subject = subject as Subject;
   }
 
-  const getPaginatedQuestions: Promise<Question[]> = getQuestionsCollection()
-    .find(filterObject)
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
+  const getPaginatedQuestions: Promise<
+    GetSingleQuestionResponse[]
+  > = getQuestionsCollection()
+    .aggregate<GetSingleQuestionResponse>([
+      { $match: query },
+      {
+        // join the users collection
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        // flatten resulting array to one doc
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        // exclude certain fields
+        $project: {
+          userId: false,
+          user: {
+            createdAt: false,
+            updatedAt: false,
+            questionIds: false,
+            answerIds: false,
+          },
+        },
+      },
+      {
+        // sort by more recent first
+        $sort: { createdAt: -1 },
+      },
+      {
+        // pagination
+        $skip: (page - 1) * pageSize,
+      },
+      {
+        // pagination
+        $limit: pageSize,
+      },
+    ])
     .toArray();
 
   const getQuestionsCollectionSize: Promise<number> = getQuestionsCollection().countDocuments(
-    filterObject
+    query
   );
 
   const [questions, total] = await Promise.all([
@@ -89,7 +132,7 @@ async function getQuestionById(
         },
       },
       {
-        // exclude certian fields
+        // exclude certain fields
         $project: {
           userId: false,
           user: {

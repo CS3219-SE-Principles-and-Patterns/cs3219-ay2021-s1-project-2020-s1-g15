@@ -30,7 +30,7 @@ export type GetPaginatedQuestionsReq = SearchForm & {
 };
 
 export type GetPaginatedQuestionRes = {
-  questions: Question[];
+  questions: GetSingleQuestionRes[];
   total: number;
 };
 
