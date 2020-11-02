@@ -1,5 +1,6 @@
 import { RegisterUserReq, User, GetSingleUserRes } from "..";
-import { USERS_API_URL, throwApiError } from "./util";
+import { USERS_API_URL, throwApiError, createUrlParamString } from "./util";
+import { GetSingleUserReq } from "utils/types";
 
 function getUsersIdUrl(id: string) {
   return `${USERS_API_URL}/${id}`;
@@ -23,8 +24,8 @@ async function registerUser(req: RegisterUserReq): Promise<GetSingleUserRes> {
   return userApi;
 }
 
-async function getSingleUser(id: string): Promise<User> {
-  const res = await fetch(getUsersIdUrl(id), {
+async function getSingleUser(req: GetSingleUserReq): Promise<User> {
+  const res = await fetch(`${USERS_API_URL}/${createUrlParamString(req)}`, {
     method: "GET",
   });
 

@@ -28,7 +28,7 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
   const authMenu: JSX.Element = (
     <Menu>
       <Menu.Item>
-        <Link href={`/users/${user?.username}`}>
+        <Link href={`${Route.USER}/${user?.username}`}>
           <span>
             <UserOutlined /> Profile
           </span>

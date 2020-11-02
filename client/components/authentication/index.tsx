@@ -55,7 +55,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       } else {
         // TODO: may need to setInterval to refresh idToken periodically
         const [user, idToken] = await Promise.all([
-          getSingleUser(firebaseUser.uid),
+          getSingleUser({ id: firebaseUser.uid }),
           firebaseUser.getIdToken(),
         ]);
         setUser(user);

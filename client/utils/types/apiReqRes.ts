@@ -50,6 +50,18 @@ export type RegisterUserReq = {
   password: string;
 };
 
+export type GetSingleUserReq =
+  | {
+      // get by user ID
+      id: string;
+      username?: never;
+    }
+  | {
+      // get by username
+      username: string;
+      id?: never;
+    };
+
 export type GetSingleUserRes = Util & {
   email: string;
   username: string;
