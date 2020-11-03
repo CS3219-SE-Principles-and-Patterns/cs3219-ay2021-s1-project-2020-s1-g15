@@ -19,6 +19,7 @@ import {
   Route,
   createQuestion,
   editQuestion,
+  GetSingleQuestionRes,
 } from "utils/index";
 import { useAuth } from "components/authentication";
 import QuestionPreview from "./QuestionPreview";
@@ -30,7 +31,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 type QuestionFormProp = {
-  question?: Question | undefined;
+  question?: GetSingleQuestionRes | undefined;
 };
 
 const subjectOptions: Subject[] = Object.values(Subject);
