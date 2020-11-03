@@ -90,7 +90,7 @@ const QuestionForm: FC<QuestionFormProp> = ({ question }): JSX.Element => {
       ? await editQuestion(questionReq, idToken, question?._id as string)
       : await createQuestion(questionReq, idToken);
     notification.success({
-      message: `Question succesfully ${isEditing ? "edited!" : "created!"}`,
+      message: `Question successfully ${isEditing ? "edited!" : "created!"}`,
     });
     router.push(Route.QUESTION_VIEW(res._id, res.slug));
   };

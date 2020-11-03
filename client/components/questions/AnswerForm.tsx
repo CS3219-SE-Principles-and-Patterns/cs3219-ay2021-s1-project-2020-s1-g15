@@ -60,7 +60,7 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
     await refreshAnswers();
     resetForm();
     notification.success({
-      message: "Answer succesfully submitted",
+      message: "Answer successfully submitted",
     });
   };
 
@@ -81,7 +81,7 @@ const AnswerForm: FC<CreateAnswerFormProp | EditAnswerFormProp> = ({
     await refreshAnswers();
     props.onCancelEdit();
     notification.success({
-      message: "Answer succesfully edited",
+      message: "Answer successfully edited",
     });
   };
 
