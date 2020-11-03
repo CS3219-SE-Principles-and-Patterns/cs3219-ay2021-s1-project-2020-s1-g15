@@ -29,7 +29,7 @@ const getMongoDbUrl: () => string = () => {
       ATLAS_PASSWORD !== undefined,
       "Atlast password env variable not set"
     );
-    return `mongodb+srv://${ATLAS_USER}:${ATLAS_PASSWORD}@cluster0.2qruf.gcp.mongodb.net`;
+    return `mongodb+srv://${ATLAS_USER}:${ATLAS_PASSWORD}@cluster0.2qruf.gcp.mongodb.net/${getMongoDbName()}`;
   }
   // code should never reach here since either one of the 3 env must be set
   assert(false);
