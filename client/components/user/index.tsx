@@ -1,12 +1,8 @@
-import React, { FC, useState } from "react";
-import { Level, User } from "../../utils";
+import React, { FC } from "react";
+import { Level, markdownToReactNode, Route, User } from "../../utils";
 import {
   AlertOutlined,
-  DislikeFilled,
-  DislikeOutlined,
   LeftOutlined,
-  LikeFilled,
-  LikeOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import {
@@ -19,12 +15,11 @@ import {
   List,
   Typography,
   Tag,
-  Button,
-  Col,
+  Space,
 } from "antd";
 
 import styles from "./user.module.css";
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 const { TabPane } = Tabs;
 
@@ -43,11 +38,6 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
   const onChangeTab = (activeKey: string) => {
     console.log(activeKey);
   };
-
-  const renderAnswerWithMarkdown = (markdown: string) => {
-    return null; // TODO: fix this
-  };
-
   return (
     <>
       <PageHeader
@@ -56,77 +46,97 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
         backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
         onBack={() => window.history.back()}
       />
-      <Content className={styles.mainContent}>
-        <Row>
-          <h1>{user.email}</h1>
-        </Row>
-        <Row>
-          <Statistic
-            title="Questions Asked"
-            prefix={<QuestionCircleOutlined />}
-            value={user.questionIds.length}
-          />
-          <Statistic
-            title="Answers Given"
-            prefix={<AlertOutlined />}
-            value={user.answerIds.length}
-            style={{
-              margin: "0 32px",
-            }}
-          />
-          <Statistic title="Number of Upvotes" prefix="$" value={3345.08} />
-        </Row>
-        <h2>
-          <Typography.Text strong>Top Level</Typography.Text>
-        </h2>
-        <Row>
-          <Tag color="magenta">{Level.JUNIOR_COLLEGE}</Tag>
-        </Row>
-        <h2>
-          <Typography.Text strong>Top Subjects</Typography.Text>
-        </h2>
-        <Row>
-          <Tag color="magenta">{Level.PRIMARY}</Tag>
-        </Row>
-        <Divider />
-        <Tabs
-          defaultActiveKey={userPageTabKeys.questions}
-          onChange={onChangeTab}
-        >
-          <TabPane forceRender tab="Questions" key={userPageTabKeys.questions}>
-            <h2>
-              <Typography.Text strong>Questions</Typography.Text>
-            </h2>
-            <List
-              bordered
-              dataSource={user.questions}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    title={<a href={item.slug}>{item.slug}</a>}
-                    description={item.title}
-                  />
-                </List.Item>
-              )}
+      <Space style={{ width: "100%" }} direction="vertical" size="large">
+        <Content className={styles.mainContent}>
+          <Row>
+            <h1>{user.email}</h1>
+          </Row>
+          <Row>
+            <Statistic
+              title="Questions Asked"
+              prefix={<QuestionCircleOutlined />}
+              value={user.questionIds.length}
             />
-          </TabPane>
-          <TabPane forceRender tab="Answers" key={userPageTabKeys.answers}>
-            <h2>
-              <Typography.Text strong>Answers</Typography.Text>
-            </h2>
-            <List
-              bordered
-              dataSource={user.answers}
-              renderItem={(item) => (
-                <List.Item>{renderAnswerWithMarkdown(item.markdown)}</List.Item>
-              )}
+            <Statistic
+              title="Answers Given"
+              prefix={<AlertOutlined />}
+              value={user.answerIds.length}
+              style={{
+                margin: "0 32px",
+              }}
             />
-          </TabPane>
-          <TabPane forceRender tab="Activity" key={userPageTabKeys.activity}>
-            Analytics dashboard
-          </TabPane>
-        </Tabs>
-      </Content>
+            <Statistic title="Number of Upvotes" prefix="$" value={"0"} />
+          </Row>
+          <h2>
+            <Typography.Text strong>Top Level</Typography.Text>
+          </h2>
+          <Row>
+            <Tag color="magenta">{Level.JUNIOR_COLLEGE}</Tag>
+          </Row>
+          <h2>
+            <Typography.Text strong>Top Subjects</Typography.Text>
+          </h2>
+          <Row>
+            <Tag color="magenta">{Level.PRIMARY}</Tag>
+          </Row>
+          <Divider />
+          <Tabs
+            defaultActiveKey={userPageTabKeys.questions}
+            onChange={onChangeTab}
+          >
+            <TabPane
+              forceRender
+              tab="Questions"
+              key={userPageTabKeys.questions}
+            >
+              <h2>
+                <Typography.Text strong>Questions</Typography.Text>
+              </h2>
+              <List
+                bordered
+                dataSource={user.questions}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={
+                        <>
+                          <Link
+                            href={`${Route.QUESTION}/[qid]/[slug]`}
+                            as={Route.QUESTION_VIEW(item._id, item.slug)}
+                          >
+                            {item.slug}
+                          </Link>
+                        </>
+                      }
+                      description={markdownToReactNode(item.markdown)}
+                    />
+                  </List.Item>
+                )}
+              />
+            </TabPane>
+            <TabPane forceRender tab="Answers" key={userPageTabKeys.answers}>
+              <h2>
+                <Typography.Text strong>Answers</Typography.Text>
+              </h2>
+              <List
+                bordered
+                dataSource={user.answers}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={item.userId}
+                      description={markdownToReactNode(item.markdown)}
+                    />
+                  </List.Item>
+                )}
+              />
+            </TabPane>
+            <TabPane forceRender tab="Activity" key={userPageTabKeys.activity}>
+              Analytics dashboard
+            </TabPane>
+          </Tabs>
+        </Content>
+      </Space>
     </>
   );
 };

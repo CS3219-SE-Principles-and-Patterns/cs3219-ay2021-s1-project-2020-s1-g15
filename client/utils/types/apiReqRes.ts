@@ -89,8 +89,9 @@ export type GetSingleUserReq =
     };
 
 export type GetSingleUserRes = Util & {
+  _id: string;
   email: string;
   username: string;
-  answerIds: string[];
-  questionIds: string[];
+  answers: Answer[];
+  questions: Question[];
 };
