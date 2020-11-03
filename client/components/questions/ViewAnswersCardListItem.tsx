@@ -67,7 +67,7 @@ const ViewAnswersCardListItem: FC<ViewAnswersCardListItemProp> = ({
         await deleteSingleAnswer(idToken, answerId);
         await refreshAnswers();
         notification.success({
-          message: "Answer succesfully deleted",
+          message: "Answer successfully deleted",
         });
       },
     });

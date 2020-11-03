@@ -67,7 +67,7 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
       async onOk() {
         await deleteSingleQuestion(idToken, question._id);
         notification.success({
-          message: "Question succesfully deleted",
+          message: "Question successfully deleted",
         });
         router.push(Route.FORUM);
       },
