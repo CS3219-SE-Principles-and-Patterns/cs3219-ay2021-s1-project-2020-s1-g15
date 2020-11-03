@@ -3,7 +3,12 @@ import { useRouter } from "next/router";
 import { Card, Row, Col } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, PageTitle, Question, Route } from "utils/index";
+import {
+  NavMenuKey,
+  PageTitle,
+  Route,
+  GetSingleQuestionRes,
+} from "utils/index";
 import { QuestionForm } from "components/questions";
 import { getSingleQuestion } from "utils/api";
 import { useAuth } from "components/authentication";
@@ -12,7 +17,9 @@ const QuestionEditPage = (): JSX.Element => {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const [question, setQuestion] = useState<Question | undefined>(undefined);
+  const [question, setQuestion] = useState<GetSingleQuestionRes | undefined>(
+    undefined
+  );
   // redirect if on client side
   if (typeof window !== "undefined" && !isAuthenticated) {
     router.push(Route.LOGIN);
