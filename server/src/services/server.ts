@@ -6,6 +6,7 @@ import customErrorHandler from "../middlewares/customErrorHandler";
 import questionsRouter from "../routes/questions";
 import answersRouter from "../routes/answers";
 import usersRouter from "../routes/users";
+import analyticsRouter from "../routes/analytics";
 
 const app: Express = express();
 const router: Router = express.Router();
@@ -22,6 +23,7 @@ app.use("/api", router);
 router.use("/questions", questionsRouter);
 router.use("/answers", answersRouter);
 router.use("/users", usersRouter);
+router.use("/analytics/users", analyticsRouter);
 // custom error handler: must be last middleware
 app.use(customErrorHandler);
 
