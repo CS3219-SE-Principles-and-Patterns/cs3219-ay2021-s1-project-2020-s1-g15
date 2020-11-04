@@ -14,6 +14,8 @@ const ANSWERS_UPVOTE_API_URL = (aid: string) =>
   `${ANSWERS_API_URL}/${aid}/upvote`;
 const ANSWERS_DOWNVOTE_API_URL = (aid: string) =>
   `${ANSWERS_API_URL}/${aid}/downvote`;
+const ANALYTICS_API_URL = (uid: string) =>
+  `${BASE_API_URL}/analytics/users/${uid}`;
 
 function getAuthorizationString(idToken: string): string {
   return "Bearer " + idToken;
@@ -35,6 +37,7 @@ export {
   ANSWERS_VOTE_STATUS_API_URL,
   ANSWERS_UPVOTE_API_URL,
   ANSWERS_DOWNVOTE_API_URL,
+  ANALYTICS_API_URL,
   getAuthorizationString,
   throwApiError,
   createUrlParamString,

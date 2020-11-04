@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
-import { verifyUserAuth } from "../middlewares/authRouteHandler";
+
 import { getAnalyticsbyUserId } from "../controllers/analytics";
 import { HttpStatusCode } from "../utils";
 import { AnalyticsResponse } from "../utils/types/analyticsTypes";
 
 const router: Router = Router();
 
-router.get("/:id", verifyUserAuth, async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
 
   const analyticsRes: AnalyticsResponse = await getAnalyticsbyUserId(id);
