@@ -88,14 +88,14 @@ export type GetSingleUserReq =
       id?: never;
     };
 export type AnalyticsResponse = {
-  totalNumQuestions?: number;
-  totalNumAnswers?: number;
-  ratioQuestionsToAnswer?: number;
-  totalNumUpvotes?: number;
-  totalNumDownvotes?: number;
-  ratioUpvotesToDownvotes?: number;
-  topVotedAnswer?: string | null;
-  topVotedQuestion?: string | null;
+  totalNumQuestions: number;
+  totalNumAnswers: number;
+  ratioQuestionsToAnswer: number;
+  totalNumUpvotes: number;
+  totalNumDownvotes: number;
+  ratioUpvotesToDownvotes: number;
+  topVotedAnswer: string | null;
+  topVotedQuestion: string | null;
 };
 
 export type GetSingleUserRes = Util & {

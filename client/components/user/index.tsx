@@ -43,7 +43,7 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
   return (
     <>
       <PageHeader
-        title={<h1>{user.email}</h1>}
+        title={<h1>{user.username}</h1>}
         subTitle="viewing user page"
         backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
         onBack={() => window.history.back()}
