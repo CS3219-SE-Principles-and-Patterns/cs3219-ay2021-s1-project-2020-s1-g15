@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Spin } from "antd";
+import { Card, Spin, Row, Col } from "antd";
 
 import NotFoundPage from "../404";
 import FluidPage from "../../components/layout";
@@ -34,7 +34,13 @@ const UserPage: FC = (): JSX.Element => {
   ) : (
     <FluidPage title={`AnswerLeh - ${user?.username}`}>
       {user ? (
-        <ViewUser user={user} />
+        <Row justify="center">
+          <Col flex="750px">
+            <Card>
+              <ViewUser user={user} />
+            </Card>
+          </Col>
+        </Row>
       ) : (
         <Spin size="large" style={{ width: "100%", marginTop: "5rem" }} />
       )}

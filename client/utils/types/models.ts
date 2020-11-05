@@ -1,4 +1,4 @@
-import { GetSingleQuestionRes } from "./apiReqRes";
+import { AnalyticsResponse, GetSingleQuestionRes } from "./apiReqRes";
 
 export type Util = {
   _id: string;
@@ -53,4 +53,5 @@ export type User = Util & {
   questionIds: string[];
   answers?: Answer[];
   questions?: Question[];
+  analytics?: AnalyticsResponse;
 };

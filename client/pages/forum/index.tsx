@@ -117,12 +117,14 @@ const ForumPage = ({ questions, total }): JSX.Element => {
             </Tag>
           </Row>
           <Button type="link">
-            <Link
-              href={`${Route.USER}/[username]`}
-              as={`${Route.USER}/${record.user.username}`}
-            >
-              {record.user.username}
-            </Link>
+            {record.user ? (
+              <Link
+                href={`${Route.USER}/[username]`}
+                as={`${Route.USER}/${record.user.username}`}
+              >
+                {record.user.username}
+              </Link>
+            ) : null}
           </Button>
         </Space>
       ),
@@ -182,6 +184,7 @@ const ForumPage = ({ questions, total }): JSX.Element => {
       page,
       pageSize,
     });
+    console.log(questions);
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);

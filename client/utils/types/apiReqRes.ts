@@ -87,10 +87,22 @@ export type GetSingleUserReq =
       username: string;
       id?: never;
     };
+export type AnalyticsResponse = {
+  totalNumQuestions: number;
+  totalNumAnswers: number;
+  ratioQuestionsToAnswer: number;
+  totalNumUpvotes: number;
+  totalNumDownvotes: number;
+  ratioUpvotesToDownvotes: number;
+  topVotedAnswer: string | null;
+  topVotedQuestion: string | null;
+};
 
 export type GetSingleUserRes = Util & {
+  _id: string;
   email: string;
   username: string;
-  answerIds: string[];
-  questionIds: string[];
+  answers: Answer[];
+  questions: Question[];
+  analytics: AnalyticsResponse;
 };
