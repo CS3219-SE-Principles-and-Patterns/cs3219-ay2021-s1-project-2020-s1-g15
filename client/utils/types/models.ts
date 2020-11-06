@@ -29,21 +29,54 @@ export type Answer = Util & {
 };
 
 export enum Level {
-  PRIMARY = "primary",
-  SECONDARY = "secondary",
-  JUNIOR_COLLEGE = "junior college",
-  DEFAULT = "others",
+  //ranked in increasing age
+  PRIMARY = "Primary",
+  SECONDARY_EXPRESS = "Secondary Express",
+  SECONDARY_NA = "Secondary Normal Academic",
+  SECONDARY_NT = "Secondary Normal Technical",
+  JUNIOR_COLLEGE = "Junior College",
+  IB = "International Baccalaureate",
+  POLYTECHNIC = "Polytechnic",
+  ITE = "ITE",
+  UNIVERSITY = "University",
+  BACHELOR = "Bachelor",
+  MASTERS = "Masters",
+  PHD = "PhD",
+  DEFAULT = "Others",
 }
 
 export enum Subject {
-  ENGLISH = "english",
-  MATHEMATICS = "mathematics",
-  SCIENCE = "science",
-  PHYSICS = "physics",
-  CHEMISTRY = "chemistry",
-  BIOLOGY = "biology",
-  GENERAL = "general",
-  DEFAULT = "others",
+  //STEM
+  ENGLISH = "English",
+  CHINESE = "Chinese",
+  MATHEMATICS = "Mathematics",
+  SCIENCE = "Science",
+  PHYSICS = "Physics",
+  CHEMISTRY = "Chemistry",
+  BIOLOGY = "Biology",
+  ENGINEERING = "Engineering",
+  HEALTHCARE = "Healthcare",
+  STEM = "STEM",
+  COMPUTING = "Computer Science",
+  MEDICINE = "Medicine",
+  //ARTS, HUMANITIES AND SOCIAL SCIENCES
+  HISTORY = "History",
+  GEOGRAPHY = "Geography",
+  ART = "Art",
+  MUSIC = "Music",
+  LITERATURE = "Literature",
+  SOCIOLOGY = "Sociology",
+  SOCIAL_STUDIES = "Social Studies",
+  ARTS_HUMANS = "Arts and Humanities",
+  //RANDOM
+  BUSINESS = "Business",
+  LAW = "Law",
+  EDUCATION = "Education",
+  GENERAL_PAPER = "General Paper",
+  PW = "Project Work",
+  COOK = "Culinary Arts",
+  GENERAL = "General",
+  DEFAULT = "Others",
 }
 
 export type User = Util & {

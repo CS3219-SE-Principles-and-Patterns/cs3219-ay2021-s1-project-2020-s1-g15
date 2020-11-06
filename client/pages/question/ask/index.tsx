@@ -2,9 +2,10 @@ import React from "react";
 import { Card, Row, Col, PageHeader } from "antd";
 
 import FluidPage from "components/layout";
-import { NavMenuKey, PageTitle } from "utils/index";
+import { NavMenuKey, PageTitle, Route } from "utils/index";
 import { QuestionForm } from "components/questions";
 import { LeftOutlined } from "@ant-design/icons";
+import router from "next/router";
 
 const QuestionAskPage = (): JSX.Element => {
   return (
@@ -14,7 +15,7 @@ const QuestionAskPage = (): JSX.Element => {
           <PageHeader
             title={"Ask a Question"}
             backIcon={<LeftOutlined size={64} />}
-            onBack={() => window.history.back()}
+            onBack={() => router.push(Route.FORUM)}
           />
           <Card>
             <QuestionForm />
