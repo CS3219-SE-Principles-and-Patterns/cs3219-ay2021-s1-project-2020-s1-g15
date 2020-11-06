@@ -51,7 +51,7 @@ const FluidPage: FC<props> = ({ children, title, selectedkey }) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Layout style={{ minHeight: "100vh" }}>
-        <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
+        <Header style={{ position: "fixed", zIndex: 50, width: "100%" }}>
           <Row justify="space-between" align="middle">
             <Row>
               <Text
