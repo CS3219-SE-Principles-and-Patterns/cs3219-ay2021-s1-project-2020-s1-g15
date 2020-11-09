@@ -34,9 +34,9 @@
     - [Get all answers created by a user](#get-all-answers-created-by-a-user)
   - [Questions](#questions)
     - [Create a question](#create-a-question)
-    - [Get all questions](#get-all-questions)
+    - [Get paginated questions](#get-paginated-questions)
     - [Get a specific question](#get-a-specific-question)
-    - [check a question vote status](#check-a-question-vote-status)
+    - [Get vote status of a single question](#get-vote-status-of-a-single-question)
     - [Upvote a question](#upvote-a-question)
     - [Downvote a question](#downvote-a-question)
     - [Update a question](#update-a-question)
@@ -51,7 +51,6 @@
     - [Delete an answer](#delete-an-answer)
   - [Analytics](#analytics)
     - [User analytics](#user-analytics)
-    - [Question analytics](#question-analytics)
 
 ## Client
 
@@ -450,18 +449,14 @@ OR
 - Status: `400 BAD REQUEST`
 - Content: description of error
 
-#### Get all questions
+#### Get paginated questions
 
 - Method: `GET`
-- URL: `/api/questions`
+- URL: `/api/questions?page=<page>&pageSize=<pageSize>`
+- URL query
+  - `<page>`: integer larger than 0
+  - `<pageSize>`: number of questions in the current `page`; integer larger than 0
 - Auth required: NO
-- param data (example):
-  ```js
-  {
-    "page": "1" // string: required
-    "pageSize": "10" // string: required
-  }
-  ```
 
 **Success response**:
 
@@ -480,12 +475,16 @@ OR
           "title": "How do I do this?",
           "slug": "how-do-i-do-this",
           "markdown": "hello",
-          "userId": "5f7d327766aa52759df235fe",
           "answerIds": [],
           "level": "primary",
           "subject": "mathematics",
           "upvotes": 0,
-          "downvotes": 0
+          "downvotes": 0,
+          "user": {
+            "_id": "5f7d327766aa52759d72a522"
+            "email": "test@test.com",
+            "username": "testuser"
+          }
         },
         // ...
       ],
@@ -514,12 +513,16 @@ OR
     "title": "How do I do this?",
     "slug": "how-do-i-do-this",
     "markdown": "hello",
-    "userId": "5f7d327766aa52759df235fe",
     "answerIds": [],
     "level": "primary",
     "subject": "mathematics",
     "upvotes": 0,
-    "downvotes": 0
+    "downvotes": 0,
+    "user": {
+      "_id": "5f7d327766aa52759d72a522"
+      "email": "test@test.com",
+      "username": "testuser"
+    }
   }
   ```
 
@@ -535,7 +538,7 @@ OR
 - Status: `404 NOT FOUND`
 - Content: description of error
 
-#### check a question vote status
+#### Get vote status of a single question
 
 - Method: `GET`
 - URL: `/api/questions/:id/vote-status`
@@ -710,9 +713,9 @@ OR
 - URL: `/api/answers?questionId=<qid>&sortBy=<sortBy>`
 - URL query
   - `<qid>`: the `ObjectId` of the question
-  - `<sortBy>`
-    - Sorted by highest nett vote by default, if no params are provided
-    - `createdAt` will sort answers by most recent
+  - `<sortBy>`: `undefined | "createdAt"`
+    - If `undefined`, sort answers by highest nett vote first
+    - If `"createdAt"`, sort answers by most recent first
 - Auth required: NO
 
 **Success response**:
@@ -729,9 +732,13 @@ OR
       "questionId": "5f570273a83adf5417b48026",
       "createdAt": "2020-09-08T04:02:59.081Z",
       "updatedAt": "2020-09-08T04:02:59.081Z",
-      "userId": "5f82feda42ace23941434007",
       "upvotes": 0,
-      "downvotes": 0
+      "downvotes": 0,
+      "user": {
+        "_id": "5f7d327766aa52759d72a522"
+        "email": "test@test.com",
+        "username": "testuser"
+      }
     },
     // ...
   ]
@@ -915,41 +922,15 @@ OR
     "totalNumUpvotes": 100,
     "totalNumDownvotes": 200,
     "ratioUpvotesToDownvotes": 20,
-    "topVotedAnswer" : Answer,
-    "topVotedQuestion" : Question,
+    "topVotedAnswer": Answer,
+    "topVotedQuestion": Question,
+    "recentlyVotedQuestions": Question[], // 5 more recently voted questions
+    "recentlyVotedAnswers": Answer[] // 5 most recently voted answers
   },
   ```
 
 **Error response**:
 
 - Condition: if user does not exist
-- Code: `404 NOT FOUND`
-- Content: description of error
-
-#### Question analytics
-
-- Method: `GET`
-- URL: `/api/analytics/questions/:id`
-- URL params
-  - `id`: the `ObjectId` of the question
-- Auth required: NO
-
-**Success response**:
-
-- Condition: if question exists
-- Code: `200 OK`
-- Content (example):
-  ```js
-  {
-    "totalNumQuestionUpvotes": 10,
-    "totalNumQuestionDownvotes": 10,
-    "totalNumAnswerUpvotes": 10,
-    "totalNumAnswerDownvotes": 10,
-  },
-  ```
-
-**Error response**:
-
-- Condition: if question does not exist
 - Code: `404 NOT FOUND`
 - Content: description of error
