@@ -76,15 +76,12 @@ const defaultSearchForm: SearchForm = {
   subject: "",
 };
 
-const ForumPage = ({ questions, total }): JSX.Element => {
-  const [isInitial, setIsInitial] = useState<boolean>(false);
-  const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>(
-    questions
-  );
-  const [currTotal, setCurrTotal] = useState<number>(total);
+const ForumPage = (): JSX.Element => {
+  const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>([]);
+  const [currTotal, setCurrTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
-  const [loading, setLoading] = useState(false); //State for loading indicator
+  const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
   const { isAuthenticated } = useAuth();
@@ -216,13 +213,8 @@ const ForumPage = ({ questions, total }): JSX.Element => {
   ]);
 
   useEffect(() => {
-    if (!isInitial) {
-      // prevent re-fetching on first load
-      fetchData();
-    } else {
-      setIsInitial(false);
-    }
-  }, [fetchData, isInitial]);
+    fetchData();
+  }, [fetchData]);
 
   const filterForm = (
     <>
@@ -324,16 +316,4 @@ const ForumPage = ({ questions, total }): JSX.Element => {
   );
 };
 
-// This gets called on every request
-export async function getServerSideProps() {
-  const { questions, total } = await getPaginatedQuestions({
-    level: "",
-    subject: "",
-    searchText: "",
-    page: 1,
-    pageSize: 10,
-  });
-  // Pass data to the page via props
-  return { props: { questions, total } };
-}
 export default ForumPage;
