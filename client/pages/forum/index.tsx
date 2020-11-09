@@ -11,11 +11,15 @@ import {
   Select,
   Space,
   Row,
+  Typography,
+  Tooltip,
 } from "antd";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   SearchOutlined,
+  LikeFilled,
+  LikeOutlined,
+  DislikeFilled,
+  DislikeOutlined,
 } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 
@@ -30,12 +34,15 @@ import {
   SearchForm,
   GetSingleQuestionRes,
   toRelativeTimeAgo,
+  useUpvoteDownvote,
 } from "../../utils";
 import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
+import { useAuth } from "components/authentication";
 
 const { Search } = Input;
 const { Option } = Select;
+const { Text } = Typography;
 
 const subjectOptions: Subject[] = Object.values(Subject);
 const levelOptions: Level[] = Object.values(Level);
@@ -80,6 +87,7 @@ const ForumPage = ({ questions, total }): JSX.Element => {
   const [loading, setLoading] = useState(false); //State for loading indicator
   const [form] = Form.useForm();
   const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
+  const { isAuthenticated } = useAuth();
 
   const onFormFinish = async (searchReq: SearchForm) => {
     // validation will throw error and stop execution if it fails
@@ -104,55 +112,67 @@ const ForumPage = ({ questions, total }): JSX.Element => {
 
   const columns: ColumnsType<QuestionTableData> = [
     {
-      title: "Votes/Author",
-      key: "votes",
-      render: (_, record) => (
-        <Space direction="vertical">
-          <Row justify="center">
-            <Tag>
-              <ArrowUpOutlined /> {record.upvotes}
-            </Tag>
-            <Tag>
-              <ArrowDownOutlined /> {record.downvotes}
-            </Tag>
-          </Row>
-          <Button type="link">
-            {record.user ? (
-              <Link
-                href={`${Route.USER}/[username]`}
-                as={`${Route.USER}/${record.user.username}`}
-              >
-                {record.user.username}
-              </Link>
-            ) : null}
-          </Button>
-        </Space>
-      ),
-    },
-    {
-      title: "Title",
-      dataIndex: "title",
       key: "title",
-    },
-    {
-      title: "Created",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => toRelativeTimeAgo(text),
-    },
-    {
-      title: "Level/Subject",
-      key: "tags",
-      render: (_, record) => (
-        <Space direction="vertical">
-          <Tag color="blue" key={record._id}>
-            {record.level}
-          </Tag>
-          <Tag color="purple" key={record._id}>
-            {record.subject}
-          </Tag>
-        </Space>
-      ),
+      render: (_, record) => {
+        const {
+          hasUpvoted,
+          hasDownvoted,
+          upvotesLocal,
+          downvotesLocal,
+          upvoteOnClick,
+          downvoteOnClick,
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+        } = useUpvoteDownvote({
+          isQuestionVote: true,
+          questionId: record._id,
+          upvotes: record.upvotes,
+          downvotes: record.downvotes,
+        });
+
+        return (
+          <Row align="middle">
+            <Button.Group size="small" style={{ marginRight: "1rem" }}>
+              <Tooltip title={isAuthenticated ? "Upvote" : "Login to upvote"}>
+                <Button
+                  icon={hasUpvoted ? <LikeFilled /> : <LikeOutlined />}
+                  onClick={upvoteOnClick}
+                >
+                  {upvotesLocal.toString()}
+                </Button>
+              </Tooltip>
+              <Tooltip
+                title={isAuthenticated ? "Downvote" : "Login to downvote"}
+              >
+                <Button
+                  icon={hasDownvoted ? <DislikeFilled /> : <DislikeOutlined />}
+                  onClick={downvoteOnClick}
+                >
+                  {downvotesLocal.toString()}
+                </Button>
+              </Tooltip>
+            </Button.Group>
+            <Space direction="vertical">
+              <Text style={{ fontSize: "20px" }}>{record.title}</Text>
+              <Row>
+                <Tag color="blue">{record.level}</Tag>
+                <Tag color="purple">{record.subject}</Tag>
+              </Row>
+              {record.user ? (
+                <Link
+                  href={`${Route.USER}/[username]`}
+                  as={`${Route.USER}/${record.user.username}`}
+                >
+                  {`@${record.user.username}`}
+                </Link>
+              ) : null}
+              <Text type="secondary">
+                {toRelativeTimeAgo(record.createdAt)}, {record.answerIds.length}{" "}
+                answers
+              </Text>
+            </Space>
+          </Row>
+        );
+      },
     },
     {
       key: "action",
@@ -184,7 +204,6 @@ const ForumPage = ({ questions, total }): JSX.Element => {
       page,
       pageSize,
     });
-    console.log(questions);
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);
@@ -286,6 +305,7 @@ const ForumPage = ({ questions, total }): JSX.Element => {
             columns={columns}
             dataSource={tableData}
             pagination={false}
+            showHeader={false}
           />
           <div className={styles.flex}>
             <Pagination
