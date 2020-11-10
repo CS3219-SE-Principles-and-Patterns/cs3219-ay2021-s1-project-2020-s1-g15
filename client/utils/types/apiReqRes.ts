@@ -25,6 +25,7 @@ export type GetSingleQuestionRes = Omit<Question, "userId"> & {
 };
 
 export type GetPaginatedQuestionsReq = SearchForm & {
+  sortBy: "recent" | "trending" | "controversial" | "top";
   page: number;
   pageSize: number;
 };
@@ -94,8 +95,8 @@ export type AnalyticsResponse = {
   totalNumUpvotes: number;
   totalNumDownvotes: number;
   ratioUpvotesToDownvotes: number;
-  topVotedAnswer: string | null;
-  topVotedQuestion: string | null;
+  topVotedAnswer: Answer | null;
+  topVotedQuestion: Question | null;
 };
 
 export type GetSingleUserRes = Util & {

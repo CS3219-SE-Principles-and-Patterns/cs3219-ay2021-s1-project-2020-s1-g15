@@ -40,6 +40,7 @@ async function getQuestions(
 ): Promise<GetPaginatedQuestionsResponse> {
   const page = parseInt(req.page || "0");
   const pageSize = parseInt(req.pageSize || "0");
+  const sortBy = req.sortBy ?? "recent";
   const { searchText, level, subject } = req;
 
   if (!page || !pageSize) {
@@ -58,6 +59,10 @@ async function getQuestions(
   }
   if (subject) {
     query.subject = subject as Subject;
+  }
+  if (sortBy === "trending" || sortBy === "controversial") {
+    const TWO_WEEKS_IN_MS = 1209600000;
+    query.createdAt = { $gte: new Date(Date.now() - TWO_WEEKS_IN_MS) };
   }
 
   const getPaginatedQuestions: Promise<
@@ -82,9 +87,29 @@ async function getQuestions(
         },
       },
       {
+        // add nettVote field so we can sort by it later
+        $addFields: {
+          nettVotes: {
+            $subtract: ["$upvotes", "$downvotes"],
+          },
+        },
+      },
+      {
+        // sort by more recent first
+        $sort:
+          sortBy === "recent"
+            ? { createdAt: -1 }
+            : {
+                nettVotes: sortBy === "controversial" ? 1 : -1,
+                upvotes: -1,
+                createdAt: -1,
+              },
+      },
+      {
         // exclude certain fields
         $project: {
           userId: false,
+          nettVotes: false,
           user: {
             createdAt: false,
             updatedAt: false,
@@ -92,10 +117,6 @@ async function getQuestions(
             answerIds: false,
           },
         },
-      },
-      {
-        // sort by more recent first
-        $sort: { createdAt: -1 },
       },
       {
         // pagination

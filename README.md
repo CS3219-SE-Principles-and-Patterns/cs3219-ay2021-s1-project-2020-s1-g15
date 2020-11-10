@@ -452,10 +452,11 @@ OR
 #### Get paginated questions
 
 - Method: `GET`
-- URL: `/api/questions?page=<page>&pageSize=<pageSize>`
+- URL: `/api/questions?page=<page>&pageSize=<pageSize>&sortBy=<sortBy>`
 - URL query
   - `<page>`: integer larger than 0
   - `<pageSize>`: number of questions in the current `page`; integer larger than 0
+  - `<sortBy>`: either `recent`, `trending`, `top`, or `controversial`; defaults to `recent` if not specified
 - Auth required: NO
 
 **Success response**:
@@ -904,7 +905,7 @@ OR
 #### User analytics
 
 - Method: `GET`
-- URL: `/api/analytics/users/:id`
+- URL: `/api/details/users/:id`
 - URL params
   - `id`: the `ObjectId` of the user
 - Auth required: NO

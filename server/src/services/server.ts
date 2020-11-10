@@ -23,7 +23,7 @@ app.use("/api", router);
 router.use("/questions", questionsRouter);
 router.use("/answers", answersRouter);
 router.use("/users", usersRouter);
-router.use("/analytics/users", analyticsRouter);
+router.use("/details/users", analyticsRouter);
 // custom error handler: must be last middleware
 app.use(customErrorHandler);
 
