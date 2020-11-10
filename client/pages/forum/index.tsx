@@ -13,6 +13,7 @@ import {
   Typography,
   Tooltip,
   Card,
+  Radio,
 } from "antd";
 import {
   SearchOutlined,
@@ -78,6 +79,9 @@ const ForumPage = (): JSX.Element => {
   const searchText = useRef<Input>(null);
   const [filterLevel, setFilterLevel] = useState<string>("");
   const [filterSubject, setFilterSubject] = useState<string>("");
+  const [sortBy, setSortBy] = useState<"recent" | "trending" | "controversial">(
+    "recent"
+  );
   const { isAuthenticated } = useAuth();
 
   const onPageChange = (page: number) => {
@@ -175,13 +179,14 @@ const ForumPage = (): JSX.Element => {
       searchText: searchText.current?.state.value ?? "",
       level: filterLevel ?? "",
       subject: filterSubject ?? "",
+      sortBy: sortBy,
       page,
       pageSize,
     });
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);
-  }, [page, pageSize, searchText, filterLevel, filterSubject]);
+  }, [page, pageSize, searchText, filterLevel, filterSubject, sortBy]);
 
   useEffect(() => {
     fetchData();
@@ -246,6 +251,26 @@ const ForumPage = (): JSX.Element => {
                 };
               })}
             />
+            <Row style={{ marginTop: "1rem" }}>
+              <Radio.Group
+                onChange={(e) => setSortBy(e.target.value)}
+                disabled={loading}
+                defaultValue="recent"
+                buttonStyle="solid"
+              >
+                <Tooltip title="Most recent questions">
+                  <Radio.Button value="recent">Recent</Radio.Button>
+                </Tooltip>
+                <Tooltip title="Trending questions in the last 2 weeks">
+                  <Radio.Button value="trending">Trending</Radio.Button>
+                </Tooltip>
+                <Tooltip title="Controversial questions in the last 2 weeks">
+                  <Radio.Button value="controversial">
+                    Controversial
+                  </Radio.Button>
+                </Tooltip>
+              </Radio.Group>
+            </Row>
           </Card>
 
           <Table
