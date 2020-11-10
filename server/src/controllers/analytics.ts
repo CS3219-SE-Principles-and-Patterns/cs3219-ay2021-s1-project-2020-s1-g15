@@ -8,9 +8,9 @@ import {
   toValidObjectId,
 } from "../utils";
 import { AnalyticsResponse } from "../utils/types/analyticsTypes";
-import { getAnswersByUserId } from "./answers";
+import { getAnswerById, getAnswersByUserId } from "./answers";
 import { Question, Answer, Vote } from "../models";
-import { getRecentQuestionVotes } from "./votes";
+import { getRecentAnswerVotes, getRecentQuestionVotes } from "./votes";
 //GET request
 async function getAnalyticsbyUserId(
   id: string | ObjectId
@@ -87,6 +87,11 @@ async function getAnalyticsbyUserId(
     userObjectId
   );
 
+  // get recently voted answers
+  const recentlyVotedAnswers: Answer[] = await getRecentlyVotedAnswers(
+    userObjectId
+  );
+
   //To return the results
   return {
     totalNumQuestions,
@@ -98,7 +103,7 @@ async function getAnalyticsbyUserId(
     topVotedAnswer,
     topVotedQuestion,
     recentlyVotedQuestions,
-    // recentlyVotedAnswers,
+    recentlyVotedAnswers,
   };
 }
 
@@ -125,6 +130,29 @@ async function getRecentlyVotedQuestions(
   }
 
   return recentlyVotedQuestions;
+}
+
+async function getRecentlyVotedAnswers(
+  userObjectId: ObjectId
+): Promise<Answer[]> {
+  // get 5 most recent answer votes
+  const recentAnswerVotes: Vote[] = await getRecentAnswerVotes(userObjectId);
+
+  // create array of answers
+  const recentlyVotedAnswers: Answer[] = [];
+
+  for (const vote of recentAnswerVotes) {
+    if (vote.answerId == null) {
+      throw new ApiError(
+        HttpStatusCode.NOT_FOUND,
+        ApiErrorMessage.Answer.NOT_FOUND
+      );
+    }
+    const answerObjectId: ObjectId = toValidObjectId(vote.answerId);
+    recentlyVotedAnswers.push(await getAnswerById(answerObjectId));
+  }
+
+  return recentlyVotedAnswers;
 }
 
 export { getAnalyticsbyUserId };

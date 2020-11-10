@@ -327,7 +327,16 @@ async function deleteAnswerVote(
 
 async function getRecentQuestionVotes(userObjectId: ObjectId): Promise<Vote[]> {
   const result = await getVotesCollection()
-    .find({ userId: userObjectId })
+    .find({ userId: userObjectId, questionId: { $exists: true } })
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .toArray();
+  return result;
+}
+
+async function getRecentAnswerVotes(userObjectId: ObjectId): Promise<Vote[]> {
+  const result = await getVotesCollection()
+    .find({ userId: userObjectId, answerId: { $exists: true } })
     .sort({ createdAt: -1 })
     .limit(5)
     .toArray();
@@ -340,4 +349,5 @@ export {
   getQuestionVoteStatus,
   getAnswersVoteStatus,
   getRecentQuestionVotes,
+  getRecentAnswerVotes,
 };

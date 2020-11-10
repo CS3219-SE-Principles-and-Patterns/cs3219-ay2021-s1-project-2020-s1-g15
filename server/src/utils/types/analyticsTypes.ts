@@ -11,5 +11,5 @@ export type AnalyticsResponse = {
   topVotedAnswer?: Answer | null;
   topVotedQuestion?: Question | null;
   recentlyVotedQuestions: GetSingleQuestionResponse[];
-  // recentlyVotedAnswers: Answer[];
+  recentlyVotedAnswers: Answer[];
 };
