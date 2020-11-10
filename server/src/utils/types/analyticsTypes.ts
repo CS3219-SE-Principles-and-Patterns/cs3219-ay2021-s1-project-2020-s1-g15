@@ -1,5 +1,4 @@
 import { Question, Answer } from "src/models";
-import { GetSingleQuestionResponse } from "./questionTypes";
 
 export type AnalyticsResponse = {
   totalNumQuestions?: number;
@@ -10,6 +9,6 @@ export type AnalyticsResponse = {
   ratioUpvotesToDownvotes?: number;
   topVotedAnswer?: Answer | null;
   topVotedQuestion?: Question | null;
-  recentlyVotedQuestions: GetSingleQuestionResponse[];
+  recentlyVotedQuestions: Question[];
   recentlyVotedAnswers: Answer[];
 };

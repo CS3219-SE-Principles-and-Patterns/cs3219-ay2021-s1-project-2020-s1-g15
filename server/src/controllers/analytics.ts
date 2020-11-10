@@ -1,9 +1,8 @@
 import { ObjectId } from "mongodb";
-import { getQuestionById, getQuestionsByUserId } from "./questions";
+import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
 import {
   ApiError,
   ApiErrorMessage,
-  GetSingleQuestionResponse,
   HttpStatusCode,
   toValidObjectId,
 } from "../utils";
@@ -83,7 +82,7 @@ async function getAnalyticsbyUserId(
   }
 
   // get recently voted questions
-  const recentlyVotedQuestions: GetSingleQuestionResponse[] = await getRecentlyVotedQuestions(
+  const recentlyVotedQuestions: Question[] = await getRecentlyVotedQuestions(
     userObjectId
   );
 
@@ -109,14 +108,14 @@ async function getAnalyticsbyUserId(
 
 async function getRecentlyVotedQuestions(
   userObjectId: ObjectId
-): Promise<GetSingleQuestionResponse[]> {
+): Promise<Question[]> {
   // get 5 most recent question votes
   const recentQuestionVotes: Vote[] = await getRecentQuestionVotes(
     userObjectId
   );
 
   // create array of questions
-  const recentlyVotedQuestions: GetSingleQuestionResponse[] = [];
+  const recentlyVotedQuestions: Question[] = [];
 
   for (const vote of recentQuestionVotes) {
     if (vote.questionId == null) {
@@ -126,7 +125,9 @@ async function getRecentlyVotedQuestions(
       );
     }
     const questionObjectId: ObjectId = toValidObjectId(vote.questionId);
-    recentlyVotedQuestions.push(await getQuestionById(questionObjectId));
+    recentlyVotedQuestions.push(
+      await getUnprocessedQuestionById(questionObjectId)
+    );
   }
 
   return recentlyVotedQuestions;
