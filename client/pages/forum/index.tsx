@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   Button,
@@ -7,12 +7,12 @@ import {
   Tag,
   Input,
   Pagination,
-  Form,
   Select,
   Space,
   Row,
   Typography,
   Tooltip,
+  Card,
 } from "antd";
 import {
   SearchOutlined,
@@ -31,7 +31,6 @@ import {
   getPaginatedQuestions,
   Level,
   Subject,
-  SearchForm,
   GetSingleQuestionRes,
   toRelativeTimeAgo,
   useUpvoteDownvote,
@@ -41,11 +40,11 @@ import styles from "./forum.module.css";
 import { useAuth } from "components/authentication";
 
 const { Search } = Input;
-const { Option } = Select;
 const { Text } = Typography;
 
 const subjectOptions: Subject[] = Object.values(Subject);
 const levelOptions: Level[] = Object.values(Level);
+
 // config values for the form
 const Config = Object.freeze({
   SearchText: Object.freeze({
@@ -70,38 +69,16 @@ const Config = Object.freeze({
   }),
 });
 
-const defaultSearchForm: SearchForm = {
-  searchText: "",
-  level: "",
-  subject: "",
-};
-
 const ForumPage = (): JSX.Element => {
   const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>([]);
   const [currTotal, setCurrTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [loading, setLoading] = useState(true);
-  const [form] = Form.useForm();
-  const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
+  const searchText = useRef<Input>(null);
+  const [filterLevel, setFilterLevel] = useState<string>("");
+  const [filterSubject, setFilterSubject] = useState<string>("");
   const { isAuthenticated } = useAuth();
-
-  const onFormFinish = async (searchReq: SearchForm) => {
-    // validation will throw error and stop execution if it fails
-    await form.validateFields();
-    setLoading(true);
-    setSearchForm({ ...searchReq });
-    setLoading(false);
-  };
-
-  const clearFilters = () => {
-    form.setFields([
-      { name: Config.Subject.NAME, value: undefined },
-      { name: Config.Level.NAME, value: undefined },
-      { name: Config.SearchText.NAME, value: undefined },
-    ]);
-    setSearchForm(defaultSearchForm);
-  };
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -195,87 +172,20 @@ const ForumPage = (): JSX.Element => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const { questions, total } = await getPaginatedQuestions({
-      searchText: searchForm.searchText ?? "",
-      level: searchForm.level ?? "",
-      subject: searchForm.subject ?? "",
+      searchText: searchText.current?.state.value ?? "",
+      level: filterLevel ?? "",
+      subject: filterSubject ?? "",
       page,
       pageSize,
     });
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);
-  }, [
-    page,
-    pageSize,
-    searchForm.level,
-    searchForm.searchText,
-    searchForm.subject,
-  ]);
+  }, [page, pageSize, searchText, filterLevel, filterSubject]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const filterForm = (
-    <>
-      <Form layout="inline" form={form} onFinish={onFormFinish}>
-        {/* Search function */}
-        <Form.Item
-          name={Config.SearchText.NAME}
-          label={Config.SearchText.LABEL}
-          rules={Config.SearchText.RULES}
-          className={styles.m8}
-        >
-          <Search
-            placeholder={Config.SearchText.PLACEHOLDER}
-            enterButton={
-              <Button
-                icon={<SearchOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
-                Search
-              </Button>
-            }
-          />
-        </Form.Item>
-        {/* LEVEL SELECT */}
-        <Form.Item
-          name={Config.Level.NAME}
-          label={Config.Level.LABEL}
-          className={styles.m8}
-        >
-          <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
-            {levelOptions.map((level) => (
-              <Option key={level} value={level}>
-                {level}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        {/* SUBJECT SELECT */}
-        <Form.Item
-          name={Config.Subject.NAME}
-          label={Config.Subject.LABEL}
-          className={styles.m8}
-        >
-          <Select disabled={loading} placeholder={Config.Subject.PLACEHOLDER}>
-            {subjectOptions.map((subject) => (
-              <Option key={subject} value={subject}>
-                {subject}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
-      <Row justify="end">
-        <Button danger onClick={clearFilters} className={styles.m8}>
-          Clear Filters
-        </Button>
-      </Row>
-    </>
-  );
 
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
@@ -291,8 +201,54 @@ const ForumPage = (): JSX.Element => {
             ]}
           />
 
+          <Card>
+            <Search
+              allowClear
+              ref={searchText}
+              size="large"
+              placeholder={Config.SearchText.PLACEHOLDER}
+              disabled={loading}
+              onSearch={fetchData}
+              enterButton={
+                <Button
+                  disabled={loading}
+                  icon={<SearchOutlined />}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Search
+                </Button>
+              }
+            />
+            <Select
+              allowClear
+              disabled={loading}
+              placeholder={Config.Level.PLACEHOLDER}
+              style={{ minWidth: "225px" }}
+              onChange={(value: string) => setFilterLevel(value)}
+              options={levelOptions.map((level) => {
+                return {
+                  label: level,
+                  value: level,
+                };
+              })}
+            />
+            <Select
+              allowClear
+              disabled={loading}
+              placeholder={Config.Subject.PLACEHOLDER}
+              style={{ minWidth: "185px" }}
+              onChange={(value: string) => setFilterSubject(value)}
+              options={subjectOptions.map((subject) => {
+                return {
+                  label: subject,
+                  value: subject,
+                };
+              })}
+            />
+          </Card>
+
           <Table
-            title={() => filterForm}
             loading={loading}
             columns={columns}
             dataSource={tableData}
