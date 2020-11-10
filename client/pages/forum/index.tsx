@@ -128,7 +128,7 @@ const ForumPage = (): JSX.Element => {
             <Space direction="vertical">
               <Text style={{ fontSize: "20px" }}>{record.title}</Text>
               <Row>
-                <Tag color="blue">{record.level}</Tag>
+                <Tag color="geekblue">{record.level}</Tag>
                 <Tag color="purple">{record.subject}</Tag>
               </Row>
               {record.user ? (
