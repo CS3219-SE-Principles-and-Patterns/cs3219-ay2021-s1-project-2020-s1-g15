@@ -31,18 +31,14 @@ async function getUnprocessedAnswersByQuestionId(
   return answers;
 }
 
-async function getAnswerById(answerId: string | ObjectId): Promise<Answer> {
+async function getAnswerById(
+  answerId: string | ObjectId
+): Promise<Answer | null> {
   const answerObjectId: ObjectId = toValidObjectId(answerId);
   const answer: Answer | null = await getAnswersCollection().findOne({
     _id: answerObjectId,
   });
 
-  if (answer === null) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Answer.NOT_FOUND
-    );
-  }
   return answer;
 }
 

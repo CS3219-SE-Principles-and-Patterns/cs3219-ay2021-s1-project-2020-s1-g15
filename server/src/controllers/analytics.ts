@@ -150,7 +150,10 @@ async function getRecentlyVotedAnswers(
       );
     }
     const answerObjectId: ObjectId = toValidObjectId(vote.answerId);
-    recentlyVotedAnswers.push(await getAnswerById(answerObjectId));
+    const answer: Answer | null = await getAnswerById(answerObjectId);
+    if (answer != null) {
+      recentlyVotedAnswers.push();
+    }
   }
 
   return recentlyVotedAnswers;
