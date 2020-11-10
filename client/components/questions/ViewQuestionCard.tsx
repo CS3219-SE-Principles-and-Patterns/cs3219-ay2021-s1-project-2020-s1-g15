@@ -1,15 +1,6 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
-import {
-  Card,
-  Divider,
-  Space,
-  Row,
-  Button,
-  Modal,
-  notification,
-  Tooltip,
-} from "antd";
+import { Card, Space, Row, Button, Modal, notification, Tooltip } from "antd";
 import {
   ExclamationCircleOutlined,
   LikeFilled,
@@ -100,9 +91,7 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
 
       {belongsToUser ? (
         <>
-          <Divider />
-
-          <Row justify="end">
+          <Row justify="end" style={{ marginTop: "2rem" }}>
             <Space>
               <Button danger onClick={onDeleteClick}>
                 Delete

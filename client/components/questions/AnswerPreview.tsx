@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import Link from "next/link";
 import { Space, Typography } from "antd";
 import { grey } from "@ant-design/colors";
 
@@ -7,6 +8,7 @@ import {
   markdownToReactNode,
   toRelativeTimeAgo,
   GetSingleAnswerRes,
+  Route,
 } from "utils/index";
 
 const { Paragraph } = Typography;
@@ -27,8 +29,13 @@ const AnswerPreview: FC<AnswerPreviewProps> = ({
     <Space style={{ width: "100%" }} direction="vertical" className={className}>
       {user && createdAt ? (
         <Space>
-          <span style={{ color: grey[4] }}>{user.username}</span>
-          <span style={{ color: grey[1] }}>{toRelativeTimeAgo(createdAt)}</span>
+          <Link
+            href={`${Route.USER}/[username]`}
+            as={`${Route.USER}/${user.username}`}
+          >
+            {`@${user.username}`}
+          </Link>
+          <span style={{ color: grey[3] }}>{toRelativeTimeAgo(createdAt)}</span>
         </Space>
       ) : null}
       <article className="markdown-body">

@@ -13,8 +13,10 @@ const QuestionAskPage = (): JSX.Element => {
       <Row justify="center">
         <Col flex="750px">
           <PageHeader
-            title={"Ask a Question"}
-            backIcon={<LeftOutlined size={64} />}
+            title={<h1>Ask Question</h1>}
+            backIcon={
+              <LeftOutlined size={64} style={{ marginBottom: "12px" }} />
+            }
             onBack={() => router.push(Route.FORUM)}
           />
           <Card>
