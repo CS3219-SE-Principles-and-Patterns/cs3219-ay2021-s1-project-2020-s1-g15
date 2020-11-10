@@ -325,10 +325,13 @@ async function deleteAnswerVote(
   return deletedVote;
 }
 
-async function getRecentlyVotedQuestions(
-  userObjectId: ObjectId
-): Promise<Question[]> {
-  return null;
+async function getRecentQuestionVotes(userObjectId: ObjectId): Promise<Vote[]> {
+  const result = await getVotesCollection()
+    .find({ userId: userObjectId })
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .toArray();
+  return result;
 }
 
 export {
@@ -336,5 +339,5 @@ export {
   handleAnswerVote,
   getQuestionVoteStatus,
   getAnswersVoteStatus,
-  getRecentlyVotedQuestions,
+  getRecentQuestionVotes,
 };
