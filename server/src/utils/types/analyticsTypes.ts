@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Question, Answer } from "src/models";
 
 export type AnalyticsResponse = {
   totalNumQuestions?: number;
@@ -7,6 +7,6 @@ export type AnalyticsResponse = {
   totalNumUpvotes?: number;
   totalNumDownvotes?: number;
   ratioUpvotesToDownvotes?: number;
-  topVotedAnswer?: ObjectId | null;
-  topVotedQuestion?: ObjectId | null;
+  topVotedAnswer?: Answer | null;
+  topVotedQuestion?: Question | null;
 };
