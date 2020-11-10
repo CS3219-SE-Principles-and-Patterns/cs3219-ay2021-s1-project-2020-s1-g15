@@ -905,7 +905,7 @@ OR
 #### User analytics
 
 - Method: `GET`
-- URL: `/api/analytics/users/:id`
+- URL: `/api/details/users/:id`
 - URL params
   - `id`: the `ObjectId` of the user
 - Auth required: NO

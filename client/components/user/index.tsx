@@ -22,7 +22,8 @@ import {
 
 import styles from "./user.module.css";
 import Link from "next/link";
-
+import QuestionPreview from "components/questions/QuestionPreview";
+const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const userPageTabKeys = {
@@ -166,17 +167,33 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
                   </Row>
                   <Row gutter={[16, 16]}>
                     <Col>
-                      <Statistic
-                        title="Top Voted Answer"
-                        value={user.analytics?.topVotedAnswer ?? "nil"}
-                      />
+                      <h2>
+                        <Typography.Text strong>
+                          Top Voted Answer
+                        </Typography.Text>
+                      </h2>
+                      {markdownToReactNode(
+                        user.analytics?.topVotedAnswer?.markdown ??
+                          "no answers upvoted"
+                      )}
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]}>
                     <Col>
-                      <Statistic
-                        title="Top Voted Question"
-                        value={user.analytics?.ratioQuestionsToAnswer ?? "nil"}
+                      <h2>
+                        <Typography.Text strong>
+                          Top Voted Question
+                        </Typography.Text>
+                      </h2>
+                      <QuestionPreview
+                        question={
+                          user.analytics?.topVotedQuestion ?? {
+                            title: "nil",
+                            markdown: "",
+                            subject: "nil",
+                            level: "nil",
+                          }
+                        }
                       />
                     </Col>
                   </Row>

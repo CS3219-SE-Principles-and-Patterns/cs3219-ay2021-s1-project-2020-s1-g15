@@ -95,8 +95,8 @@ export type AnalyticsResponse = {
   totalNumUpvotes: number;
   totalNumDownvotes: number;
   ratioUpvotesToDownvotes: number;
-  topVotedAnswer: string | null;
-  topVotedQuestion: string | null;
+  topVotedAnswer: Answer | null;
+  topVotedQuestion: Question | null;
 };
 
 export type GetSingleUserRes = Util & {
