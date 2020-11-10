@@ -184,7 +184,7 @@ const ForumPage = ({ questions, total }): JSX.Element => {
       page,
       pageSize,
     });
-    console.log(questions);
+    //console.log(questions);
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);
