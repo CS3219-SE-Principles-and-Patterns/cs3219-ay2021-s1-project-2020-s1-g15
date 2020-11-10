@@ -38,7 +38,8 @@ const ViewQuestionCard: FC<ViewQuestionCardProp> = ({
 }): JSX.Element => {
   const { isAuthenticated, user, idToken } = useAuth();
   const router = useRouter();
-  const belongsToUser: boolean = !!user && user._id === question.user._id;
+  const belongsToUser: boolean =
+    !!user && (user._id ?? "-1") === question.user._id;
   const {
     hasUpvoted,
     hasDownvoted,
