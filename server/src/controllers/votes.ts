@@ -325,9 +325,16 @@ async function deleteAnswerVote(
   return deletedVote;
 }
 
+async function getRecentlyVotedQuestions(
+  userObjectId: ObjectId
+): Promise<Question[]> {
+  return null;
+}
+
 export {
   handleQuestionVote,
   handleAnswerVote,
   getQuestionVoteStatus,
   getAnswersVoteStatus,
+  getRecentlyVotedQuestions,
 };

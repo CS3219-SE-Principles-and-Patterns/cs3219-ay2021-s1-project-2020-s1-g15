@@ -4,6 +4,7 @@ import { toValidObjectId } from "../utils";
 import { AnalyticsResponse } from "../utils/types/analyticsTypes";
 import { getAnswersByUserId } from "./answers";
 import { Question, Answer } from "../models";
+import { getRecentlyVotedQuestions } from "./votes";
 //GET request
 async function getAnalyticsbyUserId(
   id: string | ObjectId
@@ -81,6 +82,11 @@ async function getAnalyticsbyUserId(
     topVotedQuestion = toValidObjectId(topQuestion._id);
   }
 
+  // get recently voted questions
+  const recentlyVotedQuestions: Question[] = await getRecentlyVotedQuestions(
+    userObjectId
+  );
+
   //To return the results
   return {
     totalNumQuestions,
@@ -91,6 +97,8 @@ async function getAnalyticsbyUserId(
     ratioUpvotesToDownvotes,
     topVotedAnswer,
     topVotedQuestion,
+    recentlyVotedQuestions,
+    // recentlyVotedAnswers,
   };
 }
 
