@@ -456,7 +456,7 @@ OR
 - URL query
   - `<page>`: integer larger than 0
   - `<pageSize>`: number of questions in the current `page`; integer larger than 0
-  - `<sortBy>`: either `recent`, `trending`, or `controversial`; defaults to `recent` if not specified
+  - `<sortBy>`: either `recent`, `trending`, `top`, or `controversial`; defaults to `recent` if not specified
 - Auth required: NO
 
 **Success response**:

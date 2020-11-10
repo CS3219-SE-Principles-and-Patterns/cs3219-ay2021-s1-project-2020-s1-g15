@@ -79,9 +79,9 @@ const ForumPage = (): JSX.Element => {
   const searchText = useRef<Input>(null);
   const [filterLevel, setFilterLevel] = useState<string>("");
   const [filterSubject, setFilterSubject] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"recent" | "trending" | "controversial">(
-    "recent"
-  );
+  const [sortBy, setSortBy] = useState<
+    "recent" | "trending" | "controversial" | "top"
+  >("recent");
   const { isAuthenticated } = useAuth();
 
   const onPageChange = (page: number) => {
@@ -268,6 +268,9 @@ const ForumPage = (): JSX.Element => {
                   <Radio.Button value="controversial">
                     Controversial
                   </Radio.Button>
+                </Tooltip>
+                <Tooltip title="Top questions of all time">
+                  <Radio.Button value="top">Top</Radio.Button>
                 </Tooltip>
               </Radio.Group>
             </Row>

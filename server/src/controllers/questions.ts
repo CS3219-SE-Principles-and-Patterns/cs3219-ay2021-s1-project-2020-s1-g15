@@ -25,7 +25,6 @@ async function getQuestions(
   const pageSize = parseInt(req.pageSize || "0");
   const sortBy = req.sortBy ?? "recent";
   const { searchText, level, subject } = req;
-  const TWO_WEEKS_IN_MS = 1209600000;
 
   if (!page || !pageSize) {
     throw new ApiError(
@@ -45,6 +44,7 @@ async function getQuestions(
     query.subject = subject as Subject;
   }
   if (sortBy === "trending" || sortBy === "controversial") {
+    const TWO_WEEKS_IN_MS = 1209600000;
     query.createdAt = { $gte: new Date(Date.now() - TWO_WEEKS_IN_MS) };
   }
 
@@ -83,7 +83,7 @@ async function getQuestions(
           sortBy === "recent"
             ? { createdAt: -1 }
             : {
-                nettVotes: sortBy === "trending" ? -1 : 1,
+                nettVotes: sortBy === "controversial" ? 1 : -1,
                 upvotes: -1,
                 createdAt: -1,
               },

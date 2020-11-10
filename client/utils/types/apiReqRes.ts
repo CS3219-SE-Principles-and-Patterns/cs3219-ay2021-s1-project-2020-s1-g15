@@ -25,7 +25,7 @@ export type GetSingleQuestionRes = Omit<Question, "userId"> & {
 };
 
 export type GetPaginatedQuestionsReq = SearchForm & {
-  sortBy: "recent" | "trending" | "controversial";
+  sortBy: "recent" | "trending" | "controversial" | "top";
   page: number;
   pageSize: number;
 };
