@@ -5,6 +5,7 @@ import {
   QuestionCircleOutlined,
   LikeOutlined,
   DislikeOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import {
   Statistic,
@@ -26,6 +27,7 @@ import {
   Question,
   toRelativeTimeAgo,
   Answer,
+  toLocalisedDate,
 } from "../../utils";
 
 const { TabPane } = Tabs;
@@ -59,6 +61,15 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
       onChange={onChangeTab}
     >
       <TabPane forceRender tab="Statistics" key={userPageTabKeys.statistics}>
+        <Row gutter={[32, 16]}>
+          <Col>
+            <Statistic
+              title="Cake day"
+              prefix={<CalendarOutlined />}
+              value={toLocalisedDate(user.createdAt)}
+            />
+          </Col>
+        </Row>
         <Row gutter={[32, 16]}>
           <Col>
             <Statistic
