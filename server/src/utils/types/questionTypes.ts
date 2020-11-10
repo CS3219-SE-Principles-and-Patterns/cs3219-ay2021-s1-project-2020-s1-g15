@@ -13,6 +13,7 @@ export type GetPaginatedQuestionsRequest = {
   searchText?: string | undefined;
   level?: string | undefined;
   subject?: string | undefined;
+  sortBy?: "recent" | "trending" | "controversial" | "top" | undefined;
 };
 
 export type GetPaginatedQuestionsResponse = {

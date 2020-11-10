@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   Button,
@@ -7,15 +7,20 @@ import {
   Tag,
   Input,
   Pagination,
-  Form,
   Select,
   Space,
   Row,
+  Typography,
+  Tooltip,
+  Card,
+  Radio,
 } from "antd";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   SearchOutlined,
+  LikeFilled,
+  LikeOutlined,
+  DislikeFilled,
+  DislikeOutlined,
 } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 
@@ -27,18 +32,20 @@ import {
   getPaginatedQuestions,
   Level,
   Subject,
-  SearchForm,
   GetSingleQuestionRes,
   toRelativeTimeAgo,
+  useUpvoteDownvote,
 } from "../../utils";
 import FluidPage from "../../components/layout";
 import styles from "./forum.module.css";
+import { useAuth } from "components/authentication";
 
 const { Search } = Input;
-const { Option } = Select;
+const { Text } = Typography;
 
 const subjectOptions: Subject[] = Object.values(Subject);
 const levelOptions: Level[] = Object.values(Level);
+
 // config values for the form
 const Config = Object.freeze({
   SearchText: Object.freeze({
@@ -63,40 +70,19 @@ const Config = Object.freeze({
   }),
 });
 
-const defaultSearchForm: SearchForm = {
-  searchText: "",
-  level: "",
-  subject: "",
-};
-
-const ForumPage = ({ questions, total }): JSX.Element => {
-  const [isInitial, setIsInitial] = useState<boolean>(false);
-  const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>(
-    questions
-  );
-  const [currTotal, setCurrTotal] = useState<number>(total);
+const ForumPage = (): JSX.Element => {
+  const [currQuestions, setQuestions] = useState<GetSingleQuestionRes[]>([]);
+  const [currTotal, setCurrTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
-  const [loading, setLoading] = useState(false); //State for loading indicator
-  const [form] = Form.useForm();
-  const [searchForm, setSearchForm] = useState<SearchForm>(defaultSearchForm);
-
-  const onFormFinish = async (searchReq: SearchForm) => {
-    // validation will throw error and stop execution if it fails
-    await form.validateFields();
-    setLoading(true);
-    setSearchForm({ ...searchReq });
-    setLoading(false);
-  };
-
-  const clearFilters = () => {
-    form.setFields([
-      { name: Config.Subject.NAME, value: undefined },
-      { name: Config.Level.NAME, value: undefined },
-      { name: Config.SearchText.NAME, value: undefined },
-    ]);
-    setSearchForm(defaultSearchForm);
-  };
+  const [loading, setLoading] = useState(true);
+  const searchText = useRef<Input>(null);
+  const [filterLevel, setFilterLevel] = useState<string>("");
+  const [filterSubject, setFilterSubject] = useState<string>("");
+  const [sortBy, setSortBy] = useState<
+    "recent" | "trending" | "controversial" | "top"
+  >("recent");
+  const { isAuthenticated } = useAuth();
 
   const onPageChange = (page: number) => {
     setPage(page);
@@ -104,55 +90,67 @@ const ForumPage = ({ questions, total }): JSX.Element => {
 
   const columns: ColumnsType<QuestionTableData> = [
     {
-      title: "Votes/Author",
-      key: "votes",
-      render: (_, record) => (
-        <Space direction="vertical">
-          <Row justify="center">
-            <Tag>
-              <ArrowUpOutlined /> {record.upvotes}
-            </Tag>
-            <Tag>
-              <ArrowDownOutlined /> {record.downvotes}
-            </Tag>
-          </Row>
-          <Button type="link">
-            {record.user ? (
-              <Link
-                href={`${Route.USER}/[username]`}
-                as={`${Route.USER}/${record.user.username}`}
-              >
-                {record.user.username}
-              </Link>
-            ) : null}
-          </Button>
-        </Space>
-      ),
-    },
-    {
-      title: "Title",
-      dataIndex: "title",
       key: "title",
-    },
-    {
-      title: "Created",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => toRelativeTimeAgo(text),
-    },
-    {
-      title: "Level/Subject",
-      key: "tags",
-      render: (_, record) => (
-        <Space direction="vertical">
-          <Tag color="blue" key={record._id}>
-            {record.level}
-          </Tag>
-          <Tag color="purple" key={record._id}>
-            {record.subject}
-          </Tag>
-        </Space>
-      ),
+      render: (_, record) => {
+        const {
+          hasUpvoted,
+          hasDownvoted,
+          upvotesLocal,
+          downvotesLocal,
+          upvoteOnClick,
+          downvoteOnClick,
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+        } = useUpvoteDownvote({
+          isQuestionVote: true,
+          questionId: record._id,
+          upvotes: record.upvotes,
+          downvotes: record.downvotes,
+        });
+
+        return (
+          <Row align="middle">
+            <Button.Group size="small" style={{ marginRight: "1rem" }}>
+              <Tooltip title={isAuthenticated ? "Upvote" : "Login to upvote"}>
+                <Button
+                  icon={hasUpvoted ? <LikeFilled /> : <LikeOutlined />}
+                  onClick={upvoteOnClick}
+                >
+                  {upvotesLocal.toString()}
+                </Button>
+              </Tooltip>
+              <Tooltip
+                title={isAuthenticated ? "Downvote" : "Login to downvote"}
+              >
+                <Button
+                  icon={hasDownvoted ? <DislikeFilled /> : <DislikeOutlined />}
+                  onClick={downvoteOnClick}
+                >
+                  {downvotesLocal.toString()}
+                </Button>
+              </Tooltip>
+            </Button.Group>
+            <Space direction="vertical">
+              <Text style={{ fontSize: "20px" }}>{record.title}</Text>
+              <Row>
+                <Tag color="geekblue">{record.level}</Tag>
+                <Tag color="purple">{record.subject}</Tag>
+              </Row>
+              {record.user ? (
+                <Link
+                  href={`${Route.USER}/[username]`}
+                  as={`${Route.USER}/${record.user.username}`}
+                >
+                  {`@${record.user.username}`}
+                </Link>
+              ) : null}
+              <Text type="secondary">
+                {toRelativeTimeAgo(record.createdAt)}, {record.answerIds.length}{" "}
+                answers
+              </Text>
+            </Space>
+          </Row>
+        );
+      },
     },
     {
       key: "action",
@@ -178,93 +176,21 @@ const ForumPage = ({ questions, total }): JSX.Element => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const { questions, total } = await getPaginatedQuestions({
-      searchText: searchForm.searchText ?? "",
-      level: searchForm.level ?? "",
-      subject: searchForm.subject ?? "",
+      searchText: searchText.current?.state.value ?? "",
+      level: filterLevel ?? "",
+      subject: filterSubject ?? "",
+      sortBy: sortBy,
       page,
       pageSize,
     });
-    //console.log(questions);
     setQuestions(questions);
     setCurrTotal(total);
     setLoading(false);
-  }, [
-    page,
-    pageSize,
-    searchForm.level,
-    searchForm.searchText,
-    searchForm.subject,
-  ]);
+  }, [page, pageSize, searchText, filterLevel, filterSubject, sortBy]);
 
   useEffect(() => {
-    if (!isInitial) {
-      // prevent re-fetching on first load
-      fetchData();
-    } else {
-      setIsInitial(false);
-    }
-  }, [fetchData, isInitial]);
-
-  const filterForm = (
-    <>
-      <Form layout="inline" form={form} onFinish={onFormFinish}>
-        {/* Search function */}
-        <Form.Item
-          name={Config.SearchText.NAME}
-          label={Config.SearchText.LABEL}
-          rules={Config.SearchText.RULES}
-          className={styles.m8}
-        >
-          <Search
-            placeholder={Config.SearchText.PLACEHOLDER}
-            enterButton={
-              <Button
-                icon={<SearchOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
-                Search
-              </Button>
-            }
-          />
-        </Form.Item>
-        {/* LEVEL SELECT */}
-        <Form.Item
-          name={Config.Level.NAME}
-          label={Config.Level.LABEL}
-          className={styles.m8}
-        >
-          <Select disabled={loading} placeholder={Config.Level.PLACEHOLDER}>
-            {levelOptions.map((level) => (
-              <Option key={level} value={level}>
-                {level}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        {/* SUBJECT SELECT */}
-        <Form.Item
-          name={Config.Subject.NAME}
-          label={Config.Subject.LABEL}
-          className={styles.m8}
-        >
-          <Select disabled={loading} placeholder={Config.Subject.PLACEHOLDER}>
-            {subjectOptions.map((subject) => (
-              <Option key={subject} value={subject}>
-                {subject}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
-      <Row justify="end">
-        <Button danger onClick={clearFilters} className={styles.m8}>
-          Clear Filters
-        </Button>
-      </Row>
-    </>
-  );
+    fetchData();
+  }, [fetchData]);
 
   return (
     <FluidPage title={PageTitle.FORUM} selectedkey={NavMenuKey.FORUM}>
@@ -280,12 +206,82 @@ const ForumPage = ({ questions, total }): JSX.Element => {
             ]}
           />
 
+          <Card>
+            <Search
+              allowClear
+              ref={searchText}
+              size="large"
+              placeholder={Config.SearchText.PLACEHOLDER}
+              disabled={loading}
+              onSearch={fetchData}
+              enterButton={
+                <Button
+                  disabled={loading}
+                  icon={<SearchOutlined />}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Search
+                </Button>
+              }
+            />
+            <Select
+              allowClear
+              disabled={loading}
+              placeholder={Config.Level.PLACEHOLDER}
+              style={{ minWidth: "225px" }}
+              onChange={(value: string) => setFilterLevel(value)}
+              options={levelOptions.map((level) => {
+                return {
+                  label: level,
+                  value: level,
+                };
+              })}
+            />
+            <Select
+              allowClear
+              disabled={loading}
+              placeholder={Config.Subject.PLACEHOLDER}
+              style={{ minWidth: "185px" }}
+              onChange={(value: string) => setFilterSubject(value)}
+              options={subjectOptions.map((subject) => {
+                return {
+                  label: subject,
+                  value: subject,
+                };
+              })}
+            />
+            <Row style={{ marginTop: "1rem" }}>
+              <Radio.Group
+                onChange={(e) => setSortBy(e.target.value)}
+                disabled={loading}
+                defaultValue="recent"
+                buttonStyle="solid"
+              >
+                <Tooltip title="Most recent questions">
+                  <Radio.Button value="recent">Recent</Radio.Button>
+                </Tooltip>
+                <Tooltip title="Trending questions in the last 2 weeks">
+                  <Radio.Button value="trending">Trending</Radio.Button>
+                </Tooltip>
+                <Tooltip title="Controversial questions in the last 2 weeks">
+                  <Radio.Button value="controversial">
+                    Controversial
+                  </Radio.Button>
+                </Tooltip>
+                <Tooltip title="Top questions of all time">
+                  <Radio.Button value="top">Top</Radio.Button>
+                </Tooltip>
+              </Radio.Group>
+            </Row>
+          </Card>
+
           <Table
-            title={() => filterForm}
             loading={loading}
             columns={columns}
             dataSource={tableData}
             pagination={false}
+            showHeader={false}
           />
           <div className={styles.flex}>
             <Pagination
@@ -304,16 +300,4 @@ const ForumPage = ({ questions, total }): JSX.Element => {
   );
 };
 
-// This gets called on every request
-export async function getServerSideProps() {
-  const { questions, total } = await getPaginatedQuestions({
-    level: "",
-    subject: "",
-    searchText: "",
-    page: 1,
-    pageSize: 10,
-  });
-  // Pass data to the page via props
-  return { props: { questions, total } };
-}
 export default ForumPage;

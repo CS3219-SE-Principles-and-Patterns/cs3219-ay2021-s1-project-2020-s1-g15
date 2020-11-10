@@ -38,7 +38,7 @@ const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
         ) : null}
         <Row>
           <Tag color="geekblue">{level}</Tag>
-          <Tag color="geekblue">{subject}</Tag>
+          <Tag color="purple">{subject}</Tag>
         </Row>
       </Space>
 
