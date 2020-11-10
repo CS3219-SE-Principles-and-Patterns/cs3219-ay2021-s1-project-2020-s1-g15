@@ -125,9 +125,12 @@ async function getRecentlyVotedQuestions(
       );
     }
     const questionObjectId: ObjectId = toValidObjectId(vote.questionId);
-    recentlyVotedQuestions.push(
-      await getUnprocessedQuestionById(questionObjectId)
+    const question: Question | null = await getUnprocessedQuestionById(
+      questionObjectId
     );
+    if (question != null) {
+      recentlyVotedQuestions.push(question);
+    }
   }
 
   return recentlyVotedQuestions;
@@ -152,7 +155,7 @@ async function getRecentlyVotedAnswers(
     const answerObjectId: ObjectId = toValidObjectId(vote.answerId);
     const answer: Answer | null = await getAnswerById(answerObjectId);
     if (answer != null) {
-      recentlyVotedAnswers.push();
+      recentlyVotedAnswers.push(answer);
     }
   }
 

@@ -20,18 +20,12 @@ import {
 
 async function getUnprocessedQuestionById(
   questionId: string | ObjectId
-): Promise<Question> {
+): Promise<Question | null> {
   const questionObjectId: ObjectId = toValidObjectId(questionId);
   const question: Question | null = await getQuestionsCollection().findOne({
     _id: questionObjectId,
   });
 
-  if (question === null) {
-    throw new ApiError(
-      HttpStatusCode.NOT_FOUND,
-      ApiErrorMessage.Answer.NOT_FOUND
-    );
-  }
   return question;
 }
 
