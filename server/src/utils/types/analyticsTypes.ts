@@ -1,5 +1,4 @@
-import { ObjectId } from "mongodb";
-import { Answer, Question } from "../../models";
+import { Question, Answer } from "src/models";
 
 export type AnalyticsResponse = {
   totalNumQuestions?: number;
@@ -8,8 +7,8 @@ export type AnalyticsResponse = {
   totalNumUpvotes?: number;
   totalNumDownvotes?: number;
   ratioUpvotesToDownvotes?: number;
-  topVotedAnswer?: ObjectId | null;
-  topVotedQuestion?: ObjectId | null;
+  topVotedAnswer?: Answer | null;
+  topVotedQuestion?: Question | null;
   recentlyVotedQuestions: Question[];
   // recentlyVotedAnswers: Answer[];
 };

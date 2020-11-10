@@ -43,43 +43,37 @@ async function getAnalyticsbyUserId(
   const ratioUpvotesToDownvotes = totalNumUpvotes / totalNumDownvotes;
 
   //To get Top voted answer
-  let topAnswer: Answer | null;
-  let topVotedAnswer: ObjectId | null;
+  let topVotedAnswer: Answer | null;
   if (answers.length == 0) {
-    topAnswer = null;
     topVotedAnswer = null;
   } else {
-    topAnswer = answers[0]; //to initialise an initial top answer
-    let currenthighestA = topAnswer.upvotes - topAnswer.downvotes;
+    topVotedAnswer = answers[0]; //to initialise an initial top answer
+    let currenthighestA = topVotedAnswer.upvotes - topVotedAnswer.downvotes;
     let netA = 0;
     for (const answer of answers) {
       netA = answer.upvotes - answer.downvotes;
       if (netA > currenthighestA) {
-        topAnswer = answer;
+        topVotedAnswer = answer;
         currenthighestA = netA;
       } else continue;
     }
-    topVotedAnswer = toValidObjectId(topAnswer._id);
   }
 
   //To get Top voted question
-  let topQuestion: Question | null;
-  let topVotedQuestion: ObjectId | null;
+  let topVotedQuestion: Question | null;
   if (questions.length == 0) {
-    topQuestion = null;
     topVotedQuestion = null;
   } else {
-    topQuestion = questions[0]; //to initialise an initial top answer
-    let currenthighestQ = topQuestion.upvotes - topQuestion.downvotes;
+    topVotedQuestion = questions[0]; //to initialise an initial top answer
+    let currenthighestQ = topVotedQuestion.upvotes - topVotedQuestion.downvotes;
     let netQ = 0;
     for (const question of questions) {
       netQ = question.upvotes - question.downvotes;
       if (netQ > currenthighestQ) {
-        topQuestion = question;
+        topVotedQuestion = question;
         currenthighestQ = netQ;
       } else continue;
     }
-    topVotedQuestion = toValidObjectId(topQuestion._id);
   }
 
   // get recently voted questions
