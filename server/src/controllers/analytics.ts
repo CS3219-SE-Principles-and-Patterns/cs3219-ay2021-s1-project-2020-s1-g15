@@ -1,16 +1,17 @@
 import { ObjectId } from "mongodb";
-import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
+
 import {
   ApiError,
   ApiErrorMessage,
   HttpStatusCode,
   toValidObjectId,
+  AnalyticsResponse,
 } from "../utils";
-import { AnalyticsResponse } from "../utils/types/analyticsTypes";
-import { getAnswerById, getAnswersByUserId } from "./answers";
 import { Question, Answer, Vote } from "../models";
+import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
+import { getAnswerById, getAnswersByUserId } from "./answers";
 import { getRecentAnswerVotes, getRecentQuestionVotes } from "./votes";
-//GET request
+
 async function getAnalyticsbyUserId(
   id: string | ObjectId
 ): Promise<AnalyticsResponse> {
