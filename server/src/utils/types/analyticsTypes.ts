@@ -9,4 +9,6 @@ export type AnalyticsResponse = {
   ratioUpvotesToDownvotes?: number;
   topVotedAnswer?: Answer | null;
   topVotedQuestion?: Question | null;
+  recentlyVotedQuestions: Question[];
+  recentlyVotedAnswers: Answer[];
 };

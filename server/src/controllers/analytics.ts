@@ -1,9 +1,15 @@
 import { ObjectId } from "mongodb";
-import { getQuestionsByUserId } from "./questions";
-import { toValidObjectId } from "../utils";
+import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
+import {
+  ApiError,
+  ApiErrorMessage,
+  HttpStatusCode,
+  toValidObjectId,
+} from "../utils";
 import { AnalyticsResponse } from "../utils/types/analyticsTypes";
-import { getAnswersByUserId } from "./answers";
-import { Question, Answer } from "../models";
+import { getAnswerById, getAnswersByUserId } from "./answers";
+import { Question, Answer, Vote } from "../models";
+import { getRecentAnswerVotes, getRecentQuestionVotes } from "./votes";
 //GET request
 async function getAnalyticsbyUserId(
   id: string | ObjectId
@@ -75,6 +81,16 @@ async function getAnalyticsbyUserId(
     }
   }
 
+  // get recently voted questions
+  const recentlyVotedQuestions: Question[] = await getRecentlyVotedQuestions(
+    userObjectId
+  );
+
+  // get recently voted answers
+  const recentlyVotedAnswers: Answer[] = await getRecentlyVotedAnswers(
+    userObjectId
+  );
+
   //To return the results
   return {
     totalNumQuestions,
@@ -85,7 +101,65 @@ async function getAnalyticsbyUserId(
     ratioUpvotesToDownvotes,
     topVotedAnswer,
     topVotedQuestion,
+    recentlyVotedQuestions,
+    recentlyVotedAnswers,
   };
+}
+
+async function getRecentlyVotedQuestions(
+  userObjectId: ObjectId
+): Promise<Question[]> {
+  // get 5 most recent question votes
+  const recentQuestionVotes: Vote[] = await getRecentQuestionVotes(
+    userObjectId
+  );
+
+  // create array of questions
+  const recentlyVotedQuestions: Question[] = [];
+
+  for (const vote of recentQuestionVotes) {
+    if (vote.questionId == null) {
+      throw new ApiError(
+        HttpStatusCode.NOT_FOUND,
+        ApiErrorMessage.Question.NOT_FOUND
+      );
+    }
+    const questionObjectId: ObjectId = toValidObjectId(vote.questionId);
+    const question: Question | null = await getUnprocessedQuestionById(
+      questionObjectId
+    );
+    if (question != null) {
+      recentlyVotedQuestions.push(question);
+    }
+  }
+
+  return recentlyVotedQuestions;
+}
+
+async function getRecentlyVotedAnswers(
+  userObjectId: ObjectId
+): Promise<Answer[]> {
+  // get 5 most recent answer votes
+  const recentAnswerVotes: Vote[] = await getRecentAnswerVotes(userObjectId);
+
+  // create array of answers
+  const recentlyVotedAnswers: Answer[] = [];
+
+  for (const vote of recentAnswerVotes) {
+    if (vote.answerId == null) {
+      throw new ApiError(
+        HttpStatusCode.NOT_FOUND,
+        ApiErrorMessage.Answer.NOT_FOUND
+      );
+    }
+    const answerObjectId: ObjectId = toValidObjectId(vote.answerId);
+    const answer: Answer | null = await getAnswerById(answerObjectId);
+    if (answer != null) {
+      recentlyVotedAnswers.push(answer);
+    }
+  }
+
+  return recentlyVotedAnswers;
 }
 
 export { getAnalyticsbyUserId };

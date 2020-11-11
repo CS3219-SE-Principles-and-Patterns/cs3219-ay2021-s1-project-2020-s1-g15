@@ -18,6 +18,17 @@ import {
   GetSingleQuestionResponse,
 } from "../utils";
 
+async function getUnprocessedQuestionById(
+  questionId: string | ObjectId
+): Promise<Question | null> {
+  const questionObjectId: ObjectId = toValidObjectId(questionId);
+  const question: Question | null = await getQuestionsCollection().findOne({
+    _id: questionObjectId,
+  });
+
+  return question;
+}
+
 async function getQuestions(
   req: GetPaginatedQuestionsRequest
 ): Promise<GetPaginatedQuestionsResponse> {
@@ -395,6 +406,7 @@ async function removeAnswerFromQuestion(
 }
 
 export {
+  getUnprocessedQuestionById,
   getQuestions,
   getQuestionById,
   getQuestionsByUserId,
