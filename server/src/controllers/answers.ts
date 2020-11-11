@@ -31,6 +31,17 @@ async function getUnprocessedAnswersByQuestionId(
   return answers;
 }
 
+async function getAnswerById(
+  answerId: string | ObjectId
+): Promise<Answer | null> {
+  const answerObjectId: ObjectId = toValidObjectId(answerId);
+  const answer: Answer | null = await getAnswersCollection().findOne({
+    _id: answerObjectId,
+  });
+
+  return answer;
+}
+
 async function getAnswersByQuestionId(
   questionId: string | ObjectId,
   sortBy: string | undefined
@@ -270,6 +281,7 @@ async function deleteAllAnswersByQuestionId(
 }
 
 export {
+  getAnswerById,
   createAnswer,
   getUnprocessedAnswersByQuestionId,
   getAnswersByQuestionId,
