@@ -27,7 +27,9 @@ async function getAnalyticsbyUserId(
   const totalNumAnswers: number = answers.length;
   // Ratio of questions asked to questions answered
   const ratioQuestionsToAnswer: number =
-    totalNumQuestions / totalNumAnswers || 0; // to account for 0/0
+    totalNumAnswers === 0
+      ? totalNumQuestions
+      : totalNumQuestions / totalNumAnswers;
 
   // total number of upvotes (of all questions asked/answered)
   const totalNumUpvotes =
@@ -38,7 +40,10 @@ async function getAnalyticsbyUserId(
     questions.reduce((acc, question) => acc + question.downvotes, 0) +
     answers.reduce((acc, answer) => acc + answer.downvotes, 0);
   // ratio of upvotes per downvotes
-  const ratioUpvotesToDownvotes = totalNumUpvotes / totalNumDownvotes || 0; // to account for 0/0
+  const ratioUpvotesToDownvotes =
+    totalNumDownvotes === 0
+      ? totalNumUpvotes
+      : totalNumUpvotes / totalNumDownvotes;
 
   // most recent top voted question
   const topVotedQuestion: Question | null = questions.reduce<Question | null>(
