@@ -1,85 +1,70 @@
 import { ObjectId } from "mongodb";
-import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
+
 import {
   ApiError,
   ApiErrorMessage,
   HttpStatusCode,
   toValidObjectId,
+  AnalyticsResponse,
 } from "../utils";
-import { AnalyticsResponse } from "../utils/types/analyticsTypes";
-import { getAnswerById, getAnswersByUserId } from "./answers";
 import { Question, Answer, Vote } from "../models";
+import { getQuestionsByUserId, getUnprocessedQuestionById } from "./questions";
+import { getAnswerById, getAnswersByUserId } from "./answers";
 import { getRecentAnswerVotes, getRecentQuestionVotes } from "./votes";
-//GET request
+
 async function getAnalyticsbyUserId(
   id: string | ObjectId
 ): Promise<AnalyticsResponse> {
   const userObjectId: ObjectId = toValidObjectId(id);
-  const questions: Question[] = await getQuestionsByUserId(userObjectId);
-  const answers: Answer[] = await getAnswersByUserId(userObjectId);
-  //To get Total number of questions asked
+  const [questions, answers]: [Question[], Answer[]] = await Promise.all([
+    getQuestionsByUserId(userObjectId),
+    getAnswersByUserId(userObjectId),
+  ]);
+
+  // Total number of questions asked
   const totalNumQuestions: number = questions.length;
-
-  //To get Total number of questions answered
+  // Total number of questions answered
   const totalNumAnswers: number = answers.length;
+  // Ratio of questions asked to questions answered
+  const ratioQuestionsToAnswer: number =
+    totalNumAnswers === 0
+      ? totalNumQuestions
+      : totalNumQuestions / totalNumAnswers;
 
-  //To get Ratio of questions asked to questions answered
-  const ratioQuestionsToAnswer: number = totalNumQuestions / totalNumAnswers;
+  // total number of upvotes (of all questions asked/answered)
+  const totalNumUpvotes =
+    questions.reduce((acc, question) => acc + question.upvotes, 0) +
+    answers.reduce((acc, answer) => acc + answer.upvotes, 0);
+  // total number of downvotes (of all questions asked/answered)
+  const totalNumDownvotes =
+    questions.reduce((acc, question) => acc + question.downvotes, 0) +
+    answers.reduce((acc, answer) => acc + answer.downvotes, 0);
+  // ratio of upvotes per downvotes
+  const ratioUpvotesToDownvotes =
+    totalNumDownvotes === 0
+      ? totalNumUpvotes
+      : totalNumUpvotes / totalNumDownvotes;
 
-  //To get Total number of upvotes (of all questions asked/answered)
-  let totalNumUpvotes = 0;
-  for (const question of questions) {
-    totalNumUpvotes = totalNumUpvotes + question.upvotes;
-  }
-  for (const answer of answers) {
-    totalNumUpvotes = totalNumUpvotes + answer.upvotes;
-  }
-
-  //To get Total number of downvotes (of all questions asked/answered)
-  let totalNumDownvotes = 0;
-  for (const question of questions) {
-    totalNumDownvotes = totalNumDownvotes + question.downvotes;
-  }
-  for (const answer of answers) {
-    totalNumDownvotes = totalNumDownvotes + answer.downvotes;
-  }
-
-  //To get Ratio of upvotes/downvotes
-  const ratioUpvotesToDownvotes = totalNumUpvotes / totalNumDownvotes;
-
-  //To get Top voted answer
-  let topVotedAnswer: Answer | null;
-  if (answers.length == 0) {
-    topVotedAnswer = null;
-  } else {
-    topVotedAnswer = answers[0]; //to initialise an initial top answer
-    let currenthighestA = topVotedAnswer.upvotes - topVotedAnswer.downvotes;
-    let netA = 0;
-    for (const answer of answers) {
-      netA = answer.upvotes - answer.downvotes;
-      if (netA > currenthighestA) {
-        topVotedAnswer = answer;
-        currenthighestA = netA;
-      } else continue;
-    }
-  }
-
-  //To get Top voted question
-  let topVotedQuestion: Question | null;
-  if (questions.length == 0) {
-    topVotedQuestion = null;
-  } else {
-    topVotedQuestion = questions[0]; //to initialise an initial top answer
-    let currenthighestQ = topVotedQuestion.upvotes - topVotedQuestion.downvotes;
-    let netQ = 0;
-    for (const question of questions) {
-      netQ = question.upvotes - question.downvotes;
-      if (netQ > currenthighestQ) {
-        topVotedQuestion = question;
-        currenthighestQ = netQ;
-      } else continue;
-    }
-  }
+  // most recent top voted question
+  const topVotedQuestion: Question | null = questions.reduce<Question | null>(
+    (prev: Question | null, curr: Question) =>
+      prev === null
+        ? curr
+        : curr.upvotes - curr.downvotes >= prev.upvotes - prev.downvotes
+        ? curr
+        : prev,
+    null
+  );
+  // most recent top voted answer
+  const topVotedAnswer: Answer | null = answers.reduce<Answer | null>(
+    (prev: Answer | null, curr: Answer) =>
+      prev === null
+        ? curr
+        : curr.upvotes - curr.downvotes >= prev.upvotes - prev.downvotes
+        ? curr
+        : prev,
+    null
+  );
 
   // get recently voted questions
   const recentlyVotedQuestions: Question[] = await getRecentlyVotedQuestions(

@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Card, Spin, Row, Col } from "antd";
+import { Card, Spin, Row, Col, PageHeader } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
 
 import NotFoundPage from "../404";
 import FluidPage from "../../components/layout";
 import ViewUser from "../../components/user";
-import { User, getSingleUser } from "../../utils";
+import { User, getSingleUser, Route } from "../../utils";
 
 const UserPage: FC = (): JSX.Element => {
   const router = useRouter();
@@ -32,10 +33,17 @@ const UserPage: FC = (): JSX.Element => {
   return isNotFound ? (
     <NotFoundPage />
   ) : (
-    <FluidPage title={`AnswerLeh - ${user?.username}`}>
+    <FluidPage title={user ? `${user.username} | AnswerLeh` : "AnswerLeh"}>
       {user ? (
         <Row justify="center">
           <Col flex="750px">
+            <PageHeader
+              title={<h1>@{user.username}</h1>}
+              backIcon={
+                <LeftOutlined size={64} style={{ marginBottom: "12px" }} />
+              }
+              onBack={() => router.push(Route.FORUM)}
+            />
             <Card>
               <ViewUser user={user} />
             </Card>

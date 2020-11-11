@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import Link from "next/link";
 import { Typography, Space, Tag, Row, Divider } from "antd";
 import { grey } from "@ant-design/colors";
 
@@ -7,6 +8,7 @@ import {
   markdownToReactNode,
   CreateQuestionReq,
   GetSingleQuestionRes,
+  Route,
 } from "utils/index";
 
 const { Title } = Typography;
@@ -24,22 +26,27 @@ const QuestionPreview: FC<ViewQuestionProp> = ({ question }): JSX.Element => {
   return (
     <>
       <Typography>
-        <Title level={1}>{title}</Title>
+        <Title level={2}>{title}</Title>
       </Typography>
 
       <Space direction="vertical">
-        {user && createdAt ? (
-          <Space>
-            <span style={{ color: grey[4] }}>{user.username}</span>
-            <span style={{ color: grey[1] }}>
-              {toRelativeTimeAgo(createdAt)}
-            </span>
-          </Space>
-        ) : null}
         <Row>
           <Tag color="geekblue">{level}</Tag>
           <Tag color="purple">{subject}</Tag>
         </Row>
+        {user && createdAt ? (
+          <Space>
+            <Link
+              href={`${Route.USER}/[username]`}
+              as={`${Route.USER}/${user.username}`}
+            >
+              {`@${user.username}`}
+            </Link>
+            <span style={{ color: grey[3] }}>
+              {toRelativeTimeAgo(createdAt)}
+            </span>
+          </Space>
+        ) : null}
       </Space>
 
       <Divider />

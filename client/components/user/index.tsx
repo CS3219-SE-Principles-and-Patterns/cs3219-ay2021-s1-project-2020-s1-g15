@@ -1,209 +1,168 @@
 import React, { FC } from "react";
-import { Level, markdownToReactNode, Route, User } from "../../utils";
 import {
   AlertOutlined,
-  LeftOutlined,
   QuestionCircleOutlined,
+  LikeOutlined,
+  DislikeOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
-import {
-  PageHeader,
-  Statistic,
-  Layout,
-  Divider,
-  Tabs,
-  List,
-  Typography,
-  Tag,
-  Space,
-  Card,
-  Row,
-  Col,
-} from "antd";
+import { Statistic, Tabs, List, Typography, Row, Col, Divider } from "antd";
 
-import styles from "./user.module.css";
-import Link from "next/link";
-import QuestionPreview from "components/questions/QuestionPreview";
-const { Title } = Typography;
+import { User, Question, Answer, toLocalisedDate } from "../../utils";
+import { QuestionDisplay } from "./QuestionDisplay";
+import { AnswerDisplay } from "./AnswerDisplay";
+
 const { TabPane } = Tabs;
+const { Text, Paragraph } = Typography;
 
-const userPageTabKeys = {
-  questions: "questions",
-  answers: "answers",
-  activity: "activity",
-};
+enum TabKeys {
+  STATISTICS = "statistics",
+  ACTIVITY = "activity",
+  QUESTIONS = "questions",
+  ANSWERS = "answers",
+}
 
-const { Content } = Layout;
 type ViewUserProps = {
   user: User;
 };
 
 const ViewUser: FC<ViewUserProps> = ({ user }) => {
-  const onChangeTab = (activeKey: string) => {
-    console.log(activeKey);
-  };
+  const questions: Question[] = user.questions?.reverse() ?? [];
+  const answers: Answer[] = user.answers?.reverse() ?? [];
+  const topVotedQuestion: Question | null =
+    user.analytics?.topVotedQuestion ?? null;
+  const topVotedAnswer: Answer | null = user.analytics?.topVotedAnswer ?? null;
+  const recentlyVotedQuestions: Question[] =
+    user.analytics?.recentlyVotedQuestions ?? [];
+  const recentlyVotedAnswers: Answer[] =
+    user.analytics?.recentlyVotedAnswers ?? [];
+
   return (
-    <>
-      <PageHeader
-        title={<h1>{user.username}</h1>}
-        subTitle="viewing user page"
-        backIcon={<LeftOutlined className={styles.iconOffset} size={64} />}
-        onBack={() => window.history.back()}
-      />
-      <Space style={{ width: "100%" }} direction="vertical" size="large">
-        <Content className={styles.mainContent}>
-          <h2>
-            <Typography.Text strong>Top Level</Typography.Text>
-          </h2>
-          <Row>
-            <Tag color="magenta">{Level.JUNIOR_COLLEGE}</Tag>
-          </Row>
-          <h2>
-            <Typography.Text strong>Top Subjects</Typography.Text>
-          </h2>
-          <Row>
-            <Tag color="magenta">{Level.PRIMARY}</Tag>
-          </Row>
-          <Divider />
-          <Tabs
-            defaultActiveKey={userPageTabKeys.questions}
-            onChange={onChangeTab}
-          >
-            <TabPane
-              forceRender
-              tab="Questions"
-              key={userPageTabKeys.questions}
-            >
-              <h2>
-                <Typography.Text strong>Questions</Typography.Text>
-              </h2>
-              <List
-                bordered
-                dataSource={user.questions}
-                renderItem={(item) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={
-                        <>
-                          <Link
-                            href={`${Route.QUESTION}/[qid]/[slug]`}
-                            as={Route.QUESTION_VIEW(item._id, item.slug)}
-                          >
-                            {item.slug}
-                          </Link>
-                        </>
-                      }
-                      description={markdownToReactNode(item.markdown)}
-                    />
-                  </List.Item>
-                )}
-              />
-            </TabPane>
-            <TabPane forceRender tab="Answers" key={userPageTabKeys.answers}>
-              <h2>
-                <Typography.Text strong>Answers</Typography.Text>
-              </h2>
-              <List
-                bordered
-                dataSource={user.answers}
-                renderItem={(item) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={item.userId}
-                      description={markdownToReactNode(item.markdown)}
-                    />
-                  </List.Item>
-                )}
-              />
-            </TabPane>
-            <TabPane forceRender tab="Activity" key={userPageTabKeys.activity}>
-              <Card>
-                <Col>
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <Statistic
-                        title="Questions Asked"
-                        prefix={<QuestionCircleOutlined />}
-                        value={user.analytics?.totalNumQuestions ?? 0}
-                      />
-                    </Col>
-                    <Col>
-                      <Statistic
-                        title="Answers Given"
-                        prefix={<AlertOutlined />}
-                        value={user.analytics?.totalNumAnswers ?? 0}
-                        style={{
-                          margin: "0 32px",
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <Statistic
-                        title="Number of Upvotes"
-                        value={user.analytics?.totalNumUpvotes ?? 0}
-                      />
-                    </Col>
-                    <Col>
-                      <Statistic
-                        title="Number of Downvotes"
-                        value={user.analytics?.totalNumDownvotes ?? 0}
-                      />
-                    </Col>
-                  </Row>
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <Statistic
-                        title="Questions To Answers"
-                        value={user.analytics?.ratioQuestionsToAnswer ?? 0}
-                      />
-                    </Col>
-                    <Col>
-                      <Statistic
-                        title="Upvotes to Downvotes"
-                        value={user.analytics?.ratioUpvotesToDownvotes ?? 0}
-                      />
-                    </Col>
-                  </Row>
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <h2>
-                        <Typography.Text strong>
-                          Top Voted Answer
-                        </Typography.Text>
-                      </h2>
-                      {markdownToReactNode(
-                        user.analytics?.topVotedAnswer?.markdown ??
-                          "no answers upvoted"
-                      )}
-                    </Col>
-                  </Row>
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <h2>
-                        <Typography.Text strong>
-                          Top Voted Question
-                        </Typography.Text>
-                      </h2>
-                      <QuestionPreview
-                        question={
-                          user.analytics?.topVotedQuestion ?? {
-                            title: "nil",
-                            markdown: "",
-                            subject: "nil",
-                            level: "nil",
-                          }
-                        }
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Card>
-            </TabPane>
-          </Tabs>
-        </Content>
-      </Space>
-    </>
+    <Tabs size="large" defaultActiveKey={TabKeys.STATISTICS}>
+      <TabPane forceRender tab="Statistics" key={TabKeys.STATISTICS}>
+        <Row gutter={[32, 16]}>
+          <Col>
+            <Statistic
+              title="Cake day"
+              prefix={<CalendarOutlined />}
+              value={toLocalisedDate(user.createdAt)}
+            />
+          </Col>
+        </Row>
+        <Row gutter={[32, 16]}>
+          <Col>
+            <Statistic
+              title="Questions asked"
+              prefix={<QuestionCircleOutlined />}
+              value={user.analytics?.totalNumQuestions ?? 0}
+            />
+          </Col>
+          <Col>
+            <Statistic
+              title="Answers given"
+              prefix={<AlertOutlined />}
+              value={user.analytics?.totalNumAnswers ?? 0}
+            />
+          </Col>
+          <Col>
+            <Statistic
+              title="Questions asked per answer given"
+              value={user.analytics?.ratioQuestionsToAnswer.toFixed(2) ?? 0}
+            />
+          </Col>
+        </Row>
+        <Row gutter={[32, 0]}>
+          <Col>
+            <Statistic
+              title="Total upvotes"
+              prefix={<LikeOutlined />}
+              value={user.analytics?.totalNumUpvotes ?? 0}
+            />
+          </Col>
+          <Col>
+            <Statistic
+              title="Total downvotes"
+              prefix={<DislikeOutlined />}
+              value={user.analytics?.totalNumDownvotes ?? 0}
+            />
+          </Col>
+          <Col>
+            <Statistic
+              title="Upvotes per downvotes"
+              value={user.analytics?.ratioUpvotesToDownvotes.toFixed(2) ?? 0}
+            />
+          </Col>
+        </Row>
+
+        <Divider />
+        <Paragraph style={{ fontSize: "18px" }} type="secondary">
+          Top voted question asked
+        </Paragraph>
+        {topVotedQuestion ? (
+          <QuestionDisplay question={topVotedQuestion} />
+        ) : (
+          <Paragraph type="secondary">No question asked yet...</Paragraph>
+        )}
+
+        <Divider />
+        <Paragraph style={{ fontSize: "18px" }} type="secondary">
+          Top voted answer given
+        </Paragraph>
+        {topVotedAnswer ? (
+          <AnswerDisplay answer={topVotedAnswer} />
+        ) : (
+          <Text type="secondary">No answer given yet...</Text>
+        )}
+      </TabPane>
+
+      <TabPane forceRender tab="Activity" key={TabKeys.ACTIVITY}>
+        <Text type="secondary" style={{ fontSize: "18px" }}>
+          Recently voted questions
+        </Text>
+        <List
+          dataSource={recentlyVotedQuestions}
+          renderItem={(question: Question) => (
+            <List.Item>
+              <QuestionDisplay question={question} />
+            </List.Item>
+          )}
+        />
+        <Divider />
+        <Text type="secondary" style={{ fontSize: "18px" }}>
+          Recently voted answers
+        </Text>
+        <List
+          dataSource={recentlyVotedAnswers}
+          renderItem={(answer: Answer) => (
+            <List.Item>
+              <AnswerDisplay answer={answer} />
+            </List.Item>
+          )}
+        />
+      </TabPane>
+
+      <TabPane forceRender tab="Questions Asked" key={TabKeys.QUESTIONS}>
+        <List
+          dataSource={questions}
+          renderItem={(question: Question) => (
+            <List.Item>
+              <QuestionDisplay question={question} />
+            </List.Item>
+          )}
+        />
+      </TabPane>
+
+      <TabPane forceRender tab="Answers Given" key={TabKeys.ANSWERS}>
+        <List
+          dataSource={answers}
+          renderItem={(answer: Answer) => (
+            <List.Item>
+              <AnswerDisplay answer={answer} />
+            </List.Item>
+          )}
+        />
+      </TabPane>
+    </Tabs>
   );
 };
 

@@ -18,7 +18,7 @@
 }
 
 .grid {
-  z-index: 9999;
+  z-index: 20;
   display: grid;
   grid-template-rows: auto 1fr auto;
   row-gap: 1.5rem;
@@ -74,11 +74,11 @@
 
 .box {
   background-color: white;
-  flex: 1 1 150px;
+  flex: 1 1 300px;
   margin: 8px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
   overflow-wrap: break-word;
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 15px;
 }
 
@@ -105,12 +105,12 @@
 @media only screen and (min-width: 600px) {
   .pitchBox {
     margin: auto;
-    max-width: 80vw;
+    max-width: 800px;
   }
   .introColumn,
   .infoColumnDev,
   .infoColumn {
     margin: auto;
-    max-width: 80vw;
+    max-width: 800px;
   }
 }
