@@ -105,37 +105,12 @@ const LandingPage: FC = () => {
               <div className={`${styles.alignCenter} ${styles.headerText}`}>
                 <Typography>
                   <Title>Welcome to AnswerLeh</Title>
-                  <Paragraph>
-                    This application was built with NextJs and ExpressJs with
-                    typescript and Mongodb for CS3219 AY20/21 semester 1
+                  <Paragraph type="secondary" style={{ fontSize: "18px" }}>
+                    This application was built with Next.js and Express.js with
+                    TypeScript and MongoDB
+                    <br />
+                    (CS3219 AY20/21 semester 1)
                   </Paragraph>
-                </Typography>
-              </div>
-            </div>
-          </div>
-          <div className={styles.introColumn}>
-            <Divider />
-            <Typography className={styles.alignCenter}></Typography>
-          </div>
-          <div className={styles.infoColumn}>
-            <div className={styles.box}>
-              <div className={styles.cardTitle}>
-                <Typography>
-                  <Title>Ask</Title>
-                </Typography>
-              </div>
-            </div>
-            <div className={styles.box}>
-              <div className={styles.cardTitle}>
-                <Typography>
-                  <Title>Question</Title>
-                </Typography>
-              </div>
-            </div>
-            <div className={styles.box}>
-              <div className={styles.cardTitle}>
-                <Typography>
-                  <Title>Answer</Title>
                 </Typography>
               </div>
             </div>
@@ -145,44 +120,28 @@ const LandingPage: FC = () => {
             <div className={styles.pitchBox}>
               <Divider />
               <Typography className={styles.alignCenter}>
-                <Paragraph>
-                  <h3>Brought to you by</h3>
+                <Paragraph style={{ fontSize: "25px" }}>
+                  Brought to you by
                 </Paragraph>
               </Typography>
             </div>
           </div>
           <div className={styles.infoColumnDev}>
             <div className={styles.box}>
-              <Typography>
-                <Title>Eugene Teu</Title>
-                <Paragraph>
-                  Student at National University Of Singapore
-                </Paragraph>
-              </Typography>
+              <Paragraph style={{ fontSize: "30px" }}>Eugene Teu</Paragraph>
+              Student at National University Of Singapore
             </div>
             <div className={styles.box}>
-              <Typography>
-                <Title>Aaron Choo</Title>
-                <Paragraph>
-                  Student at National University Of Singapore
-                </Paragraph>
-              </Typography>
+              <Paragraph style={{ fontSize: "30px" }}>Aaron Choo</Paragraph>
+              Student at National University Of Singapore
             </div>
             <div className={styles.box}>
-              <Typography>
-                <Title>Li Ziying</Title>
-                <Paragraph>
-                  Student at National University Of Singapore
-                </Paragraph>
-              </Typography>
+              <Paragraph style={{ fontSize: "30px" }}>Li Zi Ying</Paragraph>
+              Student at National University Of Singapore
             </div>
             <div className={styles.box}>
-              <Typography>
-                <Title>Yi you</Title>
-                <Paragraph>
-                  Student at Nanyang Technological University Of Singapore
-                </Paragraph>
-              </Typography>
+              <Paragraph style={{ fontSize: "30px" }}>Chia Yi You</Paragraph>
+              Student at Nanyang Technological University
             </div>
           </div>
           <div className={styles.introColumn}></div>
