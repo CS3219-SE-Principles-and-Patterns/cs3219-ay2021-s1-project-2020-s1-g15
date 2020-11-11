@@ -33,7 +33,7 @@ const UserPage: FC = (): JSX.Element => {
   return isNotFound ? (
     <NotFoundPage />
   ) : (
-    <FluidPage title={`AnswerLeh - ${user?.username}`}>
+    <FluidPage title={user ? `${user.username} | AnswerLeh` : "AnswerLeh"}>
       {user ? (
         <Row justify="center">
           <Col flex="750px">
