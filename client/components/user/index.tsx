@@ -96,7 +96,7 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
 
         <Divider />
         <Paragraph style={{ fontSize: "18px" }} type="secondary">
-          Top voted question
+          Top voted question asked
         </Paragraph>
         {topVotedQuestion ? (
           <QuestionDisplay question={topVotedQuestion} />
@@ -106,7 +106,7 @@ const ViewUser: FC<ViewUserProps> = ({ user }) => {
 
         <Divider />
         <Paragraph style={{ fontSize: "18px" }} type="secondary">
-          Top voted answer
+          Top voted answer given
         </Paragraph>
         {topVotedAnswer ? (
           <AnswerDisplay answer={topVotedAnswer} />
