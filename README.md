@@ -9,7 +9,7 @@
   - [Installing](#installing)
   - [Development Notes](#development-notes)
     - [Pages](#pages)
-    - [Question Page ( located in `pages/question` folder )](#question-page--located-in-pagesquestion-folder-)
+    - [Question page](#question-page)
   - [Development environment](#development-environment)
   - [Production environment](#production-environment)
 - [Server](#server)
@@ -70,28 +70,20 @@ cd client/
 yarn
 ```
 
-### Development Notes 
+### Development Notes
 
-#### Pages 
+#### Pages
 
-Currently each folder name corresponds to the url e.g `question` folder will be `base_url/question/`
-- forum
-- login 
-- register
-- user 
+Next.js uses file based routing for all pages within the `/pages` directory. As such, a page located at `pages/forum/index.tsx` will be routed to `BASE_URL/forum`.
 
-Route constants can be found in `util/routes.ts`
+Route constants can be found in `util/constants/Routes.ts`.
 
-#### Question Page ( located in `pages/question` folder )
+#### Question page
 
-- `[qid].tsx` page that presents a single question
-  - url params : `qid`
-  - Fetches question based on the url params
-
-- `ask.tsx` page that represents the creation / editing of a single question
-  - url params : `qid`
-  - Fetches qid based on url params (if presence)
-  - if creating, qid is set to null
+- `[qid]/index.tsx`: page that presents a single question; will simply redirect the user to the correct page with the actual slug
+- `[qid]/[slug]/index.tsx`: page that presents a single question
+- `[qid]/[slug]/edit.tsx`: page to edit a question
+- `[qid]/[slug]/ask.tsx` page that represents the creation of a single question
 
 ### Development environment
 
